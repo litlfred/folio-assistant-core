@@ -164,7 +164,7 @@
 
 <link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><meta name="fa-pinned-data" content="../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-174","label":"Operations (174)"},{"href":"#mcp-tools-27","label":"MCP tools (27)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-191","label":"Operations (191)"},{"href":"#mcp-tools-27","label":"MCP tools (27)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -266,10 +266,10 @@
   <li><a href="../openapi.json"><code class="language-plaintext highlighter-rouge">openapi.json</code></a> — OpenAPI 3.1.0, one operation per Tool. Open it in Swagger UI or Redoc, or generate a client from it. The paths are the Tools’ call contracts, not HTTP endpoints: each operation’s <code class="language-plaintext highlighter-rouge">x-invoke</code> says how the Tool is really reached.</li>
   <li><a href="../mcp-tools.json"><code class="language-plaintext highlighter-rouge">mcp-tools.json</code></a> — the answer an MCP server gives to <code class="language-plaintext highlighter-rouge">tools/list</code>: each tool’s name, description and input schema, read from the registrar that serves it.</li>
 </ul>
-<h2 id="operations-174">
+<h2 id="operations-191">
   
   
-    <a href="#operations-174" class="anchor-heading" aria-labelledby="operations-174"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (174)
+    <a href="#operations-191" class="anchor-heading" aria-labelledby="operations-191"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (191)
   
   
 </h2>
@@ -441,8 +441,22 @@
       <td>shell</td>
     </tr>
     <tr>
+      <td><a id="ci-agent-review"></a><a href="../cat-harness/ci-agent-review/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-agent-review</code></a></td>
+      <td>Run the agent review</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
       <td><a id="ci-bootstrap-pages"></a><a href="../cat-harness/ci-bootstrap-pages/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-bootstrap-pages</code></a></td>
       <td>Publish bootstrap-tools’ site</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-code-quality-gates"></a><a href="../cat-harness/ci-code-quality-gates/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-code-quality-gates</code></a></td>
+      <td>Run the platform index’s code-quality gates</td>
       <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
       <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
       <td>shell</td>
@@ -455,6 +469,13 @@
       <td>shell</td>
     </tr>
     <tr>
+      <td><a id="ci-feature-staging"></a><a href="../cat-harness/ci-feature-staging/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-feature-staging</code></a></td>
+      <td>Build and publish a branch preview</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
       <td><a id="ci-health"></a><a href="../cat-harness/ci-health/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-health</code></a></td>
       <td>Is CI passing on the default branch?</td>
       <td><code class="language-plaintext highlighter-rouge">markdown</code>?: Flag, <code class="language-plaintext highlighter-rouge">warn</code>?: Flag, <code class="language-plaintext highlighter-rouge">out</code>?: RepoPath</td>
@@ -462,8 +483,36 @@
       <td>shell</td>
     </tr>
     <tr>
+      <td><a id="ci-merge-main"></a><a href="../cat-harness/ci-merge-main/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-merge-main</code></a></td>
+      <td>Merge main into opted-in PRs</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-merge-train"></a><a href="../cat-harness/ci-merge-train/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-merge-train</code></a></td>
+      <td>Run the merge train</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
       <td><a id="ci-post-merge-regen"></a><a href="../cat-harness/ci-post-merge-regen/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-post-merge-regen</code></a></td>
       <td>Regenerate derived files after a merge</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-pr-checks"></a><a href="../cat-harness/ci-pr-checks/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-pr-checks</code></a></td>
+      <td>Run a layer’s PR checks</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-pr-tests"></a><a href="../cat-harness/ci-pr-tests/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-pr-tests</code></a></td>
+      <td>Run the tools layer’s own test suite</td>
       <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
       <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
       <td>shell</td>
@@ -478,6 +527,34 @@
     <tr>
       <td><a id="ci-publish-subgraph-index"></a><a href="../cat-harness/ci-publish-subgraph-index/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-publish-subgraph-index</code></a></td>
       <td>Publish a layer’s sub-graph index package</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-repin-train"></a><a href="../cat-harness/ci-repin-train/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-repin-train</code></a></td>
+      <td>Run the re-pin train</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-staging-publish"></a><a href="../cat-harness/ci-staging-publish/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-staging-publish</code></a></td>
+      <td>Publish staged previews</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-standing-repin"></a><a href="../cat-harness/ci-standing-repin/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-standing-repin</code></a></td>
+      <td>Run a layer’s standing re-pin</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="ci-sweeps"></a><a href="../cat-harness/ci-sweeps/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/ci-sweeps</code></a></td>
+      <td>Run the 15-minute sweeps</td>
       <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName, <code class="language-plaintext highlighter-rouge">ref</code>?: Branch</td>
       <td><code class="language-plaintext highlighter-rouge">run</code>?: Text</td>
       <td>shell</td>
@@ -651,6 +728,13 @@
       <td>shell</td>
     </tr>
     <tr>
+      <td><a id="gates-merged"></a><a href="../cat-harness/gates-merged/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/gates-merged</code></a></td>
+      <td>Gates on the merged tree</td>
+      <td><code class="language-plaintext highlighter-rouge">base</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">report</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
       <td><a id="get-graph-stats"></a><a href="../cat-harness/get-graph-stats/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/get-graph-stats</code></a></td>
       <td>Content graph counts</td>
       <td><code class="language-plaintext highlighter-rouge">refresh</code>?: Flag</td>
@@ -763,6 +847,13 @@
       <td>shell</td>
     </tr>
     <tr>
+      <td><a id="judge-tree"></a><a href="../cat-harness/judge-tree/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/judge-tree</code></a></td>
+      <td>Judge a tree and record the verdict by digest</td>
+      <td><code class="language-plaintext highlighter-rouge">lock</code>: RepoPath, <code class="language-plaintext highlighter-rouge">caller</code>: RepoFullName, <code class="language-plaintext highlighter-rouge">caller-dir</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">sha</code>?: CommitSha, <code class="language-plaintext highlighter-rouge">root</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">instance</code>?: InstanceId, <code class="language-plaintext highlighter-rouge">base-verdict</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">base-root</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">test-path</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">publish</code>?: Flag</td>
+      <td><code class="language-plaintext highlighter-rouge">record</code>?: RepoPath</td>
+      <td>shell</td>
+    </tr>
+    <tr>
       <td><a id="kg-audit"></a><a href="../cat-harness/kg-audit/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/kg-audit</code></a></td>
       <td>Knowledge-graph audit</td>
       <td><code class="language-plaintext highlighter-rouge">check</code>?: Flag, <code class="language-plaintext highlighter-rouge">strict</code>?: Flag</td>
@@ -866,6 +957,27 @@
       <td><code class="language-plaintext highlighter-rouge">shared</code>?: Flag</td>
       <td><code class="language-plaintext highlighter-rouge">entries</code>?: Markdown</td>
       <td>inProcess, mcp</td>
+    </tr>
+    <tr>
+      <td><a id="merge-leftover"></a><a href="../cat-harness/merge-leftover/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/merge-leftover</code></a></td>
+      <td>Merge leftover (has a PR’s intent landed?)</td>
+      <td><code class="language-plaintext highlighter-rouge">member</code>: Branch, <code class="language-plaintext highlighter-rouge">base</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">report</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="merge-overlap"></a><a href="../cat-harness/merge-overlap/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/merge-overlap</code></a></td>
+      <td>Merge overlap (conflict prediction)</td>
+      <td><code class="language-plaintext highlighter-rouge">base</code>?: Branch, <code class="language-plaintext highlighter-rouge">branches</code>?: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">report</code>?: Text</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="merge-train"></a><a href="../cat-harness/merge-train/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/merge-train</code></a></td>
+      <td>Merge train</td>
+      <td><code class="language-plaintext highlighter-rouge">base</code>: CommitSha, <code class="language-plaintext highlighter-rouge">branch</code>?: Branch, <code class="language-plaintext highlighter-rouge">dry-run</code>?: Flag, <code class="language-plaintext highlighter-rouge">no-main</code>?: Flag, <code class="language-plaintext highlighter-rouge">members</code>: Branch</td>
+      <td><code class="language-plaintext highlighter-rouge">report</code>?: Text</td>
+      <td>shell</td>
     </tr>
     <tr>
       <td><a id="mesh-authority"></a><a href="../folio-assistant-core/mesh-authority/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/mesh-authority</code></a></td>
@@ -1075,6 +1187,13 @@
       <td>Reference list from reference nodes</td>
       <td><code class="language-plaintext highlighter-rouge">instance</code>: RepoPath, <code class="language-plaintext highlighter-rouge">check</code>?: Flag</td>
       <td><code class="language-plaintext highlighter-rouge">blocks</code>?: RepoPath</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="release-please"></a><a href="../cat-harness/release-please/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/release-please</code></a></td>
+      <td>release-please (declared, not configured here)</td>
+      <td><code class="language-plaintext highlighter-rouge">package</code>: PackageName, <code class="language-plaintext highlighter-rouge">repo</code>?: RepoFullName</td>
+      <td><code class="language-plaintext highlighter-rouge">tag</code>?: Text</td>
       <td>shell</td>
     </tr>
     <tr>

@@ -490,7 +490,7 @@
           },
           "package_name": {
             "default": "folio-core",
-            "description": "Package name. Local: 'authoring-core' | 'board' | 'bootstrap' | 'catalogue' | 'cataloguing' | 'conduct-core' | 'content-lifecycle' | 'content-lifecycle-ext' | 'crdm' | 'dsa' | 'folio-assistant-core' | 'folio-core' | 'folio-document-adapter' | 'graph-management' | 'ingestion' | 'kg-core' | 'kg-navigation' | 'large-datasets' | 'library-core' | 'library-extras' | 'process-core' | 'raci' | 'requirements-planning' | 'review' | 'security' | 'theming' | 'ui-core' | 'workflow'. Reference: 'academic-research-skills'.",
+            "description": "Package name. Local: 'authoring-core' | 'board' | 'bootstrap' | 'catalogue' | 'cataloguing' | 'conduct-core' | 'content-lifecycle' | 'content-lifecycle-ext' | 'crdm' | 'dsa' | 'folio-assistant-core' | 'folio-core' | 'folio-document-adapter' | 'graph-management' | 'ingestion' | 'kg-core' | 'kg-navigation' | 'large-datasets' | 'library-core' | 'library-extras' | 'process-core' | 'raci' | 'requirements-planning' | 'review' | 'sdlc-core' | 'security' | 'spec-kit' | 'theming' | 'ui-core' | 'workflow'. Reference: 'academic-research-skills'.",
             "type": "string"
           }
         },

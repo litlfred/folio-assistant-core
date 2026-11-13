@@ -132,13 +132,16 @@
       "href": "../../../en/cat-harness/processes/skills/instance-publication.html"
      },
      {
-      "name": "package-release"
+      "name": "package-release",
+      "href": "../../../en/cat-harness/processes/skills/package-release.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-report-signing"
+      "name": "qa-report-signing",
+      "href": "../../../en/cat-harness/processes/skills/qa-report-signing.html"
      },
      {
       "name": "render-kg-to-cdn",
@@ -170,25 +173,32 @@
     "title": "Merge steward",
     "skills": [
      {
-      "name": "merge-conflict-patterns"
+      "name": "merge-conflict-patterns",
+      "href": "../../../en/cat-harness/processes/skills/merge-conflict-patterns.html"
      },
      {
-      "name": "merge-manager-watcher"
+      "name": "merge-manager-watcher",
+      "href": "../../../en/cat-harness/processes/skills/merge-manager-watcher.html"
      },
      {
-      "name": "merge-queue"
+      "name": "merge-queue",
+      "href": "../../../en/cat-harness/processes/skills/merge-queue.html"
      },
      {
-      "name": "merge-to-main"
+      "name": "merge-to-main",
+      "href": "../../../en/cat-harness/processes/skills/merge-to-main.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "ref-stewardship"
+      "name": "ref-stewardship",
+      "href": "../../../en/cat-harness/processes/skills/ref-stewardship.html"
      },
      {
-      "name": "saturation-meta-merge"
+      "name": "saturation-meta-merge",
+      "href": "../../../en/cat-harness/processes/skills/saturation-meta-merge.html"
      }
     ]
    }
@@ -212,25 +222,32 @@
     "title": "Merge steward",
     "skills": [
      {
-      "name": "merge-conflict-patterns"
+      "name": "merge-conflict-patterns",
+      "href": "../../../en/cat-harness/processes/skills/merge-conflict-patterns.html"
      },
      {
-      "name": "merge-manager-watcher"
+      "name": "merge-manager-watcher",
+      "href": "../../../en/cat-harness/processes/skills/merge-manager-watcher.html"
      },
      {
-      "name": "merge-queue"
+      "name": "merge-queue",
+      "href": "../../../en/cat-harness/processes/skills/merge-queue.html"
      },
      {
-      "name": "merge-to-main"
+      "name": "merge-to-main",
+      "href": "../../../en/cat-harness/processes/skills/merge-to-main.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "ref-stewardship"
+      "name": "ref-stewardship",
+      "href": "../../../en/cat-harness/processes/skills/ref-stewardship.html"
      },
      {
-      "name": "saturation-meta-merge"
+      "name": "saturation-meta-merge",
+      "href": "../../../en/cat-harness/processes/skills/saturation-meta-merge.html"
      }
     ]
    }
@@ -244,7 +261,8 @@
    "laneHref": "guideline-updates.html#lane-Lane_Adaptation",
    "skills": [
     {
-     "name": "rendered-impact"
+     "name": "rendered-impact",
+     "href": "../../../en/cat-harness/processes/skills/rendered-impact.html"
     }
    ],
    "role": {
@@ -460,7 +478,8 @@
    "laneHref": "guideline-updates.html#lane-Lane_Steward",
    "skills": [
     {
-     "name": "prepare-merge"
+     "name": "prepare-merge",
+     "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
     }
    ],
    "role": {
@@ -469,25 +488,32 @@
     "title": "Merge steward",
     "skills": [
      {
-      "name": "merge-conflict-patterns"
+      "name": "merge-conflict-patterns",
+      "href": "../../../en/cat-harness/processes/skills/merge-conflict-patterns.html"
      },
      {
-      "name": "merge-manager-watcher"
+      "name": "merge-manager-watcher",
+      "href": "../../../en/cat-harness/processes/skills/merge-manager-watcher.html"
      },
      {
-      "name": "merge-queue"
+      "name": "merge-queue",
+      "href": "../../../en/cat-harness/processes/skills/merge-queue.html"
      },
      {
-      "name": "merge-to-main"
+      "name": "merge-to-main",
+      "href": "../../../en/cat-harness/processes/skills/merge-to-main.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "ref-stewardship"
+      "name": "ref-stewardship",
+      "href": "../../../en/cat-harness/processes/skills/ref-stewardship.html"
      },
      {
-      "name": "saturation-meta-merge"
+      "name": "saturation-meta-merge",
+      "href": "../../../en/cat-harness/processes/skills/saturation-meta-merge.html"
      }
     ]
    }

@@ -274,7 +274,7 @@
 
 <p><strong>Skill <code class="language-plaintext highlighter-rouge">l1-document-ingestion</code>:</strong> The detailed method for turning a DOCUMENT in <code class="language-plaintext highlighter-rouge">uploads/</code> into a complete L1 entry in <code class="language-plaintext highlighter-rouge">library/&lt;bib-slug&gt;/</code> — which rung reads it and why, what a complete L1 entry holds, why an inferred structure is refused rather than guessed, and the archive, dataset, narrative, image and vector-label arms. Refines the harness’s basic <code class="language-plaintext highlighter-rouge">library-ingestion</code> flow; one entry point: <code class="language-plaintext highlighter-rouge">bun run cat ingest</code>.</p>
 
-<p><strong>Named by:</strong> <a href="../ingest-build-l1-kg.html">Ingestion subprocess — build the L1 knowledge graph</a>, <a href="../ingest-derive-content.html">Ingestion subprocess — derive content from the assets</a>, <a href="../ingest-extract-structure.html">Ingestion subprocess — extract structure</a>, <a href="../l1-document-ingestion.html">L1 document ingestion — a document to the L1 source knowledge graph</a></p>
+<p><strong>Named by:</strong> <a href="../l1-document-ingestion.html">L1 document ingestion — a document to the L1 source knowledge graph</a>, <a href="../ingest-build-l1-kg.html">Ingestion subprocess — build the L1 knowledge graph</a>, <a href="../ingest-derive-content.html">Ingestion subprocess — derive content from the assets</a>, <a href="../ingest-extract-structure.html">Ingestion subprocess — extract structure</a></p>
 
 <p><strong>This is a refinement, not the entry point.</strong> The harness’s
 <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/library-ingestion.md"><code class="language-plaintext highlighter-rouge">library-ingestion</code></a>
@@ -289,7 +289,7 @@ can judge.</p>
 <p>The rung code — <code class="language-plaintext highlighter-rouge">scripts/ingest-document.ts</code>, the <code class="language-plaintext highlighter-rouge">pdf-*.py</code> rungs,
 <code class="language-plaintext highlighter-rouge">notebook-structure.ts</code> and OCR — lives in the harness. This skill is the
 METHOD that chooses among them; invoking harness code from here is a downward
-edge. The executable form is <code class="language-plaintext highlighter-rouge">processes/library/l1-document-ingestion.bpmn</code>,
+edge. The executable form is <code class="language-plaintext highlighter-rouge">collab/processes/library/l1-document-ingestion.bpmn</code>,
 which calls the harness’s basic <code class="language-plaintext highlighter-rouge">Process_Ingestion</code> first and then the four
 <code class="language-plaintext highlighter-rouge">ingest-*</code> phases beside it.</p>
 <h2 id="the-whole-path-is-two-commands">
@@ -1872,7 +1872,7 @@ one? Prose, a single column and anything ragged all answer no — a one-column
   <li><a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/skills/kg/kg-core/directory-conventions.md"><code class="language-plaintext highlighter-rouge">directory-conventions</code></a> — the graph typologies and who declares them</li>
   <li><a href="https://github.com/litlfred/folio-assistant-core/blob/main/skills/library/cataloguing/bib-qa.md"><code class="language-plaintext highlighter-rouge">bib-qa</code></a> — auditing what is already in <code class="language-plaintext highlighter-rouge">library/</code></li>
   <li><a href="https://github.com/litlfred/folio-assistant-core/blob/main/skills/library/ingestion/tabular-metadata.md"><code class="language-plaintext highlighter-rouge">tabular-metadata</code></a> — the CSVW model behind the dataset arm</li>
-  <li><code class="language-plaintext highlighter-rouge">processes/library/l1-document-ingestion.bpmn</code> — this method, executable; it calls the harness’s <code class="language-plaintext highlighter-rouge">Process_Ingestion</code> first</li>
+  <li><code class="language-plaintext highlighter-rouge">collab/processes/library/l1-document-ingestion.bpmn</code> — this method, executable; it calls the harness’s <code class="language-plaintext highlighter-rouge">Process_Ingestion</code> first</li>
 </ul>
 
           

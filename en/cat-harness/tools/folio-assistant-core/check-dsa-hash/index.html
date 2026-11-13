@@ -164,7 +164,7 @@
 
 <link rel="stylesheet" href="../../../../../assets/css/navbar.css"><script src="../../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../../assets/page-layout.js" defer data-fa-page-layout></script><meta name="fa-pinned-data" content="../../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/folio-assistant-core/check-dsa-hash/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#skills-it-satisfies","label":"Skills it satisfies","children":[{"href":"#dsa-checksum","label":"dsa-checksum","depth":1},{"href":"#dsa-odrl-source","label":"dsa-odrl-source","depth":1},{"href":"#dsa-dcat-record","label":"dsa-dcat-record","depth":1},{"href":"#dsa-catalogue-status","label":"dsa-catalogue-status","depth":1}],"fold":"4 sub-sections"},{"href":"#inputs-and-outputs","label":"Inputs and outputs"},{"href":"#processes-and-tasks","label":"Processes and tasks"},{"href":"#how-it-is-deployed-and-reached","label":"How it is deployed and reached"},{"href":"#what-it-is-made-of","label":"What it is made of"},{"href":"#linked-data","label":"Linked data"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/folio-assistant-core/check-dsa-hash/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#skills-it-satisfies","label":"Skills it satisfies","children":[{"href":"#dsa-checksum","label":"dsa-checksum","depth":1}],"fold":"1 sub-section"},{"href":"#inputs-and-outputs","label":"Inputs and outputs"},{"href":"#processes-and-tasks","label":"Processes and tasks"},{"href":"#how-it-is-deployed-and-reached","label":"How it is deployed and reached"},{"href":"#what-it-is-made-of","label":"What it is made of"},{"href":"#linked-data","label":"Linked data"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -260,7 +260,7 @@
       <div id="main-content" class="main-content">
         <main>
           
-            <script type="application/ld+json">{"@context":"https://litlfred.github.io/folio-assistant/folio-assistant-core/folio-assistant-core.context.jsonld","@id":"https://litlfred.github.io/folio-assistant/folio-assistant-core/tools/check-dsa-hash.jsonld","@type":"https://litlfred.github.io/cat-harness/v0/ns/Tool","partOf":"https://litlfred.github.io/folio-assistant/folio-assistant-core/folio-assistant-core.jsonld","name":"check-dsa-hash","title":"Verify Data Sharing Agreement hash, citation, and vocabulary terms","description":"Verify a Data Sharing Agreement (DSA) directory or single version: checks that every JSON-LD term in `agreement.jsonld` and `dcat.jsonld` is defined in the SHA-256-pinned official W3C ODRL 2.2, W3C DCAT 3 (with SPDX 2.2.2 and ADMS), or DCMI Metadata Terms contexts; checks that the ODRL 2.2 Agreement's `uid` is the version's fixed-version URL and its `dcterms:source` cites the DCAT 3 `dcat:Distribution` whose `spdx:checksum` is checked; verifies that the SHA-256 digest of `agreement.md` matches `spdx:checksumValue`; and checks `dcat:previousVersion` and hash distinctness across versions.","install":{"none":true},"invoke":{"shell":"bun run folio-assistant-core/scripts/check-dsa-hash.ts"},"io":{"inputs":[{"name":"dir","schema":"https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/RepoPath","description":"Path to a versioned DSA directory (holding `v1/`, `v2/`, ...) or a single version directory holding `agreement.md`, `dcat.jsonld`, and `agreement.jsonld`. Defaults to `folio-assistant-core/scripts/test-fixtures/dsa`.","required":false,"arg":{"positional":0}}],"outputs":[{"name":"verdict","schema":"https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/Text","description":"Per-version verification line (`dcat:version`, `dcat:downloadURL`, `sha256`) on stdout when valid; diagnostic findings on stderr with exit code 1 when any check fails."}]},"satisfies":["dsa-checksum","dsa-odrl-source","dsa-dcat-record","dsa-catalogue-status"],"requirements":{"runtime":["bun"],"network":false},"selection":{"when":"Verifying a Data Sharing Agreement's checksum, ODRL citation, DCAT 3 record and `dcat:previousVersion` chain, or `adms:status`.","limits":"Checks structural, cryptographic, and vocabulary conformance of `agreement.md`, `dcat.jsonld`, and `agreement.jsonld`; does not evaluate legal prose semantics or sign Verifiable Credentials.","cost":"Local file reads and SHA-256 hashing; runs in milliseconds with no network access."}}</script>
+            <script type="application/ld+json">{"@context":"https://litlfred.github.io/folio-assistant/folio-assistant-core/folio-assistant-core.context.jsonld","@id":"https://litlfred.github.io/folio-assistant/folio-assistant-core/tools/check-dsa-hash.jsonld","@type":"https://litlfred.github.io/cat-harness/v0/ns/Tool","partOf":"https://litlfred.github.io/folio-assistant/folio-assistant-core/folio-assistant-core.jsonld","name":"check-dsa-hash","title":"Verify Data Sharing Agreement hash, citation, and vocabulary terms","description":"Verify a Data Sharing Agreement (DSA) directory or single version: checks that every JSON-LD term in `agreement.jsonld` and `dcat.jsonld` is defined in the SHA-256-pinned official W3C ODRL 2.2, W3C DCAT 3 (with SPDX 2.2.2 and ADMS), or DCMI Metadata Terms contexts; checks that the ODRL 2.2 Agreement's `uid` is the version's fixed-version URL and its `dcterms:source` cites the DCAT 3 `dcat:Distribution` whose `spdx:checksum` is checked; verifies that the SHA-256 digest of `agreement.md` matches `spdx:checksumValue`; and checks `dcat:previousVersion` and hash distinctness across versions.","install":{"none":true},"invoke":{"shell":"bun run folio-assistant-core/scripts/check-dsa-hash.ts"},"io":{"inputs":[{"name":"dir","schema":"https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/RepoPath","description":"Path to a versioned DSA directory (holding `v1/`, `v2/`, ...) or a single version directory holding `agreement.md`, `dcat.jsonld`, and `agreement.jsonld`. Defaults to `folio-assistant-core/scripts/test-fixtures/dsa`.","required":false,"arg":{"positional":0}}],"outputs":[{"name":"verdict","schema":"https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/Text","description":"Per-version verification line (`dcat:version`, `dcat:downloadURL`, `sha256`) on stdout when valid; diagnostic findings on stderr with exit code 1 when any check fails."}]},"satisfies":["dsa-checksum"],"requirements":{"runtime":["bun"],"network":false},"selection":{"when":"Verifying a Data Sharing Agreement's checksum, ODRL citation, DCAT 3 record and `dcat:previousVersion` chain, or `adms:status`.","limits":"Checks structural, cryptographic, and vocabulary conformance of `agreement.md`, `dcat.jsonld`, and `agreement.jsonld`; does not evaluate legal prose semantics or sign Verifiable Credentials.","cost":"Local file reads and SHA-256 hashing; runs in milliseconds with no network access."}}</script>
 
 <h1 id="verify-data-sharing-agreement-hash-citation-and-vocabulary-terms">
   
@@ -336,51 +336,9 @@
 
 <p>Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement’s legal text as a W3C DCAT 3 <code class="language-plaintext highlighter-rouge">spdx:checksum</code> (<code class="language-plaintext highlighter-rouge">spdx:Checksum</code> with <code class="language-plaintext highlighter-rouge">spdx:checksumAlgorithm_sha256</code> and 64-character lowercase hex <code class="language-plaintext highlighter-rouge">spdx:checksumValue</code>), verified by <code class="language-plaintext highlighter-rouge">check:dsa-hash</code> (DSA building block B3, process steps P2.2 <code class="language-plaintext highlighter-rouge">Task_Hash</code> and P2.2a <code class="language-plaintext highlighter-rouge">Task_HashSummary</code>).</p>
 
-<p>Source: <code class="language-plaintext highlighter-rouge">dsa/skills/dsa/dsa-checksum.md</code>.</p>
+<p>Source: <code class="language-plaintext highlighter-rouge">skills/content/folio-document-adapter/dsa-checksum.md</code>.</p>
 
 <p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/dsa-checksum/{input,output}.schema.json</code>).</p>
-<h3 id="dsa-odrl-source">
-  
-  
-    <a href="#dsa-odrl-source" class="anchor-heading" aria-labelledby="dsa-odrl-source"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">dsa-odrl-source</code>
-  
-  
-</h3>
-    
-
-<p>Bind a computable Data Sharing Agreement’s W3C ODRL 2.2 <code class="language-plaintext highlighter-rouge">Agreement</code> to its signed legal text distribution using DCMI Metadata Terms <code class="language-plaintext highlighter-rouge">dcterms:source</code>, naming the exact <code class="language-plaintext highlighter-rouge">dcat:Distribution</code> whose <code class="language-plaintext highlighter-rouge">spdx:checksum</code> is checked (DSA building block B3, process step P2.3 <code class="language-plaintext highlighter-rouge">Task_OdrlCitesText</code>).</p>
-
-<p>Source: <code class="language-plaintext highlighter-rouge">dsa/skills/dsa/dsa-odrl-source.md</code>.</p>
-
-<p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/dsa-odrl-source/{input,output}.schema.json</code>).</p>
-<h3 id="dsa-dcat-record">
-  
-  
-    <a href="#dsa-dcat-record" class="anchor-heading" aria-labelledby="dsa-dcat-record"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">dsa-dcat-record</code>
-  
-  
-</h3>
-    
-
-<p>Write the W3C DCAT 3 <code class="language-plaintext highlighter-rouge">dcat:Resource</code> and <code class="language-plaintext highlighter-rouge">dcat:Distribution</code> catalogue record for a Data Sharing Agreement (<code class="language-plaintext highlighter-rouge">dcat:downloadURL</code>, <code class="language-plaintext highlighter-rouge">spdx:checksum</code>, <code class="language-plaintext highlighter-rouge">odrl:hasPolicy</code>) and link versions with <code class="language-plaintext highlighter-rouge">dcat:version</code> and <code class="language-plaintext highlighter-rouge">dcat:previousVersion</code> (DSA building block B3, process step P2.4–5 <code class="language-plaintext highlighter-rouge">Task_Catalogue</code>).</p>
-
-<p>Source: <code class="language-plaintext highlighter-rouge">dsa/skills/dsa/dsa-dcat-record.md</code>.</p>
-
-<p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/dsa-dcat-record/{input,output}.schema.json</code>).</p>
-<h3 id="dsa-catalogue-status">
-  
-  
-    <a href="#dsa-catalogue-status" class="anchor-heading" aria-labelledby="dsa-catalogue-status"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code class="language-plaintext highlighter-rouge">dsa-catalogue-status</code>
-  
-  
-</h3>
-    
-
-<p>Set the life-cycle status (<code class="language-plaintext highlighter-rouge">adms:status</code>, W3C DCAT 3 §6.4.30) on a Data Sharing Agreement’s DCAT 3 catalogue record when the agreement is amended, renewed, terminated, or expires, while keeping all published versions readable at their immutable URLs (DSA building block B3, process step P14.5 <code class="language-plaintext highlighter-rouge">Task_SetStatus</code>).</p>
-
-<p>Source: <code class="language-plaintext highlighter-rouge">dsa/skills/dsa/dsa-catalogue-status.md</code>.</p>
-
-<p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/dsa-catalogue-status/{input,output}.schema.json</code>).</p>
 <h2 id="inputs-and-outputs">
   
   
@@ -454,24 +412,6 @@
       <td><a href="../../../processes/dsa-document-lifecycle.html#step-Task_HashSummary">P2.2a · Hash the plain summary</a></td>
       <td>Publisher (data provider’s publication manager)</td>
       <td><code class="language-plaintext highlighter-rouge">dsa-checksum</code></td>
-    </tr>
-    <tr>
-      <td>Data sharing agreement document life cycle</td>
-      <td><a href="../../../processes/dsa-document-lifecycle.html#step-Task_OdrlCitesText">P2.3 · Make the ODRL cite the text</a></td>
-      <td>Author and policy author</td>
-      <td><code class="language-plaintext highlighter-rouge">dsa-odrl-source</code></td>
-    </tr>
-    <tr>
-      <td>Data sharing agreement document life cycle</td>
-      <td><a href="../../../processes/dsa-document-lifecycle.html#step-Task_Catalogue">P2.4–5 · Write the DCAT 3 record</a></td>
-      <td>Publisher (data provider’s publication manager)</td>
-      <td><code class="language-plaintext highlighter-rouge">dsa-dcat-record</code></td>
-    </tr>
-    <tr>
-      <td>Data sharing agreement document life cycle</td>
-      <td><a href="../../../processes/dsa-document-lifecycle.html#step-Task_SetStatus">P14.5 · Set the status to ended</a></td>
-      <td>Publisher (data provider’s publication manager)</td>
-      <td><code class="language-plaintext highlighter-rouge">dsa-catalogue-status</code></td>
     </tr>
   </tbody>
 </table></div>
@@ -612,10 +552,7 @@
     </span><span class="p">]</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="nl">"satisfies"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-    </span><span class="s2">"dsa-checksum"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"dsa-odrl-source"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"dsa-dcat-record"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"dsa-catalogue-status"</span><span class="w">
+    </span><span class="s2">"dsa-checksum"</span><span class="w">
   </span><span class="p">],</span><span class="w">
   </span><span class="nl">"requirements"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nl">"runtime"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">

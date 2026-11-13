@@ -338,6 +338,8 @@
 
 <p>Source: <code class="language-plaintext highlighter-rouge">cat-harness/skills/process/process-core/platform-gates.md</code>.</p>
 
+<p>Also satisfied by: <a href="../ci-code-quality-gates/"><code class="language-plaintext highlighter-rouge">ci-code-quality-gates</code></a>, <a href="../judge-tree/"><code class="language-plaintext highlighter-rouge">judge-tree</code></a>.</p>
+
 <p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/platform-gates/{input,output}.schema.json</code>).</p>
 <h3 id="continual-progress">
   
@@ -440,6 +442,102 @@
       <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/crdm-deliver.html#step-A_Implement">Phase 6: Implement (feature branch + PR)</a></td>
       <td>Agent</td>
       <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Drain the beans</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/bean-drain.html#step-Drain_Work">Work the bean (PR at the first commit)</a></td>
+      <td>Drainer</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Code change and review</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-change-review.html#step-Task_Implement">Make the change</a></td>
+      <td>Authoring agent</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Code change and review</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-change-review.html#step-Task_RunGates">Run the platform’s own gates</a></td>
+      <td>Authoring agent</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>Code change and review</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-change-review.html#step-Task_CommitAndOpenPR">Commit, push, open the PR</a></td>
+      <td>Authoring agent</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_VerdictReuse">Verdict reuse: tree already green? (NOT A GATE)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_Hygiene">Import hygiene (HARD) and advisories (WARN-ONLY)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_TypeScript">TypeScript: lint, types and tests (HARD)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_E2E">End-to-end + accessibility (HARD)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_RepositoryGates">Repository gates (HARD)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_UnrunGates">Registered gates that never run (HARD)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>The gates a change must pass before it can merge</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-quality-gates.html#step-Task_SkillChain">Skill-registration chain (UNMASKED)</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
+    </tr>
+    <tr>
+      <td>Merge the base branch in</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-base.html#step-Task_Commit">Commit the merge</a></td>
+      <td>merge:main command</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Merge request: find or elect the merge manager</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-request.html#step-Sib_Stack">Stack on it and keep working</a></td>
+      <td>Sibling session</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Merge request: find or elect the merge manager</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-request.html#step-Sib_Retarget">When the base lands, retarget</a></td>
+      <td>Sibling session</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>Merge request: find or elect the merge manager</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-request.html#step-Sib_Ready">Make the PR ready</a></td>
+      <td>Sibling session</td>
+      <td><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
+    </tr>
+    <tr>
+      <td>A merge train</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-train.html#step-Call_Gates">Run the gate set on the train</a></td>
+      <td>Build pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">platform-gates</code></td>
     </tr>
   </tbody>
 </table></div>

@@ -423,6 +423,66 @@
       <td>Build pipeline</td>
       <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
     </tr>
+    <tr>
+      <td>Is CI actually working on the default branch?</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/ci-health-watch.html#step-Task_Check">Run check:ci-health, WRITING the report file</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Code change and review</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/code-change-review.html#step-Task_Diagnose">Root-cause the failure</a></td>
+      <td>Authoring agent</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Merge the base branch in</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-base.html#step-Task_Report">Report what the run found, once</a></td>
+      <td>merge:main command</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>A merge train</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-train.html#step-Call_ChecksPresent">Find members with no CI on their head</a></td>
+      <td>Build pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>A merge train</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/merge-train.html#step-Task_RetryFlaky">Retry a declared-flaky gate once</a></td>
+      <td>Build pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Which open pull requests have no CI run on their head?</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/pr-checks-present.html#step-Task_Sweep">Ask whether each open PR head has a run</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Which open pull requests have no CI run on their head?</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/pr-checks-present.html#step-Task_Comment">Comment once per PR and head</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Report a verdict on one tracking issue</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/tracked-watch.html#step-Task_Label">Ensure the tracking label exists</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Report a verdict on one tracking issue</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/tracked-watch.html#step-Task_Close">Close the tracking issue</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
+    <tr>
+      <td>Report a verdict on one tracking issue</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/tracked-watch.html#step-Task_Track">Open or edit the one tracking issue</a></td>
+      <td>Scheduled log sweep</td>
+      <td><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+    </tr>
   </tbody>
 </table></div>
 <h2 id="how-it-is-deployed-and-reached">

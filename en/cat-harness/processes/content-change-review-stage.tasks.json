@@ -104,13 +104,16 @@
       "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-reports"
+      "name": "qa-reports",
+      "href": "../../../en/cat-harness/processes/skills/qa-reports.html"
      },
      {
       "name": "remote-mount",
@@ -136,7 +139,8 @@
       "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
-      "name": "watch"
+      "name": "watch",
+      "href": "../../../en/cat-harness/processes/skills/watch.html"
      }
     ]
    }
@@ -192,13 +196,16 @@
       "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-reports"
+      "name": "qa-reports",
+      "href": "../../../en/cat-harness/processes/skills/qa-reports.html"
      },
      {
       "name": "remote-mount",
@@ -224,7 +231,8 @@
       "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
-      "name": "watch"
+      "name": "watch",
+      "href": "../../../en/cat-harness/processes/skills/watch.html"
      }
     ]
    }
@@ -242,7 +250,8 @@
      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
     },
     {
-     "name": "rendered-impact"
+     "name": "rendered-impact",
+     "href": "../../../en/cat-harness/processes/skills/rendered-impact.html"
     }
    ],
    "role": {
@@ -283,13 +292,16 @@
       "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-reports"
+      "name": "qa-reports",
+      "href": "../../../en/cat-harness/processes/skills/qa-reports.html"
      },
      {
       "name": "remote-mount",
@@ -315,7 +327,8 @@
       "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
-      "name": "watch"
+      "name": "watch",
+      "href": "../../../en/cat-harness/processes/skills/watch.html"
      }
     ]
    }
@@ -329,7 +342,8 @@
    "laneHref": "content-change-review-stage.html#lane-Lane_Pipeline",
    "skills": [
     {
-     "name": "watch"
+     "name": "watch",
+     "href": "../../../en/cat-harness/processes/skills/watch.html"
     },
     {
      "name": "todo-manager"
@@ -373,13 +387,16 @@
       "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
-      "name": "prepare-merge"
+      "name": "prepare-merge",
+      "href": "../../../en/cat-harness/processes/skills/prepare-merge.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-reports"
+      "name": "qa-reports",
+      "href": "../../../en/cat-harness/processes/skills/qa-reports.html"
      },
      {
       "name": "remote-mount",
@@ -405,7 +422,8 @@
       "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
-      "name": "watch"
+      "name": "watch",
+      "href": "../../../en/cat-harness/processes/skills/watch.html"
      }
     ]
    }

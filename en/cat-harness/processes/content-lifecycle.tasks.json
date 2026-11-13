@@ -156,10 +156,12 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "release-epic-planning"
+      "name": "release-epic-planning",
+      "href": "../../../en/cat-harness/processes/skills/release-epic-planning.html"
      },
      {
-      "name": "release-lifecycle"
+      "name": "release-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/release-lifecycle.html"
      }
     ]
    }
@@ -345,7 +347,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-affordances.html"
      },
      {
-      "name": "qa-reports"
+      "name": "qa-reports",
+      "href": "../../../en/cat-harness/processes/skills/qa-reports.html"
      }
     ]
    }
@@ -390,13 +393,16 @@
       "href": "../../../en/cat-harness/processes/skills/instance-publication.html"
      },
      {
-      "name": "package-release"
+      "name": "package-release",
+      "href": "../../../en/cat-harness/processes/skills/package-release.html"
      },
      {
-      "name": "publish-verification"
+      "name": "publish-verification",
+      "href": "../../../en/cat-harness/processes/skills/publish-verification.html"
      },
      {
-      "name": "qa-report-signing"
+      "name": "qa-report-signing",
+      "href": "../../../en/cat-harness/processes/skills/qa-report-signing.html"
      },
      {
       "name": "render-kg-to-cdn",
@@ -444,10 +450,12 @@
       "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
-      "name": "narrative-asserts-code"
+      "name": "narrative-asserts-code",
+      "href": "../../../en/cat-harness/processes/skills/narrative-asserts-code.html"
      },
      {
-      "name": "rendered-impact"
+      "name": "rendered-impact",
+      "href": "../../../en/cat-harness/processes/skills/rendered-impact.html"
      },
      {
       "name": "staging-review",
@@ -458,7 +466,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "visual-diff"
+      "name": "visual-diff",
+      "href": "../../../en/cat-harness/processes/skills/visual-diff.html"
      },
      {
       "name": "voice-overlay-review",
@@ -568,10 +577,12 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "release-epic-planning"
+      "name": "release-epic-planning",
+      "href": "../../../en/cat-harness/processes/skills/release-epic-planning.html"
      },
      {
-      "name": "release-lifecycle"
+      "name": "release-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/release-lifecycle.html"
      }
     ]
    }
@@ -589,7 +600,9 @@
     }
    ],
    "calls": {
-    "name": "Process_BeanOpen"
+    "name": "Open the bean",
+    "href": "bean-open.html",
+    "diagram": "bean-open.html"
    },
    "role": {
     "name": "editor",
@@ -658,7 +671,9 @@
     }
    ],
    "calls": {
-    "name": "Process_BeanClose"
+    "name": "Close the bean",
+    "href": "bean-close.html",
+    "diagram": "bean-close.html"
    },
    "role": {
     "name": "programme-manager",
@@ -678,10 +693,12 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "release-epic-planning"
+      "name": "release-epic-planning",
+      "href": "../../../en/cat-harness/processes/skills/release-epic-planning.html"
      },
      {
-      "name": "release-lifecycle"
+      "name": "release-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/release-lifecycle.html"
      }
     ]
    }

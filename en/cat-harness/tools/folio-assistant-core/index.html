@@ -328,7 +328,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
 
 <div class="tg-grid">
 <a class="tg-stat" href="#every-tool"><b>30</b><span>Tool nodes</span></a>
-<a class="tg-stat" href="#does-every-satisfies-name-a-skill-that-exists"><b>25</b><span>skills satisfied</span></a>
+<a class="tg-stat" href="#does-every-satisfies-name-a-skill-that-exists"><b>22</b><span>skills satisfied</span></a>
 <a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>30</b><span>invoked as a shell command</span></a>
 <a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>0</b><span>reachable over MCP</span></a>
 </div>
@@ -386,24 +386,9 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
 </h2>
     
 
-<p><strong>1 of 25 do not.</strong> A <code class="language-plaintext highlighter-rouge">satisfies</code> naming a skill that is
-not in this checkout is a dangling reference — the tool advertises a capability
-the graph cannot locate.</p>
-
-<div class="table-wrapper"><table>
-  <thead>
-    <tr>
-      <th>unresolved skill</th>
-      <th>named by</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code class="language-plaintext highlighter-rouge">visual-diff</code></td>
-      <td><code class="language-plaintext highlighter-rouge">folio-block-screenshots</code></td>
-    </tr>
-  </tbody>
-</table></div>
+<p>Yes — all <strong>22</strong> skills named across <strong>30</strong> tools resolve to a
+skill document in this checkout. A <code class="language-plaintext highlighter-rouge">satisfies</code> pointing at nothing would be a
+tool advertising a capability the graph cannot locate.</p>
 <h2 id="every-tool">
   
   
@@ -471,7 +456,7 @@ the graph cannot locate.</p>
       <td><a id="check-dsa-hash"></a><a href="check-dsa-hash/"><code class="language-plaintext highlighter-rouge">check-dsa-hash</code></a><br />Verify Data Sharing Agreement hash, citation, and vocabulary terms</td>
       <td>Verify a Data Sharing Agreement (DSA) directory or single version: checks that every JSON-LD term in <code class="language-plaintext highlighter-rouge">agreement.jsonld</code> and <code class="language-plaintext highlighter-rouge">dcat.jsonld</code> is defined in the SHA-256-pinned official W3C ODRL 2.2, W3C DCAT 3 (with SPDX 2.2.2 and ADMS), or DCMI Metadata Terms contexts; checks that the ODRL 2.2 Agreement’s <code class="language-plaintext highlighter-rouge">uid</code> is the version’s fixed-version URL and its <code class="language-plaintext highlighter-rouge">dcterms:source</code> cites the DCAT 3 <code class="language-plaintext highlighter-rouge">dcat:Distribution</code> whose <code class="language-plaintext highlighter-rouge">spdx:checksum</code> is checked; verifies that the SHA-256 digest of <code class="language-plaintext highlighter-rouge">agreement.md</code> matches <code class="language-plaintext highlighter-rouge">spdx:checksumValue</code>; and checks <code class="language-plaintext highlighter-rouge">dcat:previousVersion</code> and hash distinctness across versions.</td>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
-      <td><code class="language-plaintext highlighter-rouge">dsa-catalogue-status</code><br /><code class="language-plaintext highlighter-rouge">dsa-checksum</code><br /><code class="language-plaintext highlighter-rouge">dsa-dcat-record</code><br /><code class="language-plaintext highlighter-rouge">dsa-odrl-source</code></td>
+      <td><code class="language-plaintext highlighter-rouge">dsa-checksum</code></td>
       <td>1 in / 1 out</td>
       <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
     </tr>

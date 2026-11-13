@@ -261,7 +261,7 @@
         <main>
           
             <blockquote class="note">
-  <p>Generated from <code class="language-plaintext highlighter-rouge">processes/content/content-change-review-committee.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
+  <p>Generated from <code class="language-plaintext highlighter-rouge">collab/processes/content/content-change-review-committee.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
 </blockquote>
 
 <h1 id="committee-review-of-a-content-change">
@@ -572,7 +572,7 @@
     <tr>
       <td><a id="step-Task_CompareBeforeAfter"></a><strong>Compare main vs staging</strong><br /><code class="language-plaintext highlighter-rouge">Task_CompareBeforeAfter</code></td>
       <td>Review Committee</td>
-      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><code class="language-plaintext highlighter-rouge">visual-diff</code><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><a href="../../../en/cat-harness/processes/skills/visual-diff.html"><code class="language-plaintext highlighter-rouge">visual-diff</code></a><br /><a href="../../../en/cat-harness/processes/skills/rendered-impact.html"><code class="language-plaintext highlighter-rouge">rendered-impact</code></a></td>
       <td>The review starts from the Change Set’s RENDERED list (skill<br />rendered-impact): every rendered file the change alters, predicted<br />from each renderer’s dependency cone and checked against the build.<br />The reviewer opens every content page on it, not only the pages the<br />author mentions; index files are listed but not reviewed. An input<br />the renderer could not place is shown as not known, never as no<br />change.<br />Review committee opens both URLs side by side:<br />- Main site: &lt;pages-url&gt;/ (current published state)<br />- Staging: &lt;pages-url&gt;/branches/&lt;branch-slug&gt;/<br />The staging banner shows the commit SHA so they can verify<br />what they are reviewing matches the PR. A changed figure, diagram<br />or table is also pictured before and after on the review page,<br />with the share of changed pixels in words (skill visual-diff,<br />Tool folio-block-screenshots). Anything the staging job cannot<br />picture (page chrome, scroll behaviour, a PDF page, an IG page) is<br />in the agent’s before/after preview (skill before-after-preview).</td>
     </tr>
     <tr>
@@ -584,7 +584,7 @@
     <tr>
       <td><a id="step-Task_SliceAndAssign"></a><strong>Slice the change and assign reviewers</strong><br /><code class="language-plaintext highlighter-rouge">Task_SliceAndAssign</code></td>
       <td>Review Coordinator</td>
-      <td><a href="../../../en/cat-harness/processes/skills/review-heatmap.html"><code class="language-plaintext highlighter-rouge">review-heatmap</code></a><br /><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/review-heatmap.html"><code class="language-plaintext highlighter-rouge">review-heatmap</code></a><br /><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><a href="../../../en/cat-harness/processes/skills/rendered-impact.html"><code class="language-plaintext highlighter-rouge">rendered-impact</code></a></td>
       <td>From the ChangeSet, its rendered list (skill rendered-impact: each changed rendered page is assigned like a changed block) and the heat map on the review page: cut the change into slices a reviewer can hold (usually a section, or a run of sections where the heat map clusters), and assign each slice to a review lane by what it contains — clinical content to a clinical SME, a decision table to a QC reviewer, prose to a narrative reviewer. A block that needs no review (a pure rename, say) is WAIVED here with a written reason, which is what the coverage gate counts. Re-entered from GW_Covered when coverage is incomplete: the uncovered blocks become new slices.</td>
     </tr>
     <tr>

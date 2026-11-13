@@ -548,7 +548,9 @@
     }
    ],
    "calls": {
-    "name": "Process_BeanOpen"
+    "name": "Open the bean",
+    "href": "bean-open.html",
+    "diagram": "bean-open.html"
    },
    "role": {
     "name": "ingestion-agent",
@@ -603,7 +605,9 @@
     }
    ],
    "calls": {
-    "name": "Process_BeanClose"
+    "name": "Close the bean",
+    "href": "bean-close.html",
+    "diagram": "bean-close.html"
    },
    "role": {
     "name": "ingestion-agent",

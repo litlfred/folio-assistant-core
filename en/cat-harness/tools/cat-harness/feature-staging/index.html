@@ -338,7 +338,7 @@
 
 <p>Source: <code class="language-plaintext highlighter-rouge">cat-harness/skills/ui/ui-core/feature-staging.md</code>.</p>
 
-<p>Also satisfied by: <a href="../ig-folio-site-workflow/"><code class="language-plaintext highlighter-rouge">ig-folio-site-workflow</code></a>, <a href="../stage-local/"><code class="language-plaintext highlighter-rouge">stage-local</code></a>.</p>
+<p>Also satisfied by: <a href="../ig-folio-site-workflow/"><code class="language-plaintext highlighter-rouge">ig-folio-site-workflow</code></a>, <a href="../stage-local/"><code class="language-plaintext highlighter-rouge">stage-local</code></a>, <a href="../ci-feature-staging/"><code class="language-plaintext highlighter-rouge">ci-feature-staging</code></a>.</p>
 
 <p>The skill declares no I/O contract (<code class="language-plaintext highlighter-rouge">schemas/skills/feature-staging/{input,output}.schema.json</code>).</p>
 <h2 id="inputs-and-outputs">
@@ -423,6 +423,36 @@
       <td>CRDM Phase 6 — implement, MVP, acceptance</td>
       <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/crdm-deliver.html#step-A_DeployStaging">Deploy the MVP to staging</a></td>
       <td>Agent</td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+    </tr>
+    <tr>
+      <td>Publishing the docs site, and keeping the previews alive</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/docs-site-publish.html#step-Task_Restore">Restore the OPEN PRs’ staging previews</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+    </tr>
+    <tr>
+      <td>Staging a feature branch preview, and taking it down</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/feature-staging.html#step-Task_Defer">Defer build and queue verify sweep</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+    </tr>
+    <tr>
+      <td>Staging a feature branch preview, and taking it down</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/feature-staging.html#step-Task_Build">Build the docs site</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+    </tr>
+    <tr>
+      <td>Staging a feature branch preview, and taking it down</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/feature-staging.html#step-Task_Slug">Derive the slug from the head ref</a></td>
+      <td>CI/CD Pipeline</td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+    </tr>
+    <tr>
+      <td>Adopting an upstream version bump</td>
+      <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/upstream-version-adoption.html#step-Task_Mvp">MVP: build the candidate on a staging branch</a></td>
+      <td>CI/CD Pipeline</td>
       <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
     </tr>
     <tr>

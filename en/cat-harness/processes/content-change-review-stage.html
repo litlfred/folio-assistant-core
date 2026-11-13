@@ -261,7 +261,7 @@
         <main>
           
             <blockquote class="note">
-  <p>Generated from <code class="language-plaintext highlighter-rouge">processes/content/content-change-review-stage.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
+  <p>Generated from <code class="language-plaintext highlighter-rouge">collab/processes/content/content-change-review-stage.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
 </blockquote>
 
 <h1 id="stage-the-content-change">
@@ -571,14 +571,14 @@
     <tr>
       <td><a id="step-Task_CommentPR"></a><strong>Comment staging URL on PR</strong><br /><code class="language-plaintext highlighter-rouge">Task_CommentPR</code></td>
       <td>CI/CD Pipeline</td>
-      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a><br /><a href="../../../en/cat-harness/processes/skills/rendered-impact.html"><code class="language-plaintext highlighter-rouge">rendered-impact</code></a></td>
       <td>Bot comments or updates the staging URL on the PR.<br />Includes commit SHA, branch name, and build log link, and the<br />review list of rendered files the change alters (skill<br />rendered-impact), each linked on the preview and on main, with any<br />input the renderer could not place named as not known.</td>
     </tr>
     <tr>
       <td><a id="step-Task_WatchBranchCI"></a><strong>Open the branch-watch bean</strong><br /><code class="language-plaintext highlighter-rouge">Task_WatchBranchCI</code></td>
       <td>CI/CD Pipeline</td>
-      <td><code class="language-plaintext highlighter-rouge">watch</code><br /><code class="language-plaintext highlighter-rouge">todo-manager</code></td>
-      <td>First dispatch point for a CI watcher: the feature branch has changed<br />and a staging build now exists to watch. The watcher is DISPATCHED BY<br />OPENING A BEAN, not by a workflow_dispatch: this is a task/workflow<br />initiation.<br />A bean makes the watch durable past the session that opened it: the<br />container is reclaimed, and what survives is the bean. Starting the<br />watcher and recording that it is running are ONE declared step, so the<br />two cannot disagree about whether anything is watching.<br />It notes the watch on the bean rather than claiming it: only<br />Process_BeanOpen claims a bean. The note is idempotent, so re-entering<br />on a later push does not duplicate it.</td>
+      <td><a href="../../../en/cat-harness/processes/skills/watch.html"><code class="language-plaintext highlighter-rouge">watch</code></a><br /><code class="language-plaintext highlighter-rouge">todo-manager</code></td>
+      <td>First dispatch point for a CI watcher: the feature branch has changed<br />and a staging build now exists to watch. The watcher is DISPATCHED BY<br />OPENING A BEAN, not by a workflow_dispatch: this is a task/workflow<br />initiation.<br />A bean makes the watch durable past the session that opened it: the<br />container is reclaimed, and what survives is the bean. Starting the<br />watcher and recording that it is running are ONE declared step, so the<br />two cannot disagree about whether anything is watching.<br />It notes the watch on the bean rather than claiming it: only<br /><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/processes/bean-open.html">Process_BeanOpen</a> claims a bean. The note is idempotent, so re-entering<br />on a later push does not duplicate it.</td>
     </tr>
   </tbody>
 </table></div>

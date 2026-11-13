@@ -261,7 +261,7 @@
         <main>
           
             <blockquote class="note">
-  <p>Generated from <code class="language-plaintext highlighter-rouge">processes/content/content-change-review-publish.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
+  <p>Generated from <code class="language-plaintext highlighter-rouge">collab/processes/content/content-change-review-publish.bpmn</code> by <code class="language-plaintext highlighter-rouge">gen-processes-viz.ts</code> — do not edit here. <a href="index.html">All processes</a> · <a href="folio-assistant-core/">folio-assistant-core processes</a></p>
 </blockquote>
 
 <h1 id="merge-and-publish-a-content-change">
@@ -564,7 +564,7 @@
     <tr>
       <td><a id="step-Task_Merge"></a><strong>Merge, on explicit confirmation</strong><br /><code class="language-plaintext highlighter-rouge">Task_Merge</code></td>
       <td>Review Committee</td>
-      <td><code class="language-plaintext highlighter-rouge">prepare-merge</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/prepare-merge.html"><code class="language-plaintext highlighter-rouge">prepare-merge</code></a></td>
       <td>The owner says “merge it”, and only then is the branch merged. Merge<br />to main triggers:<br />1. the main site rebuilds with the changes;<br />2. the staging preview’s cleanup runs;<br />3. the review comments committed on the feature branch land on main,<br />as the review record.</td>
     </tr>
     <tr>
@@ -582,7 +582,7 @@
     <tr>
       <td><a id="step-Task_WatchMainCI"></a><strong>Note the main-branch watch</strong><br /><code class="language-plaintext highlighter-rouge">Task_WatchMainCI</code></td>
       <td>CI/CD Pipeline</td>
-      <td><code class="language-plaintext highlighter-rouge">watch</code><br /><code class="language-plaintext highlighter-rouge">todo-manager</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/watch.html"><code class="language-plaintext highlighter-rouge">watch</code></a><br /><code class="language-plaintext highlighter-rouge">todo-manager</code></td>
       <td>Second dispatch point: the change was approved and merged, and the<br />root of the site has been rebuilt from main. A failing main build<br />can look like a green run from inside the repo.<br /><code class="language-plaintext highlighter-rouge">note</code> rather than <code class="language-plaintext highlighter-rouge">claim</code>: the branch-watch bean already exists, and<br />whether the publish SUCCEEDED is not this step’s judgement (the build<br />reports its own exit code). A bean is not closed on someone else’s<br />say-so, so the step records what it observed and leaves the verdict<br />to the watcher.</td>
     </tr>
   </tbody>

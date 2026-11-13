@@ -8,6 +8,9 @@
   "servers": [],
   "tags": [
     {
+      "name": "adversarial-code-review"
+    },
+    {
       "name": "agent-memory"
     },
     {
@@ -21,6 +24,9 @@
     },
     {
       "name": "bootstrap-graph-publication"
+    },
+    {
+      "name": "cache-first-ci"
     },
     {
       "name": "ci-health"
@@ -42,6 +48,9 @@
     },
     {
       "name": "continual-progress"
+    },
+    {
+      "name": "coordinate"
     },
     {
       "name": "corpus-grep"
@@ -113,10 +122,31 @@
       "name": "lsi-indexing"
     },
     {
+      "name": "merge-conflict-patterns"
+    },
+    {
+      "name": "merge-queue"
+    },
+    {
       "name": "npm-kg-distribution"
     },
     {
+      "name": "package-release"
+    },
+    {
       "name": "platform-gates"
+    },
+    {
+      "name": "prepare-merge"
+    },
+    {
+      "name": "publish-verification"
+    },
+    {
+      "name": "qa-reports"
+    },
+    {
+      "name": "ref-stewardship"
     },
     {
       "name": "remote-mount"
@@ -152,6 +182,9 @@
       "name": "task-authorization"
     },
     {
+      "name": "test-engineer"
+    },
+    {
       "name": "translation-manager"
     },
     {
@@ -159,6 +192,9 @@
     },
     {
       "name": "upload-routes"
+    },
+    {
+      "name": "upstream-version-adoption"
     },
     {
       "name": "vocabulary-authority"
@@ -1308,6 +1344,80 @@
         }
       }
     },
+    "/tools/ci-agent-review": {
+      "post": {
+        "operationId": "ci-agent-review",
+        "summary": "Run the agent review",
+        "description": "Dispatch the index's `agent-review.yml`: have every configured LLM review a commit on main and file one summary issue. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "adversarial-code-review"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-agent-review/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-agent-review.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run agent-review.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "adversarial-code-review"
+        ],
+        "x-selection": {
+          "when": "Running the `agent-review.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
     "/tools/ci-bootstrap-pages": {
       "post": {
         "operationId": "ci-bootstrap-pages",
@@ -1382,6 +1492,82 @@
         }
       }
     },
+    "/tools/ci-code-quality-gates": {
+      "post": {
+        "operationId": "ci-code-quality-gates",
+        "summary": "Run the platform index's code-quality gates",
+        "description": "Dispatch the index's `code-quality-gates.yml`: every gate over the whole mounted index, its cone, bundle cache and judge. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "platform-gates",
+          "qa-reports"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-code-quality-gates/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-code-quality-gates.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run code-quality-gates.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "platform-gates",
+          "qa-reports"
+        ],
+        "x-selection": {
+          "when": "Running the `code-quality-gates.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
     "/tools/ci-docs-site": {
       "post": {
         "operationId": "ci-docs-site",
@@ -1451,6 +1637,80 @@
         ],
         "x-selection": {
           "when": "Running the `docs-site.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-feature-staging": {
+      "post": {
+        "operationId": "ci-feature-staging",
+        "summary": "Build and publish a branch preview",
+        "description": "Dispatch the index's `feature-staging.yml`: build a branch's site and publish it at `branches/<branch>/` on gh-pages. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "feature-staging"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-feature-staging/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-feature-staging.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run feature-staging.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "feature-staging"
+        ],
+        "x-selection": {
+          "when": "Running the `feature-staging.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
           "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
           "cost": "A full CI run on GitHub's runners."
         }
@@ -1534,6 +1794,154 @@
         }
       }
     },
+    "/tools/ci-merge-main": {
+      "post": {
+        "operationId": "ci-merge-main",
+        "summary": "Merge main into opted-in PRs",
+        "description": "Dispatch the index's `merge-main.yml`: merge `main` into each opted-in PR branch when it moves, and comment where it cannot. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "prepare-merge"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-merge-main/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-merge-main.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run merge-main.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "prepare-merge"
+        ],
+        "x-selection": {
+          "when": "Running the `merge-main.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-merge-train": {
+      "post": {
+        "operationId": "ci-merge-train",
+        "summary": "Run the merge train",
+        "description": "Dispatch the index's `merge-train.yml`: take the queued PRs through the merge train. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "merge-queue"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-merge-train/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-merge-train.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run merge-train.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "merge-queue"
+        ],
+        "x-selection": {
+          "when": "Running the `merge-train.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
     "/tools/ci-post-merge-regen": {
       "post": {
         "operationId": "ci-post-merge-regen",
@@ -1603,6 +2011,154 @@
         ],
         "x-selection": {
           "when": "Running the `post-merge-regen.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-pr-checks": {
+      "post": {
+        "operationId": "ci-pr-checks",
+        "summary": "Run a layer's PR checks",
+        "description": "Dispatch the layer's `harness-pr-checks.yml`, which calls the tools layer's reusable `layer-pr-checks.yml` (mount the pinned layers, run every gate of the layer's dependency harness, compare head against base) and, on main, `layer-main-qa.yml`. The workflow is the Tool: its helper scripts (run-gates, compare-gates, main-verdict, …) are its steps. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "cache-first-ci"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-pr-checks/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-pr-checks.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run harness-pr-checks.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "cache-first-ci"
+        ],
+        "x-selection": {
+          "when": "Running the `harness-pr-checks.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-pr-tests": {
+      "post": {
+        "operationId": "ci-pr-tests",
+        "summary": "Run the tools layer's own test suite",
+        "description": "Dispatch the tools layer's `pr-tests.yml`: the unit and standalone tests, sharded, with the failures compared against main's. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "test-engineer"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-pr-tests/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-pr-tests.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run pr-tests.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "test-engineer"
+        ],
+        "x-selection": {
+          "when": "Running the `pr-tests.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
           "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
           "cost": "A full CI run on GitHub's runners."
         }
@@ -1751,6 +2307,302 @@
         ],
         "x-selection": {
           "when": "Running the `publish-subgraph-index.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-repin-train": {
+      "post": {
+        "operationId": "ci-repin-train",
+        "summary": "Run the re-pin train",
+        "description": "Dispatch the index's `repin-train.yml`: write the standing-consent layer pins and the lock once, and open or refresh the re-pin train PR. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "upstream-version-adoption"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-repin-train/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-repin-train.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run repin-train.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "upstream-version-adoption"
+        ],
+        "x-selection": {
+          "when": "Running the `repin-train.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-staging-publish": {
+      "post": {
+        "operationId": "ci-staging-publish",
+        "summary": "Publish staged previews",
+        "description": "Dispatch the index's `staging-publish.yml`: push the previews staged by feature-staging runs to gh-pages. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "ref-stewardship"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-staging-publish/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-staging-publish.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run staging-publish.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "ref-stewardship"
+        ],
+        "x-selection": {
+          "when": "Running the `staging-publish.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-standing-repin": {
+      "post": {
+        "operationId": "ci-standing-repin",
+        "summary": "Run a layer's standing re-pin",
+        "description": "Dispatch a layer's `standing-repin.yml`: move the pins that carry a standing consent to their newest `main`. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "remote-mount"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-standing-repin/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-standing-repin.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run standing-repin.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "remote-mount"
+        ],
+        "x-selection": {
+          "when": "Running the `standing-repin.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
+          "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
+          "cost": "A full CI run on GitHub's runners."
+        }
+      }
+    },
+    "/tools/ci-sweeps": {
+      "post": {
+        "operationId": "ci-sweeps",
+        "summary": "Run the 15-minute sweeps",
+        "description": "Dispatch the index's `sweeps.yml`: ask each sweep (staging publish, preview verify, re-pin train verdict, cache report) whether there is work, and start the workflow concerned only when there is. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
+        "tags": [
+          "publish-verification"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "ci-sweeps/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The repository whose workflow is run. Default: the current one."
+                  },
+                  "ref": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The branch to run it on. Default: the default branch."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "run": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The dispatched run; its outcome is read with `gh run watch` or `gh run view`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/ci-sweeps.jsonld",
+        "x-invoke": {
+          "shell": "gh workflow run sweeps.yml"
+        },
+        "x-install": {
+          "cli": "gh"
+        },
+        "x-requires": {
+          "runtime": [
+            "gh"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "publish-verification"
+        ],
+        "x-selection": {
+          "when": "Running the `sweeps.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
           "limits": "Needs a token that may dispatch workflows (actions: write) on the repository.",
           "cost": "A full CI run on GitHub's runners."
         }
@@ -2911,6 +3763,76 @@
         }
       }
     },
+    "/tools/gates-merged": {
+      "post": {
+        "operationId": "gates-merged",
+        "summary": "Gates on the merged tree",
+        "description": "Build this branch merged with the current base in a throwaway worktree and run the full `bun run cat gates` there — the state a merge will actually produce, which neither the branch's CI nor the base's CI evaluates. Exit 0 passes, 1 conflicts or fails, 2 could not determine (never read as clean). The working copy is never touched.",
+        "tags": [
+          "prepare-merge"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "gates-merged/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The base branch to merge with; `main` when omitted. Fetched first."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The gate report for the merged tree, or the conflicting paths."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/gates-merged.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat check:merged"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "prepare-merge"
+        ],
+        "x-selection": {
+          "when": "Immediately before asking for a merge, and again if the base has moved since. Not on every push: it is the full gate set, on a second tree.",
+          "limits": "It tests the base as fetched NOW; the base can still move before the merge lands. The merge queue (`merge_group:` on the gating workflows) closes that last gap.",
+          "cost": "One full `bun run cat gates`, plus a worktree; a `bun install` only when the merge changes the lockfile."
+        }
+      }
+    },
     "/tools/get-graph-stats": {
       "post": {
         "operationId": "get-graph-stats",
@@ -3876,6 +4798,120 @@
           "when": "A site build of a layer that declares a `journeys-viewer` visualiser over its `user-scenario`, `workshop` and `device-screen` directories; run with the other declared writers (`visualiser-writers.ts`), before the navbar pass.",
           "limits": "Static pages: the stepper, the filter and the remembered assessment ticks are a small dependency-free script, and every page reads complete without it. A FHIR example links to its page only where a layer declares a `fhir-artifact-index`; an ArchiMate view is drawn only where its layer declares `archimate-pages`. A device screen is drawn in the one state its node says: a toggle is drawn on or off, a button is a label; a workshop that declares no screen for its steps frames its own app (`presentation.deviceDemo`) instead.",
           "cost": "Milliseconds per journey; a BPMN drawing is inlined once per step that names it."
+        }
+      }
+    },
+    "/tools/judge-tree": {
+      "post": {
+        "operationId": "judge-tree",
+        "summary": "Judge a tree and record the verdict by digest",
+        "description": "Run the layer PR-check gates and tests on a composed tree (head) and on its base, or reuse a stored verdict whose digest is the base tree's, compare them with the layer-pr-checks compare scripts, and write a verdict record: {treeDigest, runner {kind agent|github-actions|local, id}, startedAt, finishedAt, gates [{name, exit, seconds, skipped?}], tests {total, failed, new}, verdict green|red|unknown}. With a token it publishes the verdict as the commit status `judge-tree`; `check` answers whether any runner judged a digest green; `sample` re-runs a seeded few gates of a record.",
+        "tags": [
+          "platform-gates",
+          "prepare-merge"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "judge-tree/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lock": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "The index.lock.json whose fixity digests name every layer but the caller."
+                  },
+                  "caller": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "The caller as owner/name (or its lock layer): the entry replaced by its PR tree. Every runner must name it the same way."
+                  },
+                  "caller-dir": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "The caller's git checkout; its HEAD^{tree} (or --sha's) is the PR tree."
+                  },
+                  "sha": {
+                    "$ref": "#/components/schemas/CommitSha",
+                    "description": "The head commit: whose tree is read from --caller-dir, and where the status is published."
+                  },
+                  "root": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "The mounted index with the caller swapped in, where run-gates.py runs."
+                  },
+                  "instance": {
+                    "$ref": "#/components/schemas/InstanceId",
+                    "description": "The own layer(s) run-gates.py judges; repeatable."
+                  },
+                  "base-verdict": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A stored verdict record standing in for the base run; refused unless its treeDigest is the base tree's (--base-tree)."
+                  },
+                  "base-root": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A mounted base tree to run the gates on instead."
+                  },
+                  "test-path": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "What `bun test` runs on each side; none means no tests."
+                  },
+                  "publish": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Post the commit status `judge-tree` when GITHUB_TOKEN/GH_TOKEN is set; without one, the record file is the verdict."
+                  }
+                },
+                "required": [
+                  "lock",
+                  "caller"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "record": {
+                      "$ref": "#/components/schemas/RepoPath",
+                      "description": "The verdict record, `<records-dir>/<treeDigest>.json` unless --out names it; valid against the tools layer's `schemas/verdict-record.schema.json`. Three exit codes: 0 green, 1 red, 2 COULD NOT DETERMINE (no judging scripts, a stored base verdict for another tree, a compare script that crashed, or no gate ran). 2 is never green, and neither is a verdict for another digest."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/judge-tree.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat judge:tree judge"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun",
+            "python3",
+            "git"
+          ],
+          "network": false
+        },
+        "x-satisfies": [
+          "platform-gates",
+          "prepare-merge"
+        ],
+        "x-selection": {
+          "when": "When a PR's tree must be judged and any runner can do it: an agent before pushing, a developer locally, or CI. Then `verdict-check.yml` passes the PR on the published verdict instead of re-running ~300 gates per side.",
+          "limits": "The digest trusts the lock's fixity digests for every layer but the caller, so a run that takes lower layers at main instead of the lock judges a tree the digest does not name. A verdict answers only for its exact digest: a change to the judging scripts is a new digest and needs a new verdict.",
+          "cost": "That of layer-pr-checks for one side, or two when no stored base verdict exists: gates dominate (minutes to tens of minutes). `digest` and `check` are one hash and at most one HTTP request."
         }
       }
     },
@@ -4940,6 +5976,251 @@
         "x-satisfies": [
           "work-context"
         ]
+      }
+    },
+    "/tools/merge-leftover": {
+      "post": {
+        "operationId": "merge-leftover",
+        "summary": "Merge leftover (has a PR's intent landed?)",
+        "description": "After a train merged, compare a PR's head with the base path by path and say whether what it still changes is ONLY generated files, generated README regions, or changes the base already carries (its patch applies in reverse to the base): `landed`, `not-landed` with the authored paths still different, or `could-not-determine`, which is never shown as clean. Only reports; closing the PR stays a steward action.",
+        "tags": [
+          "merge-conflict-patterns"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "merge-leftover/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "member": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The PR number or branch. On the command line a PR may be pinned as `N:<sha>`."
+                  },
+                  "base": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The base the train landed on; default `origin/main`."
+                  }
+                },
+                "required": [
+                  "member"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "`merge-leftover/v1` on stdout. Exit 0 landed, 1 not-landed, 2 could not determine."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/merge-leftover.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat merge:leftover"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "merge-conflict-patterns"
+        ],
+        "x-selection": {
+          "when": "After a train lands, for each member PR still open, before the steward decides whether to close it.",
+          "limits": "An authored path whose lines the base rewrote after the train reads `not-landed`: the reverse patch no longer applies, and only a person can say whether the rewrite kept the intent.",
+          "cost": "One fetch, then one `git diff` and one `git apply --check` per authored path, in a throwaway index. No working tree is touched."
+        }
+      }
+    },
+    "/tools/merge-overlap": {
+      "post": {
+        "operationId": "merge-overlap",
+        "summary": "Merge overlap (conflict prediction)",
+        "description": "For the open PRs (via `gh`, or a list of branches), report which pairs would conflict: pairwise overlap on AUTHORED paths, with generated paths excluded using the merge-conflict-patterns declaration; which PRs touch a shared declaration (a layer's `<instance>.json`, `roles.json`, `package.json`, `bun.lock`, schemas, BPMN/DMN); and which touch the harness layer's directory or its tools layer's. A PR that could not be measured makes no pair independent. JSON (`merge-overlap/v1`), the conflict-prediction input for composing trains.",
+        "tags": [
+          "merge-conflict-patterns",
+          "coordinate"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "merge-overlap/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The base each PR is diffed against from its fork point; default `origin/main`."
+                  },
+                  "branches": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "Branches to compare instead of the open PRs; with none, the open PRs come from `gh`."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "`merge-overlap/v1` on stdout: per member `authored_paths`, `region_paths`, `touches_shared`, the two harness flags; every pair that is not independent, with why."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/merge-overlap.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat merge:overlap"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "merge-conflict-patterns",
+          "coordinate"
+        ],
+        "x-selection": {
+          "when": "Before composing a merge train, and whenever deciding which PRs can land together or must be ordered.",
+          "limits": "Paths, not semantics: two PRs that change different files can still interact, which the shared-declaration list only partly covers. A README counts as authored when its prose changed, as a region when only generated regions did.",
+          "cost": "One REST listing (`gh api …/pulls`; not `gh pr list`, which is GraphQL) and one `git fetch` of every open head, then a `git diff --name-only` per PR. No working tree is touched."
+        }
+      }
+    },
+    "/tools/merge-train": {
+      "post": {
+        "operationId": "merge-train",
+        "summary": "Merge train",
+        "description": "Build a train branch from a base SHA: merge each member (a PR number or branch) with `merge-base.ts --no-regen`, refusing — never hand-resolving — a member whose conflicts no declared pattern covers; then one `bun run cat regen`, `check:l1-complete --write`, every check a layer declares `afterMerge` (its declared writer run when red), and `kg:audit:all:check`; then merge `origin/main`, taking main's side of generated conflicts and regenerating once more. Emits a `merge-train-report/v1` JSON report. Never pushes, opens or merges a PR.",
+        "tags": [
+          "merge-conflict-patterns",
+          "prepare-merge"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "merge-train/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "base": {
+                    "$ref": "#/components/schemas/CommitSha",
+                    "description": "The commit the train branch starts from."
+                  },
+                  "branch": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "The train branch to create; default `merge-train/<base>-<time>`."
+                  },
+                  "dry-run": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Simulate with `git merge-tree`: classify each member's conflicts against the simulated train and change nothing."
+                  },
+                  "no-main": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Skip merging `origin/main` into the train."
+                  },
+                  "members": {
+                    "$ref": "#/components/schemas/Branch",
+                    "description": "PR numbers or branches, in train order. On the command line a PR may be pinned to the head CI saw as `N:<sha>`."
+                  }
+                },
+                "required": [
+                  "base",
+                  "members"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "`merge-train-report/v1` on stdout: members merged, refused with reasons and conflicted paths, the checks run, main's merge, and the head. Exit 0 built, 1 needs a person, 2 could not start."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/merge-train.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat merge:train"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "merge-conflict-patterns",
+          "prepare-merge"
+        ],
+        "x-selection": {
+          "when": "The steward has chosen a batch of green, mutually independent PRs (see merge-overlap) and wants one branch that carries them all, regenerated once.",
+          "limits": "Each member's merge commit is not proved on its own; the train is proved at its end by one regen. A refused member is left out and reported — handing it back to its owner is the steward's step. It does not push: CI on the train runs only after the steward pushes it.",
+          "cost": "One `merge-base.ts` per member (seconds each), then one regen (5-13 min) and the three checks; a second regen if main had generated conflicts."
+        }
       }
     },
     "/tools/methodologies-viewer": {
@@ -6865,6 +8146,86 @@
         "x-satisfies": [
           "docs-generation"
         ]
+      }
+    },
+    "/tools/release-please": {
+      "post": {
+        "operationId": "release-please",
+        "summary": "release-please (declared, not configured here)",
+        "description": "Propose the next version of each package from conventional-commit messages, open a release PR with the CHANGELOG and version bump, and — when that PR is merged — create the tag and GitHub release. Does not publish to a registry. Declared here, not configured: no config file and no tag exist in this repository.",
+        "tags": [
+          "package-release",
+          "npm-kg-distribution"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "release-please/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "package": {
+                    "$ref": "#/components/schemas/PackageName",
+                    "description": "The package being released. release-please proposes every package it is configured for; this is the one whose tag is wanted."
+                  },
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "owner/name of the repository the release is made in; the current one when absent."
+                  }
+                },
+                "required": [
+                  "package"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tag": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The tag created when the release PR merges, `<package>-v<version>`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/release-please.jsonld",
+        "x-invoke": {
+          "shell": "release-please release-pr"
+        },
+        "x-install": {
+          "cli": "npm install -g release-please (or the GitHub Action googleapis/release-please-action@v4)"
+        },
+        "x-requires": {
+          "runtime": [
+            "node",
+            "release-please"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "package-release",
+          "npm-kg-distribution"
+        ],
+        "x-selection": {
+          "when": "A repository whose commits follow conventional-commit messages and that releases often enough that doing it by hand is the bottleneck. Several packages in one repository, each with its own tag, is its strength.",
+          "limits": "The bump comes from commit MESSAGES, not from what changed: a `feat:` that removed something gives a minor bump. Check it against the surface diff (skill step 1). With the default token it cannot open PRs unless the repository allows Actions to. It needs a config file (`--config-file`); a missing one falls back to defaults that find nothing. The tag appears only when its release PR is merged.",
+          "cost": "Not configured here. One config file and one manifest per repository; each run is a few seconds of API calls."
+        }
       }
     },
     "/tools/remote-mount": {
@@ -11357,6 +12718,13 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*(?:,[A-Za-z0-9][A-Za-z0-9._/-]*)*$",
         "description": "Comma-separated ids, e.g. skills,processes/sdlc or bean-query,agent-memory",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/IdList"
+      },
+      "InstanceId": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+        "description": "A workflow instance id — the stem of a file in the bean graph's workflow-state node",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/InstanceId"
       },
       "LinkMode": {
         "type": "string",
