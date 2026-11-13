@@ -26,6 +26,8 @@
  *
  * @module folio-assistant-core/schemas/glossary
  * @graphNode schema
+ * @conformsTo foaf
+ * @conformsTo w3c-org
  */
 import { z } from "zod";
 
