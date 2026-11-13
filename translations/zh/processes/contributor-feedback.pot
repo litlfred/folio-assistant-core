@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contributor-feedback\n"
-"POT-Creation-Date: 2026-11-05T06:36:50.611Z\n"
+"POT-Creation-Date: 2026-11-13T07:51:54.164Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -141,7 +141,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:116
 #. Diagram label
-msgid "QA gate: review dispositions against the people and the pull request"
+msgid "QA gate: check dispositions and PR"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:68
