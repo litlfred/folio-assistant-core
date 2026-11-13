@@ -245,7 +245,7 @@
     {
       "id": "l1-coverage",
       "prefLabel": "l1-coverage",
-      "definition": "Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. Per-page counts, captured %, accounted-for %, and a non-zero exit below 100 % accounted-for. Generic: three input files, nothing folio-specific. Implements smart-kg's docs/COVERAGE.md contract.",
+      "definition": "Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. Per-page counts, captured %, accounted-for %, and a non-zero exit below 100 % accounted-for. Generic: three input files, nothing folio-specific. Implements the methodology l1-coverage, the report contract.",
       "notation": "l1-coverage",
       "source": "folio-assistant-core/skills/library/ingestion/l1-coverage.md",
       "status": "candidate"
