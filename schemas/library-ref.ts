@@ -202,8 +202,8 @@ export function libraryDirOf(instanceRoot: string): string | undefined {
  */
 /**
  * The layer's corpus directory when it is an opt-in sub-graph that this
- * checkout's mount chose NOT to take: declared, switched on by the layer for
- * itself, absent on disk, and absent because the lock left it out. Any other
+ * checkout's mount chose NOT to take: declared, absent on disk, and absent
+ * because the lock left it out. Any other
  * absence answers `undefined`, so it stays a finding.
  *
  * `mountChoice` is {@link mountChoiceOf} unless a test supplies the lock's
@@ -215,7 +215,11 @@ export function libraryLeftOutByMount(
 ): { dir: string; lock: string } | undefined {
   let optIn: string[];
   try {
-    optIn = optInDirectoriesForGraph(instanceRoot, "library");
+    // Every opt-in corpus the layer declares, whichever root switched it on or
+    // off: resolution now follows the MOUNTING root (cat-harness-tools#1967,
+    // card Q-OPTIN-DIRS A), which lists a switched-off group not at all, so
+    // the default would hide exactly the directory this asks the lock about.
+    optIn = optInDirectoriesForGraph(instanceRoot, "library", "all");
   } catch {
     return undefined;
   }
