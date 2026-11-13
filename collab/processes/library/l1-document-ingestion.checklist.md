@@ -145,7 +145,7 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
-- What: Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A, and "add to L1 doc schema errata").
+- What: Owner, 2026-11-11 (card Q-ODD-1 = A, and "add to L1 doc schema errata").
 - Record it: `workflow_complete` with `node: "Task_Errata"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 
