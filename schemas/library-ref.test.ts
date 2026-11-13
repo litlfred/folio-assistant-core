@@ -399,7 +399,7 @@ describe("a corpus in an opt-in group the mount left out is not checked here", (
   // the group on for itself. Its always-on voices cite that corpus, and
   // check:voices reported each citation as "declares no `library` graph": a
   // wrong fact about a group the mount deliberately did not take.
-  function optInLayer(withCorpus: boolean): string {
+  function optInLayer(withCorpus: boolean, switchedOn = true): string {
     const root = mkdtempSync(join(tmpdir(), "libopt-"));
     mkdirSync(join(root, "library"), { recursive: true });
     if (withCorpus) mkdirSync(join(root, "library", "corpus"), { recursive: true });
@@ -414,7 +414,7 @@ describe("a corpus in an opt-in group the mount left out is not checked here", (
       root,
       JSON.stringify({
         name: "x",
-        enableSubgraphs: ["x.library"],
+        enableSubgraphs: switchedOn ? ["x.library"] : [],
         directories: [{ id: "library-graph", path: "library/", graphTypologies: ["cat-harness"] }],
       }),
     );
@@ -433,6 +433,17 @@ describe("a corpus in an opt-in group the mount left out is not checked here", (
       expect(r.failure.kind).toBe("library-not-mounted");
       expect(explainFailure(r.failure)).toContain("Not checked here");
     }
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("switchedOffAndLeftOutIsNotMounted", () => {
+    // Resolution follows the MOUNTING root (cat-harness-tools#1967): where it
+    // switches the group off, the corpus is not listed among the resolved
+    // directories at all. The lock's answer still decides, as it does when the
+    // layer switches the group on for itself (smart-ips-pilgrimage#66).
+    const root = optInLayer(false, false);
+    expect(libraryLeftOutByMount(root, leftOut)).toEqual({ dir: resolve(root, "library", "corpus"), lock: "index.lock.json" });
+    expect(libraryLeftOutByMount(root, taken)).toBeUndefined();
     rmSync(root, { recursive: true, force: true });
   });
 
