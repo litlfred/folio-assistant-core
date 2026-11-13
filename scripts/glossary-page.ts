@@ -85,6 +85,7 @@ import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
+import { mountedInstances } from "@litlfred/cat-harness-tools/scripts/lib/layer-output.ts";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import {
   ownerOfPath as sharedOwnerOfPath,
@@ -127,6 +128,27 @@ if (ONLY !== undefined && !INTO_SITE) {
   console.error("glossary-page.ts: --instance needs --site <dir>");
   process.exit(2);
 }
+/**
+ * The directories of the layers this checkout MOUNTS (its `index.lock.json`),
+ * absolute. A mounted layer is read-only here (bean `cat-tools-sm8r`, item 4,
+ * plan step 3; owner, 2026-11-13, "own layers only"): its extracted schemes
+ * are committed in its own repository at its pin, so this run neither
+ * rewrites nor deletes them, and `--check` does not judge them.
+ */
+const MOUNTS: readonly string[] = [...mountedInstances(REPO).values()].map((p) => resolve(REPO, p)).filter((d) => d !== resolve(REPO));
+/** Whether `p` lies inside a mounted layer. */
+export function inMount(p: string, mounts: readonly string[] = MOUNTS): boolean {
+  const at = resolve(p);
+  return mounts.some((d) => at === d || at.startsWith(d + sep));
+}
+/** Whether `p` is an extracted scheme this run must leave alone: one in a `glossary/generated/` directory inside a mount. */
+export function isMountedScheme(p: string, generated: readonly string[], mounts: readonly string[] = MOUNTS): boolean {
+  return inMount(p, mounts) && generated.some((g) => resolve(p).startsWith(resolve(g) + sep));
+}
+const ownSchemes = (files: Map<string, string>): Map<string, string> => {
+  const generated = allGeneratedDirs();
+  return new Map([...files].filter(([p]) => !isMountedScheme(p, generated)));
+};
 const written = (files: Map<string, string>): Map<string, string> =>
   INTO_SITE
     ? new Map(
@@ -136,7 +158,7 @@ const written = (files: Map<string, string>): Map<string, string> =>
             (ONLY === undefined || p === pagePath(`@${ONLY}`) || (p.startsWith(`${ASSETS}${sep}`) && p.slice(ASSETS.length + 1).startsWith(`${ONLY}--`))),
         ),
       )
-    : files;
+    : ownSchemes(files);
 /**
  * The visualiser core DECLARES for its glossary — `folio-assistant-core/glossary`
  * in `folio-assistant-core.json` `visualisers` (owner, 2026-10-09: *"Need
@@ -2144,7 +2166,7 @@ if (import.meta.main) {
   // (owner, 2026-10-16, "c") are its own orphans now: the move deletes them,
   // and the composed site forwards that address to the page under `en/`.
   const legacyDir = visualiserPageDir(SITE, forwardingParts(PARTS));
-  const orphans = [...new Set([...filesUnder(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().flatMap(filesUnder)), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)])]
+  const orphans = [...new Set([...filesUnder(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().filter((g) => !inMount(g)).flatMap(filesUnder)), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)])]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
