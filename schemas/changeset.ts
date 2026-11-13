@@ -70,6 +70,7 @@ import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-
 import { manifestFields, type ManifestFields } from "./manifest-fields.js";
 import { loadContributions } from "@litlfred/cat-harness-tools/schemas/kg/harness-config.ts";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness-tools/schemas/content/contributions.ts";
+import { inputSiteReached } from "@litlfred/cat-harness-tools/schemas/sdlc/input-trace.ts";
 
 // ── Schema ──────────────────────────────────────────────────────
 
@@ -385,6 +386,8 @@ export function compareSnapshots(
 export const WORKTREE = "worktree";
 
 function git(cwd: string, args: string[]): string {
+  // input-site: traced #fbea14bc — git at a ref the caller names (origin/main by default), which the input hash cannot name in advance
+  inputSiteReached("changeset: git");
   return execFileSync("git", args, { cwd, encoding: "utf-8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 }
 
@@ -394,9 +397,14 @@ function git(cwd: string, args: string[]): string {
  * exist yet, so everything at the head is an addition, which is the truth.
  */
 function materialise(repoRoot: string, ref: string, folio: string): { dir: string; cleanup: () => void } {
+  // input-site: inert #4c0203b1 — a temp dir for the extracted folio, removed by cleanup() in computeChangeSet's finally
   const tmp = mkdtempSync(join(tmpdir(), "changeset-"));
+  // input-site: traced #8ec04faa — git archive of the folio at a ref the caller names
+  inputSiteReached("changeset: git archive");
   const tar = spawnSync("git", ["archive", "--format=tar", ref, "--", folio], { cwd: repoRoot, maxBuffer: 1 << 30 });
   if (tar.status === 0 && tar.stdout.length > 0) {
+    // input-site: traced #0aa6b6d8 — unpacks the archive read above into the temp dir
+    inputSiteReached("changeset: tar");
     const x = spawnSync("tar", ["-x", "-C", tmp], { input: tar.stdout });
     if (x.status !== 0) throw new Error(`could not unpack ${ref}:${folio}: ${x.stderr}`);
   } else if (!/did not match any files|pathspec/.test(String(tar.stderr))) {
