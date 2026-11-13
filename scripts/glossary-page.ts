@@ -85,7 +85,7 @@ import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
-import { mountedInstances } from "@litlfred/cat-harness-tools/scripts/lib/layer-output.ts";
+import { mountedInstances, outputTwinOf, readPathAt, writePathAt } from "@litlfred/cat-harness-tools/scripts/lib/layer-output.ts";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import {
   ownerOfPath as sharedOwnerOfPath,
@@ -2122,6 +2122,24 @@ function filesUnder(dir: string): string[] {
   );
 }
 
+/**
+ * Where this run reads and writes a site file it computes (bean
+ * `cat-tools-sm8r`, item 4, step 4). The platform site is cat-harness's
+ * `docs/`, a pinned mount in a composed checkout: there a page is written at
+ * the layer's output root (`build/layers/cat-harness/…`) and read back
+ * through the overlay, so a run leaves the mount as its lock pins it. In
+ * cat-harness's own checkout, or under `--site`, both are the path itself.
+ */
+const readAt = (p: string): string => readPathAt(REPO, p);
+const writeAt = (p: string): string => writePathAt(REPO, p);
+
+/** {@link filesUnder} over `dir` and its output-root twin, each named by its path under `dir`. */
+function filesUnderBoth(dir: string): string[] {
+  const twin = outputTwinOf(REPO, dir);
+  const computed = twin === undefined ? [] : filesUnder(twin).map((f) => join(dir, relative(twin, f)));
+  return [...new Set([...filesUnder(dir), ...computed])];
+}
+
 /** What {@link collect} found, kept to the instances in `scope` (all of it with none). */
 export function scoped<C extends Pick<ReturnType<typeof collect>, "glossaries" | "ledgers" | "external" | "declaring">>(c: C, scope: ReadonlySet<string> | undefined): C {
   if (scope === undefined) return c;
@@ -2159,16 +2177,22 @@ if (import.meta.main) {
   // an asset type that is no longer extracted is an orphan.
   // Each locale's glossary directory is this generator's own too (bean c592):
   // a locale whose last .po is removed leaves an orphan page.
-  const localeDirs = readdirSync(SITE, { withFileTypes: true })
-    .map((e) => (e.isDirectory() && ROUTE_SEGMENT.test(e.name) ? dirname(localePagePath(e.name)) : undefined))
-    .filter((d): d is string => d !== undefined && existsSync(join(d, "index.md")));
+  const siteTwin = outputTwinOf(REPO, SITE);
+  const localeNames = new Set(
+    [SITE, ...(siteTwin !== undefined && existsSync(siteTwin) ? [siteTwin] : [])].flatMap((d) =>
+      readdirSync(d, { withFileTypes: true }).filter((e) => e.isDirectory() && ROUTE_SEGMENT.test(e.name)).map((e) => e.name),
+    ),
+  );
+  const localeDirs = [...localeNames]
+    .map((name) => dirname(localePagePath(name)))
+    .filter((d) => existsSync(readAt(join(d, "index.md"))));
   // The pages this generator wrote at the address before the `en/` segment
   // (owner, 2026-10-16, "c") are its own orphans now: the move deletes them,
   // and the composed site forwards that address to the page under `en/`.
   const legacyDir = visualiserPageDir(SITE, forwardingParts(PARTS));
-  const orphans = [...new Set([...filesUnder(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().filter((g) => !inMount(g)).flatMap(filesUnder)), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)])]
+  const orphans = [...new Set([...filesUnderBoth(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().filter((g) => !inMount(g)).flatMap(filesUnder)), ...filesUnderBoth(dirname(PAGE)), ...localeDirs.flatMap(filesUnderBoth), ...filesUnderBoth(legacyDir)])]
     .filter((p) => !files.has(p));
-  const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
+  const stale = [...files].filter(([p, s]) => !existsSync(readAt(p)) || readFileSync(readAt(p), "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
   const summary = `${n.authored} authored + ${n.extracted} extracted terms, ${c.glossaries.length} scheme(s), ${c.ledgers.length} swimlane ledger(s), ${c.external.length} external scheme(s)`;
   const keys = pageKeysOf(c).filter((k) => files.has(pagePath(k)));
@@ -2178,9 +2202,16 @@ if (import.meta.main) {
   }
   if (over.length) process.exit(1);
   if (check) {
-    if (stale.length || orphans.length) {
+    // Once this checkout has computed the site at the mounted layer's output
+    // root, an orphan left only in the pinned mount is that layer's to drop
+    // at its next pin, which no run here can do: reported, never charged.
+    const computedHere = siteTwin !== undefined && existsSync(siteTwin);
+    const pinnedOnly = (p: string) => computedHere && writeAt(p) !== p && !existsSync(writeAt(p));
+    for (const p of orphans.filter(pinnedOnly)) console.log(`! orphan in the pinned mount, left until the layer is re-pinned: ${relative(REPO, p)}`);
+    const charged = orphans.filter((p) => !pinnedOnly(p));
+    if (stale.length || charged.length) {
       for (const p of stale) console.error(`✗ stale: ${relative(REPO, p)}`);
-      for (const p of orphans) console.error(`✗ orphan: ${relative(REPO, p)}`);
+      for (const p of charged) console.error(`✗ orphan: ${relative(REPO, p)}`);
       console.error("Run `bun run cat glossary:page` and commit the result.");
       process.exit(1);
     }
@@ -2188,11 +2219,17 @@ if (import.meta.main) {
     process.exit(0);
   }
   for (const [p, s] of files) {
-    mkdirSync(dirname(p), { recursive: true });
-    writeFileSync(p, s);
+    const to = writeAt(p);
+    mkdirSync(dirname(to), { recursive: true });
+    writeFileSync(to, s);
   }
-  // An orphan is this generator's own output for a scheme that is gone.
-  for (const p of orphans) rmSync(p);
+  // An orphan is this generator's own output for a scheme that is gone. It is
+  // removed where this run writes; one in a pinned mount stays until re-pin.
+  for (const p of orphans) {
+    const at = writeAt(p);
+    if (existsSync(at)) rmSync(at);
+    if (at !== p && existsSync(p)) console.log(`! ${relative(REPO, p)} is an orphan in the pinned mount — left until the layer is re-pinned`);
+  }
   // ONE WRITE IS NOT A FIXED POINT, so render again until nothing moves.
   //
   // `mappingStates` runs `check:term-mapping`, which reads every
@@ -2208,15 +2245,16 @@ if (import.meta.main) {
   // a generator that never settles into a loud failure rather than a loop.
   for (let pass = 2; ; pass++) {
     const again = written(outputs(c));
-    const moved = [...again].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s);
+    const moved = [...again].filter(([p, s]) => !existsSync(readAt(p)) || readFileSync(readAt(p), "utf-8") !== s);
     if (!moved.length) break;
     if (pass > 3) {
       console.error(`✗ glossary:page did not settle after ${pass - 1} passes; still moving: ${moved.map(([p]) => relative(REPO, p)).join(", ")}`);
       process.exit(1);
     }
     for (const [p, s] of moved) {
-      mkdirSync(dirname(p), { recursive: true });
-      writeFileSync(p, s);
+      const to = writeAt(p);
+      mkdirSync(dirname(to), { recursive: true });
+      writeFileSync(to, s);
     }
   }
   const sizes = keys.map((k) => `${relative(REPO, pagePath(k))} ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}`).join(", ");
