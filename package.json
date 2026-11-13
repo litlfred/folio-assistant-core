@@ -92,6 +92,7 @@
     "kg:materialize": "bun run folio-assistant-core/scripts/kg-materialize.ts",
     "kg:materialize:check": "bun run folio-assistant-core/scripts/kg-materialize.ts --check",
     "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts",
+    "check:test-gherkin:core": "bun run cat-harness-tools/scripts/check-test-gherkin.ts --root folio-assistant-core",
     "check:core-security-gate": "bun run folio-assistant-core/scripts/check-security-gate.ts"
   },
   "scripts": {

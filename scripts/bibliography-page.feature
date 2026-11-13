@@ -33,6 +33,15 @@ Feature: the bibliography pages and their exports
     Then the asset is listed with its entries
     And its page and its DC XML carry the item and the extracted citation
 
+  @test:scripts/bibliography-page.test.ts::pages_and_exports::catalogueHeldDocumentGetsItsOwnBibliography
+  Scenario: a catalogue-held document with an extracted reference list gets its own bibliography
+    Given references extracted from a catalogued document's references section
+    And another document's reference that cites the catalogued document
+    When the bibliography is collected
+    Then nothing is invalid and the catalogued document is one asset holding itself and its two extracted references, in order
+    And its asset page carries the extracted entries
+    And without an extracted list a catalogued copy gets no page of its own
+
   @test:scripts/bibliography-page.test.ts::pages_and_exports::subgraphPageOwnRefsOnly
   Scenario: a sub-graph page holds its sub-graph's references only, and its exports match
     When the catalogue sub-graph's page and BibTeX are read
@@ -42,6 +51,13 @@ Feature: the bibliography pages and their exports
   Scenario: the whole-KG page links each sub-graph with its count
     When the whole-KG page is read
     Then it links each sub-graph with its count
+
+  @test:scripts/bibliography-page.test.ts::pages_and_exports::entryPagesNestUnderTheirSubgraphPage
+  Scenario: entry pages nest under their sub-graph page and stay out of the sidebar
+    When the entry pages are listed
+    Then there is one per entry
+    And each names its sub-graph page as parent and the Bibliography as grand parent, and is excluded from the nav
+    And that sub-graph page exists and sits under the Bibliography page
 
   @test:scripts/bibliography-page.test.ts::pages_and_exports::entryCarriesOwnExports
   Scenario: each entry carries its own BibTeX, RIS and CSL-JSON export
@@ -54,15 +70,23 @@ Feature: the bibliography pages and their exports
     When the garoufalidis2004 citation is rendered
     Then it reads author (year). title. container, volume, pages
 
+  @test:scripts/bibliography-page.test.ts::rendering::untitledShowsPrintedText
+  Scenario: an untitled reference shows its printed text
+    Given a reference with no title, a year and a note holding markup
+    When its citation is rendered
+    Then the note is shown escaped as the printed text
+    And a printed field, when present, is shown
+    And with neither note nor printed text only the year is shown
+
   @test:scripts/bibliography-page.test.ts::rendering::htmlEscaped
   Scenario: HTML in a field is escaped
     When a title holding a script tag is rendered
     Then it is escaped
 
-  @test:scripts/bibliography-page.test.ts::rendering::anchorsUrlSafe
-  Scenario: anchors are URL-safe
-    When the anchor of "a:b/c" is made
-    Then it is "ref-a-b-c"
+  @test:scripts/bibliography-page.test.ts::rendering::segmentsUrlSafe
+  Scenario: address segments are URL-safe
+    When the address segment of "a:b/c+d.e" is made
+    Then it is "a-b-c-d.e"
 
   @test:scripts/bibliography-page.test.ts::rendering::emptyPageSaysSo
   Scenario: an empty page says so and still offers its exports
@@ -102,22 +126,54 @@ Feature: the bibliography pages and their exports
     When a checkout without a root layer is written
     Then its page has no dependencies section and lists by sub-graph
 
-  @test:scripts/bibliography-page.test.ts::one_page,_one_id_per_entry_(bean_djj5)::firstKeepsRefKey
-  Scenario: the first keeps ref-<key>, which a citation links; the next is qualified by its layer
-    When a page with two entries of the same key is rendered
-    Then the first keeps ref-<key> and the next is qualified by its layer
+  @test:scripts/bibliography-page.test.ts::one_page_per_entry,_a_slash_address_and_no_anchor_(owner,_2026-11-08)::noAnchorIds
+  Scenario: the whole page links each entry by its slash address, with no anchor ids
+    Given two catalogues of different layers holding the same work under the same key
+    When the whole-KG page is read
+    Then no list item carries an id and no link points at a #ref- anchor
+    And each entry links to its own sub-graph's page for that key
 
-  @test:scripts/bibliography-page.test.ts::one_page,_one_id_per_entry_(bean_djj5)::ownEntryKeepsRefKey
-  Scenario: on an own site's page the own entry keeps ref-<key>, wherever it sorts
-    When the page is rendered for an own site
-    Then the own entry keeps ref-<key> and the ids are distinct
+  @test:scripts/bibliography-page.test.ts::one_page_per_entry,_a_slash_address_and_no_anchor_(owner,_2026-11-08)::entryPageHoldsDetail
+  Scenario: an entry's own page holds its detail
+    When one layer's page for that entry is read
+    Then it is titled with the work's title and holds its detail section and sources
+    And it says no link to the work is recorded and links back to all references of its sub-graph
+
+  @test:scripts/bibliography-page.test.ts::one_page_per_entry,_a_slash_address_and_no_anchor_(owner,_2026-11-08)::subgraphPageLinksBesideIt
+  Scenario: a sub-graph page links its entries' pages beside it
+    When the other layer's sub-graph page is read
+    Then it links the entry by a relative address beside it
+
+  @test:scripts/bibliography-page.test.ts::one_page_per_entry,_a_slash_address_and_no_anchor_(owner,_2026-11-08)::detailListsEverySource
+  Scenario: the detail lists every source of a reference, once each
+    Given a reference with a URL, a DOI, a pinned copy and a repository source that is the URL with a trailing slash
+    When its detail is rendered
+    Then it links the URL, the DOI and the pinned copy, labelled pinned
+    And the trailing-slash twin of the URL is listed only once
+
+  @test:scripts/bibliography-page.test.ts::one_page_per_entry,_a_slash_address_and_no_anchor_(owner,_2026-11-08)::panelScriptOnEveryList
+  Scenario: the whole page carries the panel script
+    When the whole-KG page is read
+    Then it carries the fa-bib-panel script
 
   @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::keepsInstanceAndNeeds
   Scenario: keeps the layer and what it needs, transitively, and makes it own
     When one layer's bibliography is taken
     Then it is its own, with its entries and the sub-graphs of what it needs
 
+  @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::leavesOutALayerBelowsExtractedReferenceLists
+  Scenario: a layer below's extracted reference lists are left out of a layer's own bibliography
+    Given extracted reference lists in the layer and in a layer it needs
+    When the layer's bibliography is taken
+    Then it keeps its own extracted list and leaves out the needed layer's references sub-graph
+
   @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::pagesUnderInstance
   Scenario: its pages are served under /<instance>/
     When that bibliography's pages are written under /smart-trust
     Then their permalinks start /smart-trust/en/folio-assistant-core/bibliography/
+
+  @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::layerSiteTitlesNameTheLayer
+  Scenario: a layer's bibliography page titles name the layer
+    When that bibliography's pages are written under /smart-trust
+    Then the root page is titled "Bibliography (smart-trust)" and its sub-graph page names it as parent
+    And no page's parent or grand parent is a root "Bibliography" title

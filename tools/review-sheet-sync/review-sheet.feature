@@ -839,3 +839,15 @@ Feature: the review sheet script, built and run against a fake sheet
   Scenario: a Title-only row gets an id and a new agent change set is added at the end
     When a sheet with a Title-only row and a new agent change set is refreshed
     Then the row gets CS-008 and the agent's change set is added with its title
+
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Title_opens_in_a_template's_whole-tab_lock_(Q-TBL-1_A)::addsTitleToExceptions
+  Scenario: Title is added to a whole-tab lock's open ranges
+    Given a tab locked whole with two open ranges, neither covering the Title column
+    When the Title column is opened from the first data row
+    Then the lock's open ranges are set once, to the two kept and a third in column B from that row
+
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Title_opens_in_a_template's_whole-tab_lock_(Q-TBL-1_A)::leavesAnOpenColumnAlone
+  Scenario: a Title column already open is left alone
+    Given a tab locked whole whose open ranges already cover the Title column from the first data row
+    When the Title column is opened
+    Then the lock's open ranges are not changed

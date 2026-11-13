@@ -41,6 +41,15 @@ Feature: validating a glossary's links
     When an untagged item, an owned item the base holds, a copy the base lacks and a wrong owner are validated
     Then each fails with its own message
 
+  @test:scripts/glossary-validate.test.ts::glossary-validate:_the_overlay_rule_and_links_into_the_instance's_own_model::slashIrisPassLikeTheOlderForm
+  Scenario: slash IRIs pass like the older .jsonld form
+    Given an overlay tagging its reference copies with slash IRIs (…/element/<id>) and with the older …/elements/<id>.jsonld form
+    And glossary links into the own model and the base by slash IRI
+    When the overlay is validated
+    Then there are no errors and the overlay is noted with 1 owned and 3 reference copies checked
+    And a slash IRI of a view is read with its model, kind and id
+    And a slash IRI ending in .jsonld is not read as an ArchiMate IRI
+
   @test:scripts/glossary-validate.test.ts::glossary-validate:_the_overlay_rule_and_links_into_the_instance's_own_model::linkToMissingOwnItemFails
   Scenario: a block link into the own model that names no item fails
     When a block links into the own model naming no item
