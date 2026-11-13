@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "b7b26f606a5f9e7448f4309a276331363f51e277",
+          "ref": "9991a7751abccbfef99dc1e6cbbc3015269b274f",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -65,8 +65,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-13",
-              "ref": "b7b26f606a5f9e7448f4309a276331363f51e277",
-              "evidence": "litlfred, 2026-11-13: owner told the re-pin session directly 'do the core re-pin' and 'run the seed yourself, don't wait'; Q-ORDER A (core first, then the rest in parallel); Q-BT-PIN A (~10:02Z, bootstrap-tools at main 0f88368d); Q-CASCADE-FREEZE B (mains read at re-pin). Re-pin session session_01EucfRnyGuuzo9anc8umZDB; coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "ref": "9991a7751abccbfef99dc1e6cbbc3015269b274f",
+              "evidence": "litlfred, 2026-11-13: owner told the re-pin session directly 'do the core re-pin' and 'run the seed yourself, don't wait'; re-seed of cat-harness-tools to the main that carries #2007 (site JSON-LD sourceDocument fix). Q-ORDER A, Q-BT-PIN A, Q-CASCADE-FREEZE B. Re-pin session session_01EucfRnyGuuzo9anc8umZDB."
             }
           }
         }
