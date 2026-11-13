@@ -57,9 +57,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Answered by the script, which compares the row's Blue cells with the basis the agent wrote.
 - Call `workflow_complete` with `node: "Gateway_FeedbackChanged"` and `outcome` set to the label that holds:
   - «changed» → `Task_Propose` (Propose a direction)
-  - «agreed» → `Task_QaGate` (QA gate: review dispositions against the people and the pull request)
+  - «agreed» → `Task_QaGate` (QA gate: check dispositions and PR)
 
-### 6. QA gate: review dispositions against the people and the pull request (`Task_QaGate`)
+### 6. QA gate: check dispositions and PR (`Task_QaGate`)
 
 - Who: the `QA reviewer (independent)` lane (role `qc-reviewer`).
 - Skill: `review-sheet-script`.

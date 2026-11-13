@@ -5,7 +5,7 @@ description: >
   source publication — captured as a node, or excluded for a fixed-list
   reason a person signed off. Per-page counts, captured %, accounted-for %,
   and a non-zero exit below 100 % accounted-for. Generic: three input files,
-  nothing folio-specific. Implements smart-kg's docs/COVERAGE.md contract.
+  nothing folio-specific. Implements the methodology l1-coverage, the report contract.
 graph-typologies:
   - library
 ---
@@ -15,8 +15,9 @@ graph-typologies:
 Any L1 extraction SHALL produce a coverage QA report: every normative
 sentence in the source is captured, or excluded for a reason from a fixed
 list; the target is 100 % accounted for. The report's fields and what its
-numbers mean are fixed by smart-kg's `docs/COVERAGE.md`; this is the
-implementation that contract says core owns.
+numbers mean are fixed by the methodology
+[`l1-coverage`](../../../methodologies/l1-coverage.md), the report contract;
+this is its implementation.
 
 ## Why
 

@@ -1,5 +1,5 @@
 /**
- * l1-coverage — issue #2405 FR-009, contract smart-kg docs/COVERAGE.md.
+ * l1-coverage — issue #2405 FR-009, contract methodologies/l1-coverage.md.
  */
 import { describe, expect, it } from "bun:test";
 import { spawnSync } from "node:child_process";
