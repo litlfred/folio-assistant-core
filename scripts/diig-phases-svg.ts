@@ -56,7 +56,7 @@ export function loadFigure(path: string): DiigFigure {
   const data = JSON.parse(readFileSync(path, "utf8"));
   if (data.$schema === "diig-phases-adaptation/v1") {
     const a = data as Adaptation;
-    // `adapts` is a repository-root path, e.g. who-iris/library/<entry>/figure-data/...
+    // `adapts` is a repository-root path, e.g. <layer>/library/<entry>/figure-data/...
     const base = loadFigure(resolve(a.adapts));
     const resources = [...base.resources, ...(a.resources ?? [])];
     const tiles = [...base.layout.tiles, ...(a.tiles ?? [])];
