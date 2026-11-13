@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "edaa380219fbc4f949db2c1f2e08c9a45e6a26ad",
+          "ref": "026a6d919add39221387dd0fba0faccf998be9ac",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -39,9 +39,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-12",
-              "ref": "edaa380219fbc4f949db2c1f2e08c9a45e6a26ad",
-              "evidence": "Owner litlfred, 2026-11-12: smart-ra#242 bottom-up re-pin (owner 'a b then c', step c), Q-CASCADE-FREEZE B (re-pin just the moved layer), Q-CONSENT-1 A, merge window Q-WIN-1 C. Core T2b: cat-harness to main edaa380 (cat-harness#1281), so core's lock and cat-harness's agree on bootstrap-tools bbdaffb."
+              "on": "2026-11-13",
+              "ref": "026a6d919add39221387dd0fba0faccf998be9ac",
+              "evidence": "litlfred, 2026-11-13: owner told the re-pin session directly 'do the core re-pin' and 'run the seed yourself, don't wait'; Q-ORDER A (core first, then the rest in parallel); Q-BT-PIN A (~10:02Z, bootstrap-tools at main 0f88368d); Q-CASCADE-FREEZE B (mains read at re-pin). Re-pin session session_01EucfRnyGuuzo9anc8umZDB; coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
             }
           }
         }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "49b2eb15b14b52ae19422876bcc825607ebe22f4",
+          "ref": "b7b26f606a5f9e7448f4309a276331363f51e277",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -64,9 +64,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-12",
-              "ref": "49b2eb15b14b52ae19422876bcc825607ebe22f4",
-              "evidence": "litlfred, 2026-11-12, merge-manager thread: owner card Q-CONSENT-1 = A (re-pin + merge window to ~21:05Z 11-12, Q-WIN-1 C); bottom-up re-pin T2 (smart-ra#242), follow-up to Q-RA-241 A (Q-CASCADE-FREEZE B: mains read at re-pin). Coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "on": "2026-11-13",
+              "ref": "b7b26f606a5f9e7448f4309a276331363f51e277",
+              "evidence": "litlfred, 2026-11-13: owner told the re-pin session directly 'do the core re-pin' and 'run the seed yourself, don't wait'; Q-ORDER A (core first, then the rest in parallel); Q-BT-PIN A (~10:02Z, bootstrap-tools at main 0f88368d); Q-CASCADE-FREEZE B (mains read at re-pin). Re-pin session session_01EucfRnyGuuzo9anc8umZDB; coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
             }
           }
         }
@@ -99,7 +99,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "bbdaffb757007bf0c4fe0ce4d21018491df308a9",
+          "ref": "0f88368db7560afac6d3e16fd905cbb974350f82",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -111,9 +111,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-12",
-              "ref": "bbdaffb757007bf0c4fe0ce4d21018491df308a9",
-              "evidence": "litlfred, 2026-11-12, merge-manager thread: owner card Q-CONSENT-1 = A (re-pin + merge window to ~21:05Z 11-12, Q-WIN-1 C); bottom-up re-pin T2 (smart-ra#242), follow-up to Q-RA-241 A (Q-CASCADE-FREEZE B: mains read at re-pin). Coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "on": "2026-11-13",
+              "ref": "0f88368db7560afac6d3e16fd905cbb974350f82",
+              "evidence": "litlfred, 2026-11-13: owner told the re-pin session directly 'do the core re-pin' and 'run the seed yourself, don't wait'; Q-ORDER A (core first, then the rest in parallel); Q-BT-PIN A (~10:02Z, bootstrap-tools at main 0f88368d); Q-CASCADE-FREEZE B (mains read at re-pin). Re-pin session session_01EucfRnyGuuzo9anc8umZDB; coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
             }
           }
         }
