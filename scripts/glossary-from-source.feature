@@ -34,3 +34,23 @@ Feature: a glossary drafted from a source's glossary and abbreviations
     When the candidates are merged again
     Then the authored definition is kept and the count unchanged
     And merging unedited terms changes nothing
+
+  @test:scripts/glossary-from-source.test.ts::glossaries_as_a_PDF_prints_them_(re-ingest_pilot,_2026-11-14)::stackedTermsRead
+  Scenario: an L1 glossary printed term over definition is read
+    When a term is printed on its own line, wrapped over at most three, and its definition below it
+    Then each term becomes a row, its definition joined and its reference marks dropped
+
+  @test:scripts/glossary-from-source.test.ts::glossaries_as_a_PDF_prints_them_(re-ingest_pilot,_2026-11-14)::stackedAcronymsFoldIntoTerms
+  Scenario: an L1 abbreviations list printed acronym over expansion is read
+    When an acronym is printed on its own line and its expansion on the next
+    Then each acronym becomes a row with its expansion
+
+  @test:scripts/glossary-from-source.test.ts::glossaries_as_a_PDF_prints_them_(re-ingest_pilot,_2026-11-14)::titleWordsOpenTheTitle
+  Scenario: a glossary title names the glossary at its start
+    When "definitions" appears late in a step's title
+    Then the section is not a glossary, while "Annex G. Definition of terms" and "II. Definition of key terms" are
+
+  @test:scripts/glossary-from-source.test.ts::glossaries_as_a_PDF_prints_them_(re-ingest_pilot,_2026-11-14)::titledSectionWithNoRowIsAnInput
+  Scenario: a glossary section nothing is read from is still a glossary section
+    When a section titled Glossary yields no row
+    Then it is an input with no candidates, so the arm reports partial and not none
