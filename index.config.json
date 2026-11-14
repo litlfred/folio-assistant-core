@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "775426b8e6d72a2baf036065564554794df71ee0",
+          "ref": "aceb4c70af19ba69234768b7b061c54ff0031010",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,8 +40,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-14",
-              "ref": "775426b8e6d72a2baf036065564554794df71ee0",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 (cat-harness moves with tools)"
+              "ref": "aceb4c70af19ba69234768b7b061c54ff0031010",
+              "evidence": "owner litlfred, 2026-11-14 ~05:50Z and 13 Nov ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; 'A. Renew 6h + re-pin' (every layer at main); needed so the merge-guard caller can pin tools >= #2118"
             }
           }
         }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "d17f5201becfdaad2a0021b60f8a2f0428edfdd8",
+          "ref": "b43c49dd87f527c1572efff7d98afb4350004ead",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -65,8 +65,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-14",
-              "ref": "d17f5201becfdaad2a0021b60f8a2f0428edfdd8",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 was on the owner-approved merge-manager plan"
+              "ref": "b43c49dd87f527c1572efff7d98afb4350004ead",
+              "evidence": "owner litlfred, 2026-11-14 ~05:50Z and 13 Nov ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; 'A. Renew 6h + re-pin' (every layer at main); needed so the merge-guard caller can pin tools >= #2118"
             }
           }
         }
@@ -77,7 +77,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap",
-          "ref": "17204fe9ed49e87b165bf0a8b626b6c69329a2a6",
+          "ref": "a3176a0dc77f935465cfaf121c6152b12d03472d",
           "overrides": {
             "bootstrap": {
               "whole": true
@@ -86,9 +86,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-12",
-              "ref": "17204fe9ed49e87b165bf0a8b626b6c69329a2a6",
-              "evidence": "litlfred, 2026-11-12, merge-manager thread: owner card Q-CONSENT-1 = A (re-pin + merge window to ~21:05Z 11-12, Q-WIN-1 C); bottom-up re-pin T2 (smart-ra#242), follow-up to Q-RA-241 A (Q-CASCADE-FREEZE B: mains read at re-pin). Coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "on": "2026-11-14",
+              "ref": "a3176a0dc77f935465cfaf121c6152b12d03472d",
+              "evidence": "owner litlfred, 2026-11-14 ~05:50Z and 13 Nov ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; 'A. Renew 6h + re-pin' (every layer at main); needed so the merge-guard caller can pin tools >= #2118"
             }
           }
         }
@@ -99,7 +99,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "b653e0577a1649969319196ec738353fe2068793",
+          "ref": "db808314c98a9b931d08e923d80a8f8dbcdb7d89",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -112,8 +112,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-14",
-              "ref": "b653e0577a1649969319196ec738353fe2068793",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 was on the owner-approved merge-manager plan"
+              "ref": "db808314c98a9b931d08e923d80a8f8dbcdb7d89",
+              "evidence": "owner litlfred, 2026-11-14 ~05:50Z and 13 Nov ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; 'A. Renew 6h + re-pin' (every layer at main); needed so the merge-guard caller can pin tools >= #2118"
             }
           }
         }
