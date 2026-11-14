@@ -27,12 +27,12 @@
  *
  * @module folio-assistant-core/pipeline/plugin-slots
  */
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 import type { LibraryEntryArmContext, PipelinePlugins } from "@litlfred/cat-harness-tools/pipeline/pipeline-plugins.js";
 import { instanceDirectoryForGraph } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import type { ExtractionStep } from "@litlfred/cat-harness-tools/schemas/library/entry-extraction.js";
-import { scriptVersion, today } from "@litlfred/cat-harness-tools/scripts/entry-extraction.js";
 import { GlossarySchema, type Glossary } from "../schemas/glossary.js";
 import { candidates, merge, sectionsUnder } from "../scripts/glossary-from-source.js";
 import { write as writeReferences } from "../scripts/references-extract.js";
@@ -43,6 +43,27 @@ import { extractXlsx } from "../scripts/tabular-xlsx.js";
 export const XLSX_MIMETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 /** A step that could not run, saying why. */
+/*
+ * The two helpers the extraction record uses, kept here rather than imported
+ * from cat-harness-tools' `scripts/entry-extraction.ts`: this table is loaded
+ * by every pass that reads the layer's contributions (kind validators, site
+ * builds), including under a tools pin older than that script, and a missing
+ * module there failed every such pass, not just ingest. Same definitions as
+ * the tools' own.
+ */
+/** Today, `YYYY-MM-DD`. */
+function today(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+/** A script's version: the first 12 hex of its sha256, or `undefined` when it cannot be read. */
+function scriptVersion(path: string): string | undefined {
+  try {
+    return createHash("sha256").update(readFileSync(path)).digest("hex").slice(0, 12);
+  } catch {
+    return undefined;
+  }
+}
+
 const notRun = (tool: string, note: string): ExtractionStep => ({ state: "not-extracted", tool, at: today(), note });
 
 /** Where a reader looks, or why it cannot: the entry's `sections/`, under the library the instance declares. */
