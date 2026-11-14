@@ -29,3 +29,21 @@ Feature: glossary:page leaves a mounted layer's extracted schemes alone
     Given the mounted core-layer
     When core-layer/docs/page.md, which is outside every glossary/generated/ directory, is tested
     Then it is not a mounted scheme
+
+  @test:scripts/glossary-page-mounts.test.ts::the_site's_pages,_at_the_output_root::a_page_in_a_mounted_site_is_written_at_the_output_root
+  Scenario: a page in a mounted site is written at the output root
+    Given the mounted site-layer under the checkout
+    When site-layer/docs/en/glossary/index.md is resolved for writing
+    Then its write path is build/layers/site-layer/docs/en/glossary/index.md
+
+  @test:scripts/glossary-page-mounts.test.ts::the_site's_pages,_at_the_output_root::a_page_in_no_mount_is_written_where_it_is
+  Scenario: a page in no mount is written where it is
+    Given own-site/x.md outside every mount
+    When own-site/x.md is resolved for writing
+    Then its write path is own-site/x.md itself
+
+  @test:scripts/glossary-page-mounts.test.ts::the_site's_pages,_at_the_output_root::orphans_come_from_the_pinned_site_until_an_output_root_exists,_then_from_it_alone
+  Scenario: orphans come from the pinned site until an output root exists, then from it alone
+    Given a pinned page under site-layer/docs/en/glossary/old/index.md
+    When owned files under site-layer/docs/en/glossary are listed before and after the output root exists
+    Then they come from the pinned site before and from the output root alone after
