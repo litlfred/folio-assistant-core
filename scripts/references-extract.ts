@@ -395,6 +395,25 @@ export function extract(instanceRoot: string, only?: string): ExtractResult {
   return { files, perEntry, dir: relative(instanceRoot, refs) };
 }
 
+/** What {@link extract} gives against what is on disk: the nodes that differ, and the extracted ones with no list left to come from. */
+export function plan(instanceRoot: string, only?: string): ExtractResult & { changed: string[]; stale: string[] } {
+  const r = extract(instanceRoot, only);
+  const stale = onDisk(instanceRoot, r.dir, only).filter((p) => !r.files.has(p));
+  const changed = [...r.files].filter(([p, t]) => !existsSync(join(instanceRoot, p)) || readFileSync(join(instanceRoot, p), "utf-8") !== t).map(([p]) => p);
+  return { ...r, changed, stale };
+}
+
+/** Write the {@link plan}: changed nodes written, stale extracted ones removed. Authored nodes are never touched. */
+export function write(instanceRoot: string, only?: string): ReturnType<typeof plan> {
+  const p = plan(instanceRoot, only);
+  for (const f of p.stale) rmSync(join(instanceRoot, f));
+  for (const f of p.changed) {
+    mkdirSync(join(instanceRoot, f, ".."), { recursive: true });
+    writeFileSync(join(instanceRoot, f), p.files.get(f)!);
+  }
+  return p;
+}
+
 /** The extracted nodes on disk: `provenance: "extracted"` files of the references directory (authored ones are left alone). */
 function onDisk(instanceRoot: string, dir: string, only?: string): string[] {
   const abs = join(instanceRoot, dir);
@@ -420,9 +439,7 @@ if (import.meta.main) {
   const root = resolve(opt("--instance") ?? ".");
   const only = opt("--entry");
   const check = args.includes("--check");
-  const { files, perEntry, dir } = extract(root, only);
-  const stale = onDisk(root, dir, only).filter((p) => !files.has(p));
-  const changed = [...files].filter(([p, t]) => !existsSync(join(root, p)) || readFileSync(join(root, p), "utf-8") !== t).map(([p]) => p);
+  const { perEntry, changed, stale } = check ? plan(root, only) : write(root, only);
   const total = perEntry.reduce((s, e) => s + e.references, 0);
   if (check) {
     if (changed.length || stale.length) {
@@ -432,11 +449,6 @@ if (import.meta.main) {
     }
     console.log(`references:extract: ${total} reference(s) from ${perEntry.length} document(s), current`);
   } else {
-    for (const p of stale) rmSync(join(root, p));
-    for (const p of changed) {
-      mkdirSync(join(root, p, ".."), { recursive: true });
-      writeFileSync(join(root, p), files.get(p)!);
-    }
     console.log(`references:extract: ${total} reference(s) from ${perEntry.length} document(s); ${changed.length} written, ${stale.length} removed`);
   }
 }

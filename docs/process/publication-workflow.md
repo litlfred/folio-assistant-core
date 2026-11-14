@@ -47,14 +47,14 @@ an SVG.
 **The table below is not written on this page.** It is read from the
 published knowledge graph — the [named-subgraph JSON-LD]({{ '/subgraph/index.jsonld' | relative_url }})
 that `bun run cat subgraph:jsonld` frames from `kg-export` — by walking each
-instance's `processes` subgraph. Each row's text is the first sentence of that
+layer's `processes` subgraph. Each row's text is the first sentence of that
 diagram's own `bpmn:documentation`, carried on its `Process` node as
 `summary`. To change what a row says, change the diagram. The
 [derived process index]({{ '/cat-harness/auto-docs/index/processes/' | relative_url }}) lists this
-instance's corpus of diagrams with their lanes and skills.
+layer's corpus of diagrams with their lanes and skills.
 
 **Bootstrap's diagrams are in the table, read from bootstrap's own graph.**
-`bootstrap` and `bootstrap-tools` sit below this instance and publish their own
+`bootstrap` and `bootstrap-tools` sit below this layer and publish their own
 named subgraphs at their own sites; the repository index here links each with
 `seeAlso`, and the table follows those links. If that site cannot be read, the
 page says so beside the table rather than drawing a shorter one.
@@ -99,7 +99,7 @@ Which of two neighbouring processes you are in:
 <noscript>
 <p>The process table is drawn by JavaScript from the published
 <a href="{{ '/subgraph/index.jsonld' | relative_url }}">named-subgraph JSON-LD</a>, which can be read
-directly: each instance's <code>processes/index.hydrated.jsonld</code> holds
+directly: each layer's <code>processes/index.hydrated.jsonld</code> holds
 every one of its processes. The same diagrams are listed, without scripts, in the
 <a href="{{ '/cat-harness/auto-docs/index/processes/' | relative_url }}">derived process index</a>, apart from
 bootstrap's, which are in its own <code>processes/</code> directory.</p>
