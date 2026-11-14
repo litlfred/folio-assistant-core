@@ -280,8 +280,15 @@ export function listsOf(instanceRoot: string, entryDir: string): ExtractedList[]
     const skipTo = taken.get(k) ?? 0;
     const starts = whole ? [0] : own.flatMap((l, i) => (i >= skipTo && REFERENCE_HEADING.test(l) ? [i + 1] : []));
     for (const at of starts) {
-      // A whole section may repeat its own heading on its first lines.
-      const from = whole ? Math.max(own.findIndex((l) => l.trim() && !REFERENCE_HEADING.test(l)), 0) : at;
+      // A whole section may repeat its own heading on its first lines. When an
+      // inferred split put a line of the page before above that heading (a
+      // footnote: "2 All linked references were accessed on ..."), the list
+      // starts after the heading: reading from the stray line, the heading
+      // ended the list at its first line (9789240101197-eng kept 1 of 26).
+      const heading = own.findIndex((l, i) => i < 6 && REFERENCE_HEADING.test(l));
+      const from = whole
+        ? Math.max(own.findIndex((l, i) => i > heading && l.trim() && !REFERENCE_HEADING.test(l)), 0)
+        : at;
       // Read on into the next pages only when the list starts with citations
       // (on this page, or on the next page's first lines): a heading at a
       // page's foot over a page of prose is not a list.
