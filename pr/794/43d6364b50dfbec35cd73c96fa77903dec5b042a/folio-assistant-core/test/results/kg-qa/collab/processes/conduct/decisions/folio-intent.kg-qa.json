@@ -1,0 +1,21 @@
+{
+  "$schema": "kg-qa/v1",
+  "subject": {
+    "kind": "decision",
+    "id": "folio-intent",
+    "path": "collab/processes/conduct/decisions/folio-intent.dmn"
+  },
+  "source_hash": "sha256:3e279c0c71a904953f391e377c03a5faca47a7cdd7c0bceaf5b54e77134a42a5",
+  "criteria": {
+    "decision-outcomes-used": {
+      "result": "pass",
+      "findings": []
+    }
+  },
+  "totals": {
+    "pass": 1,
+    "fail": 0,
+    "n/a": 0,
+    "unknown": 0
+  }
+}
