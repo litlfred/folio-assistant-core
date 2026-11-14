@@ -544,8 +544,59 @@ library/<bib-slug>/
   summaries.json     agent summaries of prose blocks, a QA sidecar (see below)
   footnotes.json     footnotes and the marks that call them (pdf-footnotes.py arm)
   errata.json        errors in the source's own text, authored (never a rung's)
+  images.json        raster images and their role (figure | decorative | ...)
+  vector-figures.json  drawn figures rendered to figures/vfig-pNNN.png
+  tabular.csvw.json  transcribed tables (CSVW) and tables/*.csv
+  extraction.json    "$schema": "folio-library-extraction/v1" — what each kind's
+                     step found (see "Every kind says what was extracted")
   ocr/               page-NNN.txt, only where the source was scanned
 ```
+
+### Every kind says what was extracted
+
+Owner, 2026-11-14, on a one-page notice whose page showed no references and
+no glossary: *"why no biblio, glossary, etc here"*. A blank says nothing:
+"none in the source", "not extracted yet" and "never looked" all look the
+same. So every entry records, per kind — `contents`, `sections`, `figures`,
+`tables`, `references`, `glossary`, `footnotes`, `summaries` — one of:
+
+| state | means |
+|---|---|
+| `found` (+ `count`) | the step ran and kept N |
+| `partial` | fewer kept than the text declares (e.g. 15 figures captioned, 3 kept), or sections split per page rather than by heading |
+| `none` | the step **ran** and the source has none — never written for a step that did not run |
+| `not-extracted` | the step has not run for this entry |
+
+The ingest writes `extraction.json`:
+`{"$schema":"folio-library-extraction/v1","kinds":{"<kind>":{"state","count"?,"note"?,"tool"?,"version"?,"at"?}}}`.
+The library viewer's **What was extracted** line reads it and, for any kind
+it does not name, derives the state from the files present
+(`entryCoverage` in `cat-harness-tools/scripts/lib/library-document.ts`).
+
+**A `check:l1-complete` pass is not this.** The gate checks the files an
+entry must hold; it does not check headings, captions, tables, references,
+glossary or figure blocks. An entry can pass the gate and still be
+`page`-granular with fifteen figures nobody can see — 205 of who-iris's 211
+entries passed while 89 were split per page (audit, 2026-11-14).
+
+### When an entry needs re-ingesting — and how it is done
+
+Re-ingest an entry when any of these holds; each is visible on its page:
+
+- `granularity: page` on a born-digital PDF (sections are "Page 1…N", the
+  Contents tree is flat) — the current `pdf-structure.py` may now trust an
+  inferred contents the older run refused;
+- figures captioned in the text but none kept, or vector figures kept but no
+  figure **blocks** (they are invisible to the knowledge graph);
+- a references or glossary heading in the text but its entries not extracted;
+- tables captioned but none transcribed.
+
+The order is fixed (owner's card, 2026-11-14): **fix the tools first, re-ingest
+a pilot of about three entries, check them on their pages, then batch.**
+Re-ingesting writes new derived files; the source PDF is frozen evidence and
+is never edited. Re-splitting a page-granular entry makes its block summaries
+stale: they are kept and marked stale, English is redrafted in the batch, and
+the other five languages are left to the summary drain.
 
 `bun run cat check:l1-complete` is the gate. It reports three states, never two: a
 requirement **met**, **unmet**, or **not yet derivable** — the last because the
@@ -902,6 +953,20 @@ section's own opening text, labelled as such and cut at a word), **Checks**
 (contents vs body, numbering gaps, page-label conflicts). Because it reads the
 schema, a new field in `structure.json` reaches every library at once; a field
 an older ingestion lacks shows "not recorded — re-ingest", never an empty table.
+
+Above the tabs: the entry's own **listing row** (the same columns the whole
+library shows) and the **What was extracted** line. Figures are a list, one
+per row: a lazy thumbnail, a short name taken from the description's own
+"Fig. n, 'Title'", and the page; selecting the thumbnail opens it large with
+its description (owner, 2026-11-14). Block summaries sit behind a disclosure
+labelled with their state, so an unconfirmed agent draft is readable and
+still says it is one.
+
+**Printing loads everything first** (owner, 2026-11-14: *"make sure printing
+loads all of the content before it renders the PDF"*): the panel's Print /
+PDF button and the browser's own print both switch lazy images to eager and
+wait for them, write each figure's description under it, and open the
+contents tree and every disclosure.
 
 For a withheld entry the panel keeps structure, page labels, figure and table
 **captions** (labels, like TOC titles) and our summaries,
