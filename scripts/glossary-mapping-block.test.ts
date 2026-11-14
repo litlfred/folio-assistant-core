@@ -11,6 +11,9 @@
  */
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+
+import { readPathAt } from "@litlfred/cat-harness-tools/scripts/lib/layer-output.ts";
 
 import { codeSpans, collect, mappingBlock, mappingStates, perTermMapping } from "./glossary-page.ts";
 
@@ -68,7 +71,9 @@ describe("the committed result, read the way the page reads it", () => {
 });
 
 describe("the rendered pages say it", () => {
-  const read = async (p: string) => await Bun.file(p).text();
+  // The pages are written at publish to the layer output root (bean cat-tools-sm8r):
+  // read the copy a reader of the site sees, the pinned bytes when there is none.
+  const read = async (p: string) => await Bun.file(readPathAt(process.cwd(), resolve(p))).text();
 
   test("glossaryPagesCarryTable", async () => {
     for (const p of [
@@ -271,7 +276,7 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     // the note is on each part; the type's own page is a landing page.
     const parts = ["a-c", "d-e", "f-l", "m-o", "p-r", "s", "t-z"].map((r) => `cat-harness/docs/en/folio-assistant-core/glossary/schema-fields/${r}/index.md`);
     for (const p of ["cat-harness/docs/en/folio-assistant-core/glossary/dmn-decisions/index.md", ...parts]) {
-      const html = await Bun.file(p).text();
+      const html = await Bun.file(readPathAt(process.cwd(), resolve(p))).text();
       expect(html, `${p} has no per-term note`).toContain('class="fa-gloss-mapping-perterm"');
     }
   });
