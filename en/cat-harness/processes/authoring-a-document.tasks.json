@@ -184,7 +184,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -201,7 +202,8 @@
    "laneHref": "authoring-a-document.html#lane-Lane_WorkPlan",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -219,10 +221,12 @@
       "href": "../../../en/cat-harness/processes/skills/content-feedback.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
-      "name": "work-plan-store"
+      "name": "work-plan-store",
+      "href": "../../../en/cat-harness/processes/skills/work-plan-store.html"
      }
     ]
    }
@@ -236,7 +240,8 @@
    "laneHref": "authoring-a-document.html#lane-Lane_WorkPlan",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "shared": {
@@ -253,10 +258,12 @@
       "href": "../../../en/cat-harness/processes/skills/content-feedback.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
-      "name": "work-plan-store"
+      "name": "work-plan-store",
+      "href": "../../../en/cat-harness/processes/skills/work-plan-store.html"
      }
     ]
    }
@@ -292,7 +299,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -459,7 +467,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -522,7 +531,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -689,7 +699,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -792,7 +803,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -884,7 +896,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -981,7 +994,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1073,7 +1087,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1170,7 +1185,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1196,7 +1212,8 @@
    "laneHref": "authoring-a-document.html#lane-Lane_Build",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {
@@ -1266,7 +1283,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",

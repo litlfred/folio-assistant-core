@@ -178,7 +178,12 @@ html[data-fa-scheme="light"] .lib-page {
    count broken over two lines is harder to read than one scrolled to. */
 .lib-page #listing td.lib-first { white-space:normal; min-width:13rem; max-width:17rem; }
 .lib-page #listing td.t-title { white-space:normal; min-width:14rem; max-width:22rem; }
-.lib-page #listing td.t-title a.lib-title { display:inline-flex; align-items:center; min-height:24px; }
+/* A long title is capped at three lines (owner, 2026-11-13: "some titles are
+   really long. need cap + hover for complete"). The rest stays in the DOM, so
+   a screen reader reads all of it; the title attribute shows it on hover. */
+.lib-page #listing td.t-title a.lib-title, .lib-page #listing td.t-title .lib-title-locale {
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; line-clamp:3; overflow:hidden; min-height:24px; }
+.lib-page #listing td.t-title .lib-title-locale { font-size:.85em; color:var(--muted); line-height:1.35; }
 .lib-page #listing td.t-source { white-space:normal; min-width:9rem; max-width:14rem; }
 .lib-page #listing td.t-source .slug { overflow-wrap:anywhere; }
 .lib-page #listing td.t-source .pill { white-space:nowrap; }

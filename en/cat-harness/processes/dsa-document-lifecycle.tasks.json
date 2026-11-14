@@ -326,7 +326,8 @@
    "laneHref": "dsa-document-lifecycle.html#lane-Lane_Author",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -368,7 +369,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -446,7 +448,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -501,7 +504,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -556,7 +560,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -606,7 +611,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -717,7 +723,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -907,7 +914,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1202,7 +1210,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -1285,7 +1294,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1364,7 +1374,8 @@
    "laneHref": "dsa-document-lifecycle.html#lane-Lane_Author",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -1406,7 +1417,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -1536,7 +1548,8 @@
    "laneHref": "dsa-document-lifecycle.html#lane-Lane_Author",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {
@@ -1578,7 +1591,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"

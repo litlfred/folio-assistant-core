@@ -175,7 +175,8 @@
    "laneHref": "content-lifecycle.html#lane-Lane_Editors",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "shared": {
@@ -228,6 +229,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -308,6 +310,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -485,7 +488,8 @@
    "laneHref": "content-lifecycle.html#lane-Lane_Editors",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     },
     {
      "name": "content-feedback",
@@ -538,6 +542,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -596,7 +601,8 @@
    "laneHref": "content-lifecycle.html#lane-Lane_Editors",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -650,6 +656,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -667,7 +674,8 @@
    "laneHref": "content-lifecycle.html#lane-Lane_ProgMgr",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {

@@ -139,6 +139,27 @@ function uploadState(e){
     unknown: { label: "no source named", cls: "" }
   }[e.upload] || { label: e.upload, cls: "" };
 }
+/* THE PAGE'S LANGUAGE: ?lang=, else the locale segment of its path
+   (/en/.../library/), else the page's own lang, else English. */
+var LOCALE = (function(){
+  var l = "";
+  try { l = new URL(location.href).searchParams.get("lang") || ""; } catch (_e) {}
+  if (!l) { var m = /[/]([a-z]{2})(?:-[A-Za-z]{2})?[/]/.exec(location.pathname); l = m ? m[1] : ""; }
+  if (!l && document.documentElement) l = document.documentElement.getAttribute("lang") || "";
+  return (l || "en").toLowerCase().split("-")[0];
+})();
+/* A TITLE NOT IN THE PAGE'S LANGUAGE SHOWS THE READER'S UNDER IT -- owner,
+   2026-11-13: "when display title not in locale, then display locale if
+   present under original". Only an official edition's title (e.titles, from
+   the projection); nothing when there is none, and nothing is translated.
+   A long title is capped to three lines by CSS; the whole of it is in the
+   DOM for a screen reader and in a title attribute for a pointer. */
+function titleHtml(e, href){
+  var t = String(e.title == null ? "" : e.title);
+  var h = '<a class="lib-title" href="'+esc(href)+'" title="'+esc(t)+'"'+(e.lang ? ' lang="'+esc(e.lang)+'"' : "")+">"+esc(t)+"</a>";
+  var mine = e.lang && e.lang !== LOCALE && e.titles && typeof e.titles[LOCALE] === "string" ? e.titles[LOCALE] : "";
+  return mine ? h + '<span class="lib-title-locale" lang="'+esc(LOCALE)+'" title="'+esc(mine)+'">'+esc(mine)+"</span>" : h;
+}
 
 var COLS = [
   /* THE SLUG OPENS THE ENTRY'S VISUALISER -- e.view, generated per entry by
@@ -158,7 +179,7 @@ var COLS = [
          used to open the item's README on GitHub, which a referenced entry
          may not have (owner, 2026-10-02: a DAK IG's title went to a
          404). The README stays as a secondary link, only when one exists. */
-      var t = '<a class="lib-title" href="'+esc(entryHref(e))+'">'+esc(e.title)+"</a>";
+      var t = titleHtml(e, entryHref(e));
       var src = e.arxiv ? "https://arxiv.org/abs/"+encodeURIComponent(e.arxiv) : e.doi ? "https://doi.org/"+e.doi : "";
       return t + (src ? ' <a class="src" href="'+esc(src)+'">source</a>' : "") +
         (e.readme ? ' <a class="src" href="'+esc(e.readme)+'">README</a>' : "") + linksHtml(e);
@@ -190,6 +211,9 @@ var COLS = [
   { k:"upload",   t:"source",   n:false, c:"t-source", f:function(e){ var s=uploadState(e);
       var name = '<span class="slug" style="font-size:.72rem;color:var(--muted)">'+esc(e.sourceFile)+"</span>";
       if (e.sourceFile && e.viewable) name = '<a class="src lib-src" href="'+esc(entryHref(e))+'#lib-view" target="_blank" rel="noopener">'+esc(e.sourceFile)+"</a>";
+      /* Owner, 2026-11-13: every source file name is a link. One not viewable
+         here opens its entry page, which says where the file is held. */
+      else if (e.sourceFile) name = '<a class="src lib-src" href="'+esc(entryHref(e))+'">'+esc(e.sourceFile)+"</a>";
       return '<span class="pill '+s.cls+'">'+esc(s.label)+"</span>"+(e.sourceFile?"<br>"+name:""); } }
 ];
 
@@ -292,24 +316,6 @@ function renderDesk(){
   }).join("") || '<p class="empty">Nothing matches.</p>';
 }
 
-function renderQueue(){
-  var h = "<table><thead><tr><th>unit</th><th>queue</th><th>kind</th><th>size</th><th>state</th></tr></thead><tbody>";
-  h += G.uploads.filter(inScope).map(function(u){
-    /* An intake is ONE queued document however many files it declares, and
-       the row says so — otherwise a four-file capture reads as four things
-       waiting. The count comes from the intake's own declared file list. */
-    var kind = u.kind === "intake"
-      ? '<span class="pill info">intake · ' + u.declaredFiles + " file" + (u.declaredFiles === 1 ? "" : "s") + "</span>"
-      : esc(u.ext || "—");
-    var label = esc(u.file) + (u.kind === "intake" && u.title
-      ? '<br><span style="font-family:inherit;color:var(--muted);font-size:.78rem">' + esc(u.title) + "</span>" : "");
-    return '<tr><td class="slug" data-label="unit">' + label + '</td><td data-label="queue"><span class="pill">' + esc(u.instance) +
-      '</span></td><td data-label="kind">' + kind + '</td><td class="num" data-label="size">' + kb(u.bytes) + '</td><td data-label="state">' +
-      (u.ingestedBy ? '<span class="pill ok">ingested → ' + esc(u.ingestedBy) + "</span>"
-                    : '<span class="pill warn">uningested</span>') + "</td></tr>";
-  }).join("") || '<tr><td colspan="5"><p class="empty">No uploads queue for this subject.</p></td></tr>';
-  $("queue").innerHTML = h + "</tbody></table>";
-}
 
 function render(){ if (VIEW === "list") renderList(); else renderDesk(); }
 
@@ -395,6 +401,9 @@ function renderBlocks(id, data, err, entry){
     return;
   }
   var bs = (data && data.blocks) || [];
+  /* The Contents tree's leaves (library-document.ts) come from these. */
+  DOC_BLOCKS = bs;
+  if (DOC && DOC_ID === id && DOC_TAB === "contents") renderDocument(id, DOC, null);
   if (!bs.length) {
     el.innerHTML = '<h2>Blocks</h2><p class="empty">' + esc(id) +
       ' has no blocks. Nothing failed — the entry carries none.</p>';
@@ -440,7 +449,7 @@ function renderBlocks(id, data, err, entry){
          text lives in scripts/lib/library-withheld-view.ts so a test runs
          exactly what this page runs. */
       var body = blockBody(b, entry);
-      return '<tr><td class="num">' + esc(pages) + '</td><td>' + esc(b.kind) +
+      return '<tr id="' + esc(blockAnchor(b.id)) + '"><td class="num">' + esc(pages) + '</td><td>' + esc(b.kind) +
         '</td><td>' + esc((b.types || []).join(' + ')) + '</td><td class="bt">' + body +
         '</td><td>' + nar + '</td></tr>';
     }).join("") + '</tbody></table>';
@@ -1327,6 +1336,11 @@ function withheldBanner(e, bs){
     // A standalone page (an IG's thin layout) has no .main-content-wrap to
     // pad, so its column leaves the same gutter itself.
     "html.fa-bp .fa-page-main.main-content:has(>.fa-sec-actions){margin-right:2.5rem}}" +
+    // Below 50rem there is no gutter, so a section's box sits in the text
+    // column under its heading. Owner, 2026-11-13 ("phone first"): there it is
+    // ONE row, right-aligned, not the gutter's column, which left two icon
+    // heights of empty space under every heading on a phone.
+    "@media (max-width:49.99rem){html.fa-bp .main-content .fa-sec-actions{flex-direction:row;justify-content:flex-end;align-items:center;gap:8px}}" +
     // A section's QA / TR chips, under its 📣 and 🔖 in the gutter; pressed,
     // they open the section's panel, where each badge says what it found.
     "html.fa-bp .main-content .fa-sec-actions>.fa-sec-qa{order:9;margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}" +
@@ -1594,11 +1608,21 @@ function withheldBanner(e, bs){
     if (!d) return null;
     try { const m = JSON.parse(d.textContent); return m && m.blob ? m : null; } catch { return null; }
   };
+  // A docs page says the same of ITSELF in <script id="fa-page-source">,
+  // written by head_custom.html from compose-docs' _data/page_sources.json
+  // (owner, 2026-11-13). Only the headings its own Markdown writes are listed,
+  // so a section an include draws keeps its 📣 alone: "own-text sections only".
+  const pageLines = () => {
+    const d = document.getElementById("fa-page-source");
+    if (!d) return null;
+    try { const m = JSON.parse(d.textContent); return m && m.blob ? m : null; } catch { return null; }
+  };
   const norm = (s) => String(s).toLowerCase().replace(/&[a-z]+;/g, " ").replace(/[^a-z0-9]+/g, " ").trim();
   const sectionBoxes = () => {
     const main = document.querySelector(".main-content");
     if (!main || main.querySelector(".fa-doc, .block-actions")) return;
     const ig = igLines();
+    const own = ig ? null : pageLines();
     const ghRepo = ig ? (/^https:\/\/github\.com\/([^/]+\/[^/]+)/.exec(ig.blob) || [])[1] || "" : "";
     const site = ig ? (ig.repo || ghRepo) : siteRepo();
     const used = {};
@@ -1632,18 +1656,20 @@ function withheldBanner(e, bs){
         if (qa) box.append(el("p", { className: "fa-sec-qa" }, [qa]));
         nx.remove();
       }
-      if (ig) {
+      const lm = ig || (from ? null : own);
+      if (lm) {
         const k = norm(sec);
-        const lines = Array.isArray(ig.lines) ? ig.lines : [];
+        const lines = Array.isArray(lm.lines) ? lm.lines : [];
         for (let i = 0; i < lines.length; i++) if (!used[i] && norm(lines[i].t) === k) {
           used[i] = 1;
-          src = (lines[i].b || ig.blob) + "#L" + lines[i].l;
+          src = (lines[i].b || lm.blob) + "#L" + lines[i].l;
           break;
         }
         if (src) {
           const e = el("a", { className: "ba-edit", href: src, textContent: "\u270e edit", title: "Edit this section's source on GitHub" });
           e.dataset.faLink = "edit";
           box.append(e);
+          if (!ig) addSuggest(box);
         }
       }
       const repo = (from && from.dataset.repo) || site;
@@ -1780,58 +1806,107 @@ function confPill(c, ev){
 function notRecorded(what){
   return '<p class="empty">' + esc(what) + ' not recorded for this entry \u2014 it was ingested before this field existed. Re-ingest to add it.</p>';
 }
-function docContents(d){
-  if (!d.toc.length && d.variant && d.variant !== "pdf") {
-    /* A text or notebook source has no separate outline: its headings ARE its
-       sections, so they are its contents. */
-    if (!d.sections.length) return '<p class="empty">No sections: the source has no headings.</p>';
-    return '<p class="note">Contents: the source\u2019s own headings.</p><ul class="toc">' + d.sections.map(function(s){
-      return '<li style="margin-left:' + (Math.max(0, (s.level || 1) - 1)) + 'em"><a href="#sec-' + esc(s.id) + '" data-sec="' + esc(s.id) + '">' +
-        (s.number ? esc(s.number) + ' ' : '') + esc(s.title) + '</a></li>';
-    }).join("") + '</ul>';
-  }
-  if (!d.toc.length) return '<p class="empty">No table of contents: the PDF carries no outline and none could be inferred.</p>';
-  var how = d.tocSource === "outline" ? "the PDF\u2019s own outline"
-    : "inferred (" + esc(d.tocMethod || "unknown") + "); each entry\u2019s confidence and the evidence behind it are shown";
-  /* A TREE OF <details>, collapsed to the top level so the document's shape
-     is visible at a glance (owner, 2026-10-06: "TOC collapsible and start
-     collapsed - hard to see overview"). Native <details>: keyboard and
-     screen-reader behaviour with no script. */
-  var bySec = {};
-  d.sections.forEach(function(s){ bySec[s.id] = s; });
-  function line(e){
-    var t = (e.number ? esc(e.number) + ' ' : '') + esc(e.title);
-    var link = e.section ? '<a href="#sec-' + esc(e.section) + '" data-sec="' + esc(e.section) + '">' + t + '</a>' : t;
-    var s = e.section && bySec[e.section];
-    return link + ' <span class="note">' + pageText(e.page, e.pageLabel) + '</span> ' + confPill(e.confidence, e.evidence) +
-      (s && s.edit && d.links ? ' ' + editHost(s) : '');
-  }
-  /* Build a node list first, so a level can see how many siblings it has.
-     A node that is the ONLY one at its level starts open: an outline whose
-     single root is the book's title would otherwise collapse to one line
-     (9789241548960-eng). The tree opens down to the first level that
-     branches \u2014 the chapters \u2014 and no further. */
-  var i = 0;
-  function nodes(level){
+/* THE CONTENTS TREE. Owner, 2026-11-13: "a hierarchy tree expandable
+   browser of sections on library items ... that shows blocks within". From
+   the outline when there is one, else from the sections, nested by level; a
+   section's blocks are its leaves. A node's children are built when it is
+   first opened, so a document of a thousand sections stays fast. */
+var DOC_BLOCKS = null, DOC_TREE = [];
+/* Section id -> its blocks: the ids its own node contains, then any block
+   whose target is that section's file. A block placed by neither is left to
+   the Blocks panel rather than guessed into a section. */
+function docBlocksBySection(d){
+  var out = {}, byId = {}, placed = {};
+  (DOC_BLOCKS || []).forEach(function(b){ byId[b.id] = b; });
+  d.sections.forEach(function(s){
+    (s.blocks || []).forEach(function(id){
+      if (placed[id]) return;
+      placed[id] = 1; (out[s.id] = out[s.id] || []).push(byId[id] || { id: id });
+    });
+  });
+  var known = {};
+  d.sections.forEach(function(s){ known[s.id] = 1; });
+  (DOC_BLOCKS || []).forEach(function(b){
+    var m = !placed[b.id] && /(?:^|\/)sections\/([^\/]+)\.md$/.exec(b.target || "");
+    if (m && known[m[1]]) { placed[b.id] = 1; (out[m[1]] = out[m[1]] || []).push(b); }
+  });
+  return out;
+}
+function blockAnchor(id){ return "blk-" + String(id).split("/").pop(); }
+function blockLeaf(b, secTitle){
+  var words = String(b.content || (b.summary && b.summary.text) || "").replace(/\s+/g, " ").trim().split(" ").slice(0, 10).join(" ");
+  var t = b.title && b.title !== secTitle ? b.title : words ? words + "\u2026" : b.title || String(b.id).split("/").pop();
+  return '<li class="leaf blk"><span class="pill">' + esc(b.kind || "block") + '</span> <a href="#' + esc(blockAnchor(b.id)) +
+    '" data-blk="' + esc(blockAnchor(b.id)) + '">' + esc(t) + '</a></li>';
+}
+/* Nest a flat list by its levels: node = { item, kids: [node index] }. */
+function docNest(items){
+  var nodes = [], i = 0;
+  function level(lv){
     var out = [];
-    while (i < d.toc.length && d.toc[i].level >= level) {
-      var e = d.toc[i++];
-      out.push({ e: e, kids: (i < d.toc.length && d.toc[i].level > e.level) ? nodes(e.level + 1) : [] });
+    while (i < items.length && (items[i].level || 1) >= lv) {
+      var n = nodes.push({ item: items[i++], kids: [] }) - 1;
+      if (i < items.length && (items[i].level || 1) > (nodes[n].item.level || 1)) nodes[n].kids = level((nodes[n].item.level || 1) + 1);
+      out.push(n);
     }
     return out;
   }
-  function render(ns){
-    var only = ns.length === 1;
-    return ns.map(function(n){
-      return n.kids.length
-        ? '<li><details' + (only ? ' open' : '') + '><summary>' + line(n.e) + '</summary><ul>' + render(n.kids) + '</ul></details></li>'
-        : '<li class="leaf">' + line(n.e) + '</li>';
-    }).join("");
+  /* From the shallowest level, so an item above the first one's is not dropped. */
+  var top = items.length ? level(Math.min.apply(null, items.map(function(x){ return x.level || 1; }))) : [];
+  return { nodes: nodes, top: top };
+}
+/* The <li> of each node in ns. A node that is the ONLY one at its level
+   starts open (an outline whose single root is the book's title would
+   otherwise collapse to one line, 9789241548960-eng), so its children are
+   built now; every other node's are built on its first toggle. */
+function docTreeItems(ns){
+  var only = ns.length === 1;
+  return ns.map(function(k){
+    var n = DOC_TREE[k];
+    if (!n.kids.length && !n.blocks.length) return '<li class="leaf">' + n.line + '</li>';
+    return '<li><details data-node="' + k + '"' + (only ? ' open' : '') + '><summary>' + n.line + '</summary><ul data-kids="' + k + '"' +
+      (only ? ' data-built="1">' + docTreeKids(k) : '>') + '</ul></details></li>';
+  }).join("");
+}
+function docTreeKids(k){
+  var n = DOC_TREE[k];
+  return docTreeItems(n.kids) + n.blocks.map(function(b){ return blockLeaf(b, n.title); }).join("");
+}
+function docTreeBuild(details){
+  var ul = details.querySelector("ul[data-kids]");
+  if (!ul || ul.getAttribute("data-built")) return;
+  ul.setAttribute("data-built", "1");
+  ul.innerHTML = docTreeKids(Number(ul.getAttribute("data-kids")));
+}
+function docContents(d){
+  var bySec = {};
+  d.sections.forEach(function(s){ bySec[s.id] = s; });
+  var blocksOf = docBlocksBySection(d);
+  var useToc = d.toc.length > 0, items = useToc ? d.toc : d.sections;
+  if (!items.length) return d.variant && d.variant !== "pdf"
+    ? '<p class="empty">No sections: the source has no headings.</p>'
+    : '<p class="empty">No table of contents: the PDF carries no outline and none could be inferred.</p>';
+  function line(e){
+    var sid = useToc ? e.section : e.id, s = sid && bySec[sid];
+    var t = (e.number ? esc(e.number) + ' ' : '') + esc(e.title);
+    var link = sid ? '<a href="#sec-' + esc(sid) + '" data-sec="' + esc(sid) + '">' + t + '</a>' : t;
+    var where = useToc ? ' <span class="note">' + pageText(e.page, e.pageLabel) + '</span> ' + confPill(e.confidence, e.evidence)
+      : e.pageStart != null ? ' <span class="note">' + pageText(e.pageStart, e.labelStart) + '</span>' : '';
+    return link + where + (s && s.edit && d.links ? ' ' + editHost(s) : '');
   }
-  var tree = render(nodes(d.toc[0].level));
-  return '<p class="note">Source: ' + how + '. ' + d.toc.length + ' entries.</p>' +
+  var t = docNest(items);
+  DOC_TREE = t.nodes.map(function(n){
+    var sid = useToc ? n.item.section : n.item.id;
+    return { line: line(n.item), title: n.item.title, kids: n.kids, blocks: (sid && blocksOf[sid]) || [] };
+  });
+  var how = !useToc
+    ? (d.variant && d.variant !== "pdf" ? "Contents: the source\u2019s own headings."
+      : "No outline: the PDF carries none and none could be inferred, so its sections are listed.") + ' ' + d.sections.length + ' sections.'
+    : 'Source: ' + (d.tocSource === "outline" ? "the PDF\u2019s own outline"
+      : "inferred (" + esc(d.tocMethod || "unknown") + "); each entry\u2019s confidence and the evidence behind it are shown") + '. ' + d.toc.length + ' entries.';
+  return '<p class="note">' + how + (DOC_BLOCKS ? '' : ' Blocks are listed once the block graph has loaded.') + '</p>' +
     '<p><button type="button" data-toc="open">Expand all</button> <button type="button" data-toc="close">Collapse all</button></p>' +
-    '<ul class="toc">' + tree + '</ul>';
+    '<ul class="toc">' + docTreeItems(t.top) + '</ul>';
 }
 function docPages(d){
   if (!d.pageLabels) return notRecorded("Page labels");
@@ -2005,10 +2080,32 @@ function renderDocument(id, d, err){
   });
   Array.prototype.forEach.call(el.querySelectorAll("[data-toc]"), function(b){
     b.addEventListener("click", function(){
-      var open = b.getAttribute("data-toc") === "open";
-      Array.prototype.forEach.call(el.querySelectorAll("ul.toc details"), function(x){ x.open = open; });
+      if (b.getAttribute("data-toc") !== "open") {
+        Array.prototype.forEach.call(el.querySelectorAll("ul.toc details"), function(x){ x.open = false; });
+        return;
+      }
+      /* Opening builds children, which may be nodes of their own: repeat
+         until every node is open. */
+      for (var ds; (ds = el.querySelectorAll("ul.toc details:not([open])")).length;)
+        Array.prototype.forEach.call(ds, function(x){ docTreeBuild(x); x.open = true; });
     });
   });
+  /* toggle does not bubble, so it is caught on the way down; once per panel. */
+  if (!el.getAttribute("data-tree")) {
+    el.setAttribute("data-tree", "1");
+    el.addEventListener("toggle", function(ev){
+      var t = ev.target;
+      if (t && t.matches && t.matches("ul.toc details[data-node]") && t.open) docTreeBuild(t);
+    }, true);
+    /* A block leaf scrolls to its row in the Blocks panel; the address is
+       left alone, since a changed hash re-reads the whole entry. */
+    el.addEventListener("click", function(ev){
+      var a = ev.target && ev.target.closest && ev.target.closest("a[data-blk]");
+      if (!a) return;
+      ev.preventDefault();
+      var r = document.getElementById(a.getAttribute("data-blk")); if (r) r.scrollIntoView({ block: "center" });
+    });
+  }
   /* Hrefs now, not on first hover: a keyboard reader tabs to these links. */
   if (d.links && window.faEditLinks) window.faEditLinks.fill(el);
   /* A section link from any tab opens the Sections tab at that section. Only
@@ -2060,6 +2157,7 @@ function summaryPanel(s){
     (who ? '<p class="note">' + esc(who) + '</p>' : '') + '</div>';
 }
 function loadBlocks(id, entry){
+  DOC_BLOCKS = null;
   fetch(blocksHref(id), {cache: "no-store"})
     .then(function(r){ if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
     .then(function(d){ renderBlocks(id, d, null, entry); })
@@ -2124,7 +2222,7 @@ fetch(DATA_HREF).then(function(r){
     renderList();
   });
   render();
-  renderQueue();
+  // The uploads queue has its own page (gen-uploads-viz.ts); the library page shows the corpus only (owner, 2026-11-13).
   honourAddress();
   window.addEventListener("hashchange", honourAddress);
 }).catch(function(e){

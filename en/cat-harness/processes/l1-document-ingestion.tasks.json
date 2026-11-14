@@ -544,7 +544,8 @@
    "laneHref": "l1-document-ingestion.html#lane-Lane_1",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -601,7 +602,8 @@
    "laneHref": "l1-document-ingestion.html#lane-Lane_1",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {
@@ -784,7 +786,8 @@
    "laneHref": "l1-document-ingestion.html#lane-Lane_1",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "role": {

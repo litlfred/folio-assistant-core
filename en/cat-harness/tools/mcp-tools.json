@@ -39,6 +39,38 @@
       }
     },
     {
+      "name": "bean_query",
+      "description": "Query the beans knowledge graph using named graph analytics or arbitrary SPARQL 1.1. Available named queries: safe_drain_candidates, actionable_leaves, critical_path_blockers, epic_burndown, rollup_invariant_violations, stale_claims, unparented_open_tasks, circular_blockers, high_fanout_epics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "named": {
+            "description": "Pre-defined named query: safe_drain_candidates, actionable_leaves, critical_path_blockers, epic_burndown, rollup_invariant_violations, stale_claims, unparented_open_tasks, circular_blockers, high_fanout_epics",
+            "type": "string"
+          },
+          "sparql": {
+            "description": "Arbitrary SPARQL 1.1 SELECT query over the bean store",
+            "type": "string"
+          },
+          "format": {
+            "default": "table",
+            "description": "Output format: table, json, or ids",
+            "type": "string",
+            "enum": [
+              "table",
+              "json",
+              "ids"
+            ]
+          }
+        }
+      },
+      "_meta": {
+        "tool": "bean-query",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/bean-query.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
       "name": "corpus_search",
       "description": "Search the authored corpus AND the ingested library together, then follow the graph out from what matched. Reach for this before declaring anything open, unproved or novel. A block one `uses` hop from a match is found whatever words it uses, which a lexical search cannot do. Each hit says whether it MATCHED or was REACHED, and by which edge. A `~` prefix means the edge was traversed backwards, so that node depends on the seed. Counts are split authored vs ingested: many ingested hits and no authored ones means cite it, not derive it. `emptyRoots` names a root that exists but holds no graph nodes, which is what an ungenerated .jsonld corpus looks like. Seeding is lexical, so query with a short phrase: a long multi-word query that no node contains seeds nothing (`noSeeds: true`).",
       "inputSchema": {
@@ -490,7 +522,7 @@
           },
           "package_name": {
             "default": "folio-core",
-            "description": "Package name. Local: 'authoring-core' | 'board' | 'bootstrap' | 'catalogue' | 'cataloguing' | 'conduct-core' | 'content-lifecycle' | 'content-lifecycle-ext' | 'crdm' | 'dsa' | 'folio-assistant-core' | 'folio-core' | 'folio-document-adapter' | 'graph-management' | 'ingestion' | 'kg-core' | 'kg-navigation' | 'large-datasets' | 'library-core' | 'library-extras' | 'process-core' | 'raci' | 'requirements-planning' | 'review' | 'sdlc-core' | 'security' | 'spec-kit' | 'theming' | 'ui-core' | 'workflow'. Reference: 'academic-research-skills'.",
+            "description": "Package name. Local: 'authoring-core' | 'board' | 'bootstrap' | 'catalogue' | 'cataloguing' | 'conduct-core' | 'content-lifecycle' | 'content-lifecycle-ext' | 'crdm' | 'dsa' | 'folio-assistant-core' | 'folio-core' | 'folio-document-adapter' | 'graph-management' | 'ingestion' | 'kg-core' | 'kg-navigation' | 'large-datasets' | 'library-core' | 'library-extras' | 'platform-ui' | 'process-core' | 'raci' | 'requirements-planning' | 'review' | 'sdlc-core' | 'security' | 'spec-kit' | 'theming' | 'ui-core' | 'work-plan' | 'workflow'. Reference: 'academic-research-skills'.",
             "type": "string"
           }
         },
@@ -776,6 +808,73 @@
       }
     },
     {
+      "name": "work_plan_prime",
+      "description": "Prime yourself with the current beans work-plan (session + cross-session/cross-agent todos). Runs `beans prime` + `beans list`; if the beans CLI is not installed, falls back to reading the committed beans/ store directly. Use at the start of a task to see open items and claim before working.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "_meta": {
+        "tool": "work-plan-prime",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/work-plan-prime.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
+      "name": "workflow_complete",
+      "description": "Record that an enabled step is done, or answer a decision, and advance the process. Refuses a step that is not currently enabled — that refusal is the point: it is what keeps work from being claimed out of order. A step inside a subprocess is named by its own id, exactly as workflow_next reported it; the call activity itself is not completable, because a phase is done when its steps are.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "node": {
+            "type": "string",
+            "description": "Node id from workflow_next, e.g. `Task_DraftEdit`"
+          },
+          "outcome": {
+            "description": "For a decision a person makes — one of the outcomes workflow_next listed",
+            "type": "string"
+          },
+          "facts": {
+            "description": "For a decision workflow_next reported as `computed by <table>`: the values it reads, e.g. { failCritical: 0, failMajor: 2 } from qa_sweep totals. The table returns the branch — do not pass `outcome` for these.",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "actor": {
+            "description": "Who you say did it, written to the history. Authorization is decided on the principal GitHub vouches for (owner or collaborator), in strict mode, before the step is recorded",
+            "type": "string"
+          },
+          "target": {
+            "description": "The content the step acted on: a block id, path or bean id",
+            "type": "string"
+          },
+          "note": {
+            "description": "What happened, for the instance history",
+            "type": "string"
+          },
+          "activities": {
+            "description": "PROV-O activities a Tool returned while doing this step, verbatim (e.g. skill_update's `activity`). Kept on the step's history entry; each must name this step as its plan",
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "instance",
+          "node"
+        ]
+      },
+      "_meta": {
+        "tool": "workflow-complete",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-complete.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
       "name": "workflow_complete",
       "description": "Record that an enabled step is done, or answer a decision, and advance the process. Refuses a step that is not currently enabled — that refusal is the point: it is what keeps work from being claimed out of order. A step inside a subprocess is named by its own id, exactly as workflow_next reported it; the call activity itself is not completable, because a phase is done when its steps are.",
       "inputSchema": {
@@ -857,8 +956,54 @@
         ]
       },
       "_meta": {
+        "tool": "workflow-gate",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-gate.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
+      "name": "workflow_gate",
+      "description": "May a step be performed right now? Ask before doing work a strict process governs. The content-agnostic processes (editing, publication, lifecycle) enforce: a step that is not enabled is refused unless a content package declares a relaxation for it in skills/<package>/workflow-policy.json. The per-content-type processes are advisory and always allow.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "activity": {
+            "type": "string",
+            "description": "Node id, e.g. `Task_Commit`"
+          },
+          "actor": {
+            "description": "Who you say would perform it. Recorded only: strict mode authorizes the principal GitHub vouches for",
+            "type": "string"
+          },
+          "target": {
+            "description": "The content it would act on: a block id, path or bean id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instance",
+          "activity"
+        ]
+      },
+      "_meta": {
         "tool": "bpmn-engine",
         "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness-tools/tools/bpmn-engine.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
+      "name": "workflow_list",
+      "description": "List the BPMN processes this folio defines, across every directory it declares as holding its knowledge graph, and any instances currently open. Use before workflow_start to see what exists.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "_meta": {
+        "tool": "workflow-list",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-list.jsonld",
         "source": "registrar"
       }
     },
@@ -891,8 +1036,63 @@
         ]
       },
       "_meta": {
+        "tool": "workflow-next",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-next.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
+      "name": "workflow_next",
+      "description": "What is enabled RIGHT NOW in an instance — the activities that may be worked, with the lane (role) that performs each and the skill that implements it, plus any decision waiting on an outcome. Derived from the diagram: a step not listed here has not been reached yet. A call activity is entered automatically, so what is reported is the leaf step, with the phases it sits inside shown as `inside:`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "type": "string",
+            "description": "Instance id, from workflow_start or workflow_list"
+          }
+        },
+        "required": [
+          "instance"
+        ]
+      },
+      "_meta": {
         "tool": "bpmn-engine",
         "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness-tools/tools/bpmn-engine.jsonld",
+        "source": "registrar"
+      }
+    },
+    {
+      "name": "workflow_start",
+      "description": "Begin a process instance for a subject (a block label, a release, a bean id). Idempotent: an instance already open for the same process and subject is returned rather than duplicated. Returns what is enabled first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "process": {
+            "type": "string",
+            "description": "File stem, e.g. `editing-hci-validation`, or the bpmn:process id"
+          },
+          "subject": {
+            "type": "string",
+            "description": "What this run is about — a block label, a release name"
+          },
+          "bean": {
+            "description": "Bean id this work is tracked under",
+            "type": "string"
+          },
+          "plan": {
+            "description": "Work plan this run is part of: the id of an epic or milestone whose `process:` tag names this process. Optional; not every process needs a plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "process",
+          "subject"
+        ]
+      },
+      "_meta": {
+        "tool": "workflow-start",
+        "toolIri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-start.jsonld",
         "source": "registrar"
       }
     },

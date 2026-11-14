@@ -20,6 +20,9 @@
       "name": "asset-extraction"
     },
     {
+      "name": "bean-coordination"
+    },
+    {
       "name": "block-actions"
     },
     {
@@ -110,6 +113,9 @@
       "name": "harness-tiles"
     },
     {
+      "name": "idle-backlog"
+    },
+    {
       "name": "index-config"
     },
     {
@@ -170,6 +176,12 @@
       "name": "package-release"
     },
     {
+      "name": "pdf-inline-viewer"
+    },
+    {
+      "name": "pending-show"
+    },
+    {
       "name": "platform-gates"
     },
     {
@@ -227,6 +239,9 @@
       "name": "serving-renderings"
     },
     {
+      "name": "session-intent"
+    },
+    {
       "name": "site-presentation-assets"
     },
     {
@@ -246,6 +261,9 @@
     },
     {
       "name": "test-engineer"
+    },
+    {
+      "name": "todo-manager"
     },
     {
       "name": "translation-manager"
@@ -1133,6 +1151,374 @@
         "x-satisfies": [
           "site-presentation-assets"
         ]
+      }
+    },
+    "/tools/bean-claim-check": {
+      "post": {
+        "operationId": "bean-claim-check",
+        "summary": "Check a bean is free, then claim it on every copy",
+        "description": "For one bean: fetch every bean copy, read the last three commits on its file, skip it if another agent committed within the window or its last note is a claim, look for an open PR naming it in every listed repository, and only then set it in-progress with a dated claim note as a plain commit on every copy. A rejected push is fetched, rebased and re-checked, never forced.",
+        "tags": [
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/bean-claim-check/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/BeanId",
+                    "description": "The bean, full or short id."
+                  },
+                  "copy": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A local checkout of a bean copy. Repeat once per copy. Defaults to the current checkout."
+                  },
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "A repository whose open PRs are searched for the id. Repeat. Defaults to the copies' repositories."
+                  },
+                  "minePr": {
+                    "$ref": "#/components/schemas/Url",
+                    "description": "The link of an open PR that is the caller's own, when resuming a bean it already holds. Every cloud thread's PR has the same author, so without this any open PR naming the bean is a skip."
+                  },
+                  "as": {
+                    "$ref": "#/components/schemas/Slug",
+                    "description": "Which agent is asking, by its name in the agents table. Defaults to `cloud`."
+                  },
+                  "session": {
+                    "$ref": "#/components/schemas/Url",
+                    "description": "The caller's session link, matched against the `Claude-Session:` trailer so a sibling thread of the same agent is told apart. Defaults to $CLAUDE_SESSION_URL."
+                  },
+                  "agents": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A JSON file of agents and their commit authors, as in the skill's input schema."
+                  },
+                  "window": {
+                    "$ref": "#/components/schemas/TimeWindow",
+                    "description": "Defaults to 24h."
+                  },
+                  "dryRun": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Check only; report `would-claim` and write nothing."
+                  },
+                  "json": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Emit `definitions.claimCheck` as JSON."
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "check": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "One of claimed, would-claim, skip-recent-commit, skip-claim-note, skip-open-pr, skip-closed or unknown, with the evidence per copy and the open PRs found. Exit 0 for claimed or would-claim, 1 for a skip, 2 for unknown. Unknown is never reported as free. With --json, `definitions.claimCheck` of schemas/skills/bean-drain/output.schema.json."
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/BeanClaimCheck",
+                      "description": "With --json, the check as one `BeanClaimCheck` record: the state, the evidence per copy and the open PRs found. Programs and BPMN gateways read this; people read `check`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/bean-claim-check.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat beans:claim-check",
+          "inProcess": {
+            "module": "scripts/bean-claim-check.ts"
+          }
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "bean-coordination"
+        ],
+        "x-selection": {
+          "when": "Before any work on a bean, when more than one agent may be draining the same store.",
+          "limits": "It sees commits and open PRs, not an agent's intent: an agent that works without committing or opening a PR is invisible until it does. One bean per call. `beans:claim` is the right claim when the store has one copy and no other agents drain it.",
+          "cost": "One fetch and one push per copy, and one paged GitHub REST listing of open PRs per repository."
+        }
+      }
+    },
+    "/tools/bean-query": {
+      "post": {
+        "operationId": "bean-query",
+        "summary": "Query the beans knowledge graph",
+        "description": "Query the beans knowledge graph using named graph analytics or arbitrary SPARQL 1.1.",
+        "tags": [
+          "todo-manager",
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/bean-query/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "named": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "Pre-defined named query (e.g. safe_drain_candidates, actionable_leaves)."
+                  },
+                  "sparql": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "Arbitrary SPARQL 1.1 SELECT query over the bean store."
+                  },
+                  "format": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "Output format: table, json, or ids."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "Query results formatted as a table, JSON or IDs, for people to read."
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/BeanQueryRows",
+                      "description": "The rows as one `BeanQueryRows` record, each variable to its value with bean IRIs shortened to ids: `structuredContent.rows` over MCP in every format, and the text itself with format json. Programs and BPMN gateways read this; people read `report`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/bean-query.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "bean_query"
+          },
+          "inProcess": {
+            "module": "src/tools/beans-prime.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "bean_query"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "todo-manager",
+          "bean-coordination"
+        ]
+      }
+    },
+    "/tools/beans-cli": {
+      "post": {
+        "operationId": "beans-cli",
+        "summary": "beans CLI",
+        "description": "Read and write the work plan with the `beans` binary. The normal mechanism when it is installed.",
+        "tags": [
+          "bean-coordination",
+          "todo-manager",
+          "pending-show",
+          "session-intent",
+          "continual-progress",
+          "idle-backlog"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/beans-cli/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/BeanId",
+                    "description": "The bean to act on; absent for list/create."
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/BeanStatus"
+                  },
+                  "body": {
+                    "$ref": "#/components/schemas/Markdown"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bean": {
+                      "$ref": "#/components/schemas/BeanId",
+                      "description": "The bean created or updated."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/beans-cli.jsonld",
+        "x-invoke": {
+          "shell": "beans"
+        },
+        "x-install": {
+          "cli": "scripts/install-beans.sh"
+        },
+        "x-requires": {
+          "runtime": [
+            "go"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "bean-coordination",
+          "todo-manager",
+          "pending-show",
+          "session-intent",
+          "continual-progress",
+          "idle-backlog"
+        ],
+        "x-selection": {
+          "when": "The normal case, once `scripts/install-beans.sh` has run. It is the only arm that can answer what an item IS or what it waits on — the fallback gives titles and statuses and nothing else — so any work that involves choosing, claiming or reasoning about an item wants this one.",
+          "limits": "Absent on a fresh container until installed, and the install can fail. It is third-party, which is why `.beans.yml` is one of the two configuration paths `check:harness-dirs` cannot remove. When it is missing, `beans-manual` writes the same store in the same layout and this reads back everything it wrote.",
+          "cost": "One install step per container, and it wants network to fetch. Nothing at runtime after that."
+        }
+      }
+    },
+    "/tools/beans-manual": {
+      "post": {
+        "operationId": "beans-manual",
+        "summary": "beans, by hand",
+        "description": "Read and write the same work plan without the CLI — `scripts/beans-fallback.ts`, or editing a bean's front matter directly. Equal standing to the CLI, not a degraded mode.",
+        "tags": [
+          "bean-coordination",
+          "todo-manager",
+          "pending-show",
+          "session-intent",
+          "continual-progress",
+          "idle-backlog"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/beans-manual/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/BeanId"
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/BeanStatus"
+                  },
+                  "body": {
+                    "$ref": "#/components/schemas/Markdown"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bean": {
+                      "$ref": "#/components/schemas/BeanId"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/beans-manual.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat beans:fallback",
+          "manual": true
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "bean-coordination",
+          "todo-manager",
+          "pending-show",
+          "session-intent",
+          "continual-progress",
+          "idle-backlog"
+        ],
+        "x-selection": {
+          "when": "When the CLI is not installed and cannot be — not a rare case: a fresh container has no `beans` on PATH. Equal standing, not a degraded mode. An agent that knows only the CLI reads the plan and touches nothing, which is exactly the 2026-09-18 session that completed two merged PRs' worth of durable work UNCLAIMED.",
+          "limits": "Titles and statuses only. It cannot say what an item is, what it depends on, or what it waits on — enough to CLAIM and to record, not enough to CHOOSE. Install `beans-cli` when the choice is the point.",
+          "cost": "None. The store is files in the repository, so this needs a filesystem and nothing else — which is also why it is the arm that survives an air-gapped or sovereign-compute layer."
+        }
       }
     },
     "/tools/bibliography-page": {
@@ -4104,6 +4490,101 @@
         "x-satisfies": [
           "graph-rendering"
         ]
+      }
+    },
+    "/tools/drain-queue": {
+      "post": {
+        "operationId": "drain-queue",
+        "summary": "Build a bean drain queue",
+        "description": "Read every bean copy, keep the drainable open beans (task, bug, feature in todo or in-progress, not blocked, not owner-held), group them by the owner already working in that area, mark the ones another agent touched within the window as skip, and list everything left out with its reason and every bean whose copies disagree. The newest updated_at wins where copies disagree.",
+        "tags": [
+          "bean-coordination",
+          "idle-backlog"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/drain-queue/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "copy": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A local checkout of a bean copy, fetched by the tool to its bean ref. Repeat once per copy. Defaults to the current checkout."
+                  },
+                  "holdings": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A JSON file mapping each owner to the bean ids it holds (`holdings` in the skill's input schema)."
+                  },
+                  "agents": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A JSON file of the agents and their commit authors (`agents` in the skill's input schema). Defaults to the table in the bean-drain skill."
+                  },
+                  "window": {
+                    "$ref": "#/components/schemas/TimeWindow",
+                    "description": "Another agent's commit within this window marks a bean skip. Defaults to 24h."
+                  },
+                  "json": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Emit the queue as JSON matching `definitions.queue`, instead of Markdown."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "queue": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "The queue: sources with the tip each was read at, one section per owner in priority order, the spare pool, the excluded beans with reasons, and the copies that disagree. With --json, the same as `definitions.queue` of schemas/skills/bean-drain/output.schema.json. A copy that cannot be fetched is an error, never an empty queue."
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/DrainQueue",
+                      "description": "With --json, the queue as one `DrainQueue` record: sources, owner sections in priority order, the spare pool, exclusions and disagreeing copies. Programs read this; people read `queue`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/drain-queue.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat beans:drain-queue",
+          "inProcess": {
+            "module": "scripts/drain-queue.ts"
+          }
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "bean-coordination",
+          "idle-backlog"
+        ],
+        "x-selection": {
+          "when": "Starting or refreshing a drain with more than one agent, or giving an idle drainer its next beans.",
+          "limits": "It proposes; it does not claim. Every bean taken from it still goes through `bean-claim-check`. Owner-held is read from the last note's wording and can miss; a person reviewing the queue is the backstop. For one agent picking one bean, `bean-query` named `safe_drain_candidates` is enough.",
+          "cost": "One fetch per copy and one `git log` per open bean. No GitHub API calls."
+        }
       }
     },
     "/tools/dublin-core-render": {
@@ -8683,6 +9164,99 @@
         ]
       }
     },
+    "/tools/open-work-lookup": {
+      "post": {
+        "operationId": "open-work-lookup",
+        "summary": "Does a path or bean exist on main or any open PR",
+        "description": "Answer whether a path, a path prefix or a bean id appears on a repository's default branch or on the head of any of its open pull requests, and where: the PR number, head branch, first commit author and creation time. A path or prefix matches files at the default branch and files each open PR changes; a bean id matches PR titles, bodies and head branch names. Repositories or PRs that could not be read are listed, so an empty answer is never mistaken for absence.",
+        "tags": [
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/open-work-lookup/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "An exact repository path."
+                  },
+                  "prefix": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A directory or file-name prefix; every path under or starting with it matches."
+                  },
+                  "bean": {
+                    "$ref": "#/components/schemas/BeanId",
+                    "description": "A bean id, full or short."
+                  },
+                  "repo": {
+                    "$ref": "#/components/schemas/RepoFullName",
+                    "description": "Repositories to search. Repeat. Defaults to the current checkout's origin."
+                  },
+                  "json": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Emit `definitions.lookup` as JSON."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lookup": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "One line per hit: repository, default branch or PR number, head, author, when, and what matched. Then what could not be read. Exactly one of path, prefix or bean must be given. With --json, `definitions.lookup` of schemas/skills/bean-drain/output.schema.json."
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/OpenWorkLookup",
+                      "description": "With --json, the hits as one `OpenWorkLookup` record, with what could not be read. Programs read this; people read `lookup`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/open-work-lookup.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat lookup:open-work",
+          "inProcess": {
+            "module": "scripts/open-work-lookup.ts"
+          }
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "bean-coordination"
+        ],
+        "x-selection": {
+          "when": "Before starting work that a sibling may already have in flight, and before publishing that a path or a piece of work does not exist.",
+          "limits": "Open PRs only, not unpushed local branches or closed PRs. It uses the GitHub REST API, not GraphQL, because cloud sessions are refused GraphQL. A PR's changed-file list is capped by the API at 3000 files; a bigger PR is listed under unread rather than guessed. For the current checkout alone, `git show origin/main:<path>` in its own command is enough.",
+          "cost": "One paged REST listing of open PRs per repository, plus one files listing per open PR for a path or prefix query."
+        }
+      }
+    },
     "/tools/openapi-ingest-rendered": {
       "post": {
         "operationId": "openapi-ingest-rendered",
@@ -9483,6 +10057,162 @@
           "when": "A listing needs a cover and the bytes are already held. It renders page 1 by default and calls that the cover, because page 1 is a determined answer and \"the cover\" is not — the same choice `pdf-pages.py` makes about sections.",
           "limits": "It decides nothing beyond the raster. WHICH documents get a cover, where the file lands, and what the catalogue must say about the derivation are the catalogue's to declare — see the content core's `scripts/gen-covers.ts`, which reads them from a layer's catalogue and refuses to write bytes for a THUMBNAIL that does not declare itself derived. It also cannot tell you whether the page it rendered IS the cover; it can only tell you it is page 1.",
           "cost": "One PyMuPDF wheel, no network at run time, and a few milliseconds per page. Deterministic — identical input gives identical bytes, which is what lets a caller gate on `--check` rather than re-deciding."
+        }
+      }
+    },
+    "/tools/pdf-viewer-embed": {
+      "post": {
+        "operationId": "pdf-viewer-embed",
+        "summary": "Embed a PDF inline in a page",
+        "description": "Print the HTML fragment that shows a PDF in the installed viewer: a lazily loaded frame whose address is derived from the page's own location (so one page works at the site root, under a project base and under a staging preview), plus plain open and download links that work without it.",
+        "tags": [
+          "pdf-inline-viewer"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/pdf-viewer-embed/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "spec": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "One JSON object: `src` (the PDF's URL, which must fall under a prefix `pdf-viewer-install` was given, or the viewer refuses it on screen), `title` (what the document is; the frame's accessible name), `route` (a regular expression over the page's pathname whose group 1 is the site root — the `folio-mount.ts` convention) and optionally `page` (open at this 1-based page). On stdin because a title and a regular expression are free text."
+                  }
+                },
+                "required": [
+                  "spec"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "fragment": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "The HTML fragment on stdout. TypeScript callers import `embed` from the module that implements this Tool instead."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/pdf-viewer-embed.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat pdf:viewer --embed"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun"
+          ],
+          "network": false
+        },
+        "x-satisfies": [
+          "pdf-inline-viewer"
+        ],
+        "x-selection": {
+          "when": "A generated page should let a reader search, page through, print or download a PDF without leaving it. Only for a document whose publication gates permit linking it: an embed is a link that also renders.",
+          "limits": "It renders PDFs only. It cannot tell whether the site it lands on had the viewer installed; when it did not, or the page is off the route, the frame says so and the plain links still work.",
+          "cost": "Nothing until the reader scrolls to it; then the viewer and worker (~3 MB, cached after the first) and the PDF itself."
+        }
+      }
+    },
+    "/tools/pdf-viewer-install": {
+      "post": {
+        "operationId": "pdf-viewer-install",
+        "summary": "Install the inline PDF viewer into a built site",
+        "description": "Download the pinned pdf.js release (legacy build), verify its SHA-256, copy the parts a site needs into `<site>/assets/vendor/pdfjs/`, and add the shim that opens `?src=` only for the allowlisted URL prefixes or the site's own origin. Nothing is committed: the viewer exists only in the built site.",
+        "tags": [
+          "pdf-inline-viewer"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/pdf-viewer-install/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "site": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "The built site directory, `_site` in both site workflows."
+                  },
+                  "allow": {
+                    "$ref": "#/components/schemas/Url",
+                    "description": "An https URL prefix the viewer may open, ending in `/`. Repeat the flag for more than one. `same-origin-only` is the explicit way to allow none — an omitted flag is a usage error, because a viewer that refuses every CDN document would otherwise ship green."
+                  },
+                  "zip": {
+                    "$ref": "#/components/schemas/RepoPath",
+                    "description": "A local copy of the release zip, for offline runs and tests. Its hash is checked exactly as a download's would be."
+                  }
+                },
+                "required": [
+                  "site",
+                  "allow"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "summary": {
+                      "$ref": "#/components/schemas/Text",
+                      "description": "One line on stdout: version, destination, file count, and the prefixes it will open. Exit 2 on a usage error; a hash mismatch or a release missing a kept path throws, refusing the install."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/pdf-viewer-install.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat pdf:viewer"
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "runtime": [
+            "bun",
+            "unzip"
+          ],
+          "network": true
+        },
+        "x-satisfies": [
+          "pdf-inline-viewer"
+        ],
+        "x-selection": {
+          "when": "A site build that publishes pages carrying `pdf-viewer-embed` fragments. Run it after the site is assembled and before any pass that walks every page.",
+          "limits": "It installs one pinned version and nothing else: moving the pin is `upstream-version-adoption`, with the hash re-measured. It does not decide which PDFs may be shown — the allowlist bounds where the viewer will FETCH from, and a page's publication gates decide whether a page embeds a document at all.",
+          "cost": "One ~7 MB download per build and ~12 MB (404 files) added to the built site. Not committed, so no clone cost."
         }
       }
     },
@@ -11779,6 +12509,79 @@
         }
       }
     },
+    "/tools/sibling-sessions": {
+      "post": {
+        "operationId": "sibling-sessions",
+        "summary": "Sibling sessions in a window",
+        "description": "List the Claude Code sessions that have committed to this repository in a time window, from the `Claude-Session:` trailer on commits across ALL branches — with each one's commit count, first and last commit, latest subject, and the branches containing its tip. The session API cannot see a sibling session, so the trailer is the only durable session identity here and a session's state is INFERRED from its branch; whether a session is still running is not knowable from a checkout and is deliberately not reported.",
+        "tags": [
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/sibling-sessions/"
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "since": {
+                    "$ref": "#/components/schemas/TimeWindow",
+                    "description": "The window: `4h`, `2d`, `1w`, or an ISO date. Defaults to one day."
+                  },
+                  "json": {
+                    "$ref": "#/components/schemas/Flag",
+                    "description": "Emit the sweep as JSON rather than the report."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "report": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "One entry per session, most recently active first, plus the number of commits examined and how many carried no trailer. A window with NO commits exits non-zero rather than reporting 'no siblings' — a sweep over nothing has not found anything."
+                    },
+                    "result": {
+                      "$ref": "#/components/schemas/SessionSweep",
+                      "description": "With --json, the sweep as one `SessionSweep` record: the sessions, the commits examined and how many carried no trailer. Programs read this; people read `report`."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/sibling-sessions.jsonld",
+        "x-invoke": {
+          "shell": "bun run cat sessions",
+          "inProcess": {
+            "module": "scripts/sibling-sessions.ts"
+          }
+        },
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "bean-coordination"
+        ]
+      }
+    },
     "/tools/site-build-local": {
       "post": {
         "operationId": "site-build-local",
@@ -13629,6 +14432,10 @@
                   "site": {
                     "$ref": "#/components/schemas/RepoPath",
                     "description": "A site being built: write the pages at their declared route under it instead of under the harness's own site directory. A repository's own site build passes it (the tools layer's `visualiser-writers.ts`), since its harness docs are a pinned mount."
+                  },
+                  "scope": {
+                    "$ref": "#/components/schemas/IdList",
+                    "description": "A scoped site build: the comma-separated instances whose per-layer Tools pages this writer writes; every other layer's Tools pages are linked on the platform's site, not copied (owner, 2026-11-13: \"other harnesses should be referenced not included\"). The combined index and API documents are still written. Passed by the tools layer's `visualiser-writers.ts`. Absent: every instance."
                   }
                 },
                 "additionalProperties": false
@@ -15185,6 +15992,464 @@
           "directory-conventions"
         ]
       }
+    },
+    "/tools/work-plan-prime": {
+      "post": {
+        "operationId": "work-plan-prime",
+        "summary": "Prime the work plan",
+        "description": "Load the current work plan for this session — the same committed beans store the CLI reads, so a fresh container starts from the plan rather than from nothing.",
+        "tags": [
+          "todo-manager",
+          "bean-coordination",
+          "session-intent",
+          "pending-show"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/work-plan-prime/"
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "priming": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "Open items, the roadmap, and what each is waiting on."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/work-plan-prime.jsonld",
+        "x-invoke": {
+          "shell": "beans prime",
+          "mcp": {
+            "tool": "work_plan_prime"
+          },
+          "inProcess": {
+            "module": "src/tools/beans-prime.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "work_plan_prime"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "todo-manager",
+          "bean-coordination",
+          "session-intent",
+          "pending-show"
+        ]
+      }
+    },
+    "/tools/workflow-complete": {
+      "post": {
+        "operationId": "workflow-complete",
+        "summary": "Complete a step",
+        "description": "Record an enabled step as done — or supply the facts a decision gateway is computed from — and advance the layer. Refuses a step that is not enabled.",
+        "tags": [
+          "process-state",
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/workflow-complete/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "instance": {
+                    "$ref": "#/components/schemas/InstanceId"
+                  },
+                  "node": {
+                    "$ref": "#/components/schemas/NodeId"
+                  },
+                  "outcome": {
+                    "$ref": "#/components/schemas/NodeId",
+                    "description": "Which branch a plain gateway takes. Refused at a gateway backed by a decision table — asserting the answer would defeat the table."
+                  },
+                  "facts": {
+                    "$ref": "#/components/schemas/DecisionFacts",
+                    "description": "Facts a DMN table is evaluated against. Structured, so it is never a command-line word."
+                  },
+                  "actor": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "Who you say performed the step, written to the history. Authorization is decided on the principal GitHub vouches for, in strict mode (issue #1207)."
+                  },
+                  "target": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "The content the step acted on, for the access check."
+                  },
+                  "note": {
+                    "$ref": "#/components/schemas/Markdown",
+                    "description": "Appended to the layer's bean."
+                  },
+                  "activities": {
+                    "$ref": "#/components/schemas/ProvActivity",
+                    "description": "PROV-O activities a Tool returned while doing this step, verbatim (e.g. skill_update's `activity`). Kept on the step's history entry; each must name this step as its plan."
+                  }
+                },
+                "required": [
+                  "instance",
+                  "node"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "position": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "The layer's new position, and what is enabled next."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-complete.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "workflow_complete"
+          },
+          "inProcess": {
+            "module": "src/tools/workflow.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "workflow_complete"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "process-state",
+          "bean-coordination"
+        ]
+      }
+    },
+    "/tools/workflow-gate": {
+      "post": {
+        "operationId": "workflow-gate",
+        "summary": "May this step be performed?",
+        "description": "Ask before doing work a strict process governs. The content-agnostic processes refuse a step that is not enabled; the per-content-type ones advise.",
+        "tags": [
+          "process-state"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/workflow-gate/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "instance": {
+                    "$ref": "#/components/schemas/InstanceId"
+                  },
+                  "activity": {
+                    "$ref": "#/components/schemas/NodeId"
+                  },
+                  "actor": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "Who you say would perform it. Recorded only: strict mode authorizes the principal GitHub vouches for (issue #1207)."
+                  },
+                  "target": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "The content it would act on, for the access check."
+                  }
+                },
+                "required": [
+                  "instance",
+                  "activity"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "verdict": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "Permitted, refused with the reason, or advisory — and the task-authorization verdict."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-gate.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "workflow_gate"
+          },
+          "inProcess": {
+            "module": "src/tools/workflow.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "workflow_gate"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "process-state"
+        ]
+      }
+    },
+    "/tools/workflow-list": {
+      "post": {
+        "operationId": "workflow-list",
+        "summary": "List processes",
+        "description": "The BPMN processes this layer defines, and the layers currently open against them.",
+        "tags": [
+          "process-state"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/workflow-list/"
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "processes": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "Each process, its policy, and its open layers."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-list.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "workflow_list"
+          },
+          "inProcess": {
+            "module": "src/tools/workflow.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "workflow_list"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "process-state"
+        ]
+      }
+    },
+    "/tools/workflow-next": {
+      "post": {
+        "operationId": "workflow-next",
+        "summary": "What is enabled now",
+        "description": "The activities a layer may work right now, each with the lane that owns it and the skill that implements it.",
+        "tags": [
+          "process-state"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/workflow-next/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "instance": {
+                    "$ref": "#/components/schemas/InstanceId"
+                  }
+                },
+                "required": [
+                  "instance"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "$ref": "#/components/schemas/Markdown",
+                      "description": "Activity, lane and skill for each enabled step."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-next.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "workflow_next"
+          },
+          "inProcess": {
+            "module": "src/tools/workflow.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "workflow_next"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "process-state"
+        ]
+      }
+    },
+    "/tools/workflow-start": {
+      "post": {
+        "operationId": "workflow-start",
+        "summary": "Start a process instance",
+        "description": "Open an instance of a process for a subject. Idempotent: an existing layer for the same subject is returned rather than duplicated.",
+        "tags": [
+          "process-state",
+          "bean-coordination"
+        ],
+        "externalDocs": {
+          "description": "The Tool's page",
+          "url": "cat-harness/workflow-start/"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "process": {
+                    "$ref": "#/components/schemas/ProcessId"
+                  },
+                  "subject": {
+                    "$ref": "#/components/schemas/Text",
+                    "description": "What the layer is about — a block label, a release, a bean."
+                  },
+                  "bean": {
+                    "$ref": "#/components/schemas/BeanId",
+                    "description": "The work-plan item this layer carries out."
+                  },
+                  "plan": {
+                    "$ref": "#/components/schemas/BeanId",
+                    "description": "The work plan this layer is part of: an epic or milestone whose `process:` tag names this process. Not every process needs one."
+                  }
+                },
+                "required": [
+                  "process",
+                  "subject"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The Tool's declared outputs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "instance": {
+                      "$ref": "#/components/schemas/InstanceId",
+                      "description": "The layer opened or found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-tool-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tools/workflow-start.jsonld",
+        "x-invoke": {
+          "mcp": {
+            "tool": "workflow_start"
+          },
+          "inProcess": {
+            "module": "src/tools/workflow.ts"
+          }
+        },
+        "x-mcp-tools": [
+          "workflow_start"
+        ],
+        "x-install": {
+          "none": true
+        },
+        "x-requires": {
+          "network": false
+        },
+        "x-satisfies": [
+          "process-state",
+          "bean-coordination"
+        ]
+      }
     }
   },
   "components": {
@@ -15205,6 +16470,228 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
         "description": "An ArchiMate model's id in cat-archimate.config.json, e.g. 0.2.0",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/ArchimateModelId"
+      },
+      "BeanClaimCheck": {
+        "type": "object",
+        "properties": {
+          "bean": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "claimed",
+              "would-claim",
+              "skip-recent-commit",
+              "skip-claim-note",
+              "skip-open-pr",
+              "skip-closed",
+              "unknown"
+            ]
+          },
+          "copies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repo": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "recent": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "author": {
+                        "type": "string"
+                      },
+                      "at": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "session": {
+                        "type": "string"
+                      },
+                      "agent": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "author",
+                      "at",
+                      "subject",
+                      "agent"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "status": {
+                  "type": "string"
+                },
+                "claimCommit": {
+                  "type": "string"
+                },
+                "pushAttempts": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "repo",
+                "ref",
+                "recent"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "openWork": {
+            "type": "object",
+            "properties": {
+              "query": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "path",
+                      "prefix",
+                      "bean"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "checkedAt": {
+                "type": "string"
+              },
+              "hits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "repo": {
+                      "type": "string"
+                    },
+                    "where": {
+                      "type": "string",
+                      "enum": [
+                        "default-branch",
+                        "open-pr"
+                      ]
+                    },
+                    "pr": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "head": {
+                      "type": "string"
+                    },
+                    "author": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "match": {
+                      "type": "string",
+                      "enum": [
+                        "file",
+                        "title",
+                        "body",
+                        "branch"
+                      ]
+                    },
+                    "paths": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "repo",
+                    "where",
+                    "match"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "unread": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "query",
+              "checkedAt",
+              "hits",
+              "unread"
+            ],
+            "additionalProperties": false,
+            "description": "Where a path, prefix or bean id exists on main or an open PR head; `unread` names what could not be read."
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bean",
+          "state",
+          "copies",
+          "openWork",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "description": "Whether a bean was claimed, or why it was skipped, with what each copy of the work plan showed.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/BeanClaimCheck"
+      },
+      "BeanId": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$",
+        "description": "A bean identifier, e.g. folio-assistant-1dfh",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/BeanId"
+      },
+      "BeanQueryRows": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": "The rows a bean SPARQL query returned, each variable to its value; bean IRIs are shortened to bean ids.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/BeanQueryRows"
+      },
+      "BeanStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "todo",
+          "in-progress",
+          "completed",
+          "scrapped"
+        ],
+        "description": "A bean status. Exactly what `beans update --status` accepts.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/BeanStatus"
       },
       "Branch": {
         "type": "string",
@@ -15259,6 +16746,21 @@
         "description": "A non-negative count — how many of something, or how many to show. Zero is a real answer.",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/Count"
       },
+      "DecisionFacts": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ]
+        },
+        "description": "Facts for a DMN decision table. Scalar values only. Not admissible as a command-line argument.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/DecisionFacts"
+      },
       "DelimitedTextPath": {
         "type": "string",
         "minLength": 1,
@@ -15272,6 +16774,232 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
         "description": "A library document id, e.g. WPR-RDO-2020-003-eng",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/DocId"
+      },
+      "DrainQueue": {
+        "type": "object",
+        "properties": {
+          "refreshedAt": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repo": {
+                  "type": "string"
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "sha": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "repo",
+                "ref",
+                "sha"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "byOwner": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "owner": {
+                  "type": "string"
+                },
+                "beans": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "priority": {
+                        "type": "string"
+                      },
+                      "lastTouch": {
+                        "type": "object",
+                        "properties": {
+                          "author": {
+                            "type": "string"
+                          },
+                          "at": {
+                            "type": "string"
+                          },
+                          "agent": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "author",
+                          "at",
+                          "agent"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "skip": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "status",
+                      "type",
+                      "priority"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "owner",
+                "beans"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "spare": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "lastTouch": {
+                  "type": "object",
+                  "properties": {
+                    "author": {
+                      "type": "string"
+                    },
+                    "at": {
+                      "type": "string"
+                    },
+                    "agent": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "author",
+                    "at",
+                    "agent"
+                  ],
+                  "additionalProperties": false
+                },
+                "skip": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "status",
+                "type",
+                "priority"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "excluded": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "reason": {
+                  "type": "string",
+                  "enum": [
+                    "goal",
+                    "epic",
+                    "blocked",
+                    "completed",
+                    "scrapped",
+                    "draft",
+                    "owner-held"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "disagreements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "byCopy": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "used": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "byCopy",
+                "used"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "refreshedAt",
+          "sources",
+          "byOwner",
+          "spare",
+          "excluded",
+          "disagreements"
+        ],
+        "additionalProperties": false,
+        "description": "The beans that can be drained, by owner, with what was excluded and why.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/DrainQueue"
       },
       "FilesystemPath": {
         "type": "string",
@@ -15544,6 +17272,103 @@
         "pattern": "^[A-Za-z_][A-Za-z0-9_-]*$",
         "description": "A node id within a BPMN process, e.g. A_Implement",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/NodeId"
+      },
+      "OpenWorkLookup": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "path",
+                  "prefix",
+                  "bean"
+                ]
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "checkedAt": {
+            "type": "string"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "repo": {
+                  "type": "string"
+                },
+                "where": {
+                  "type": "string",
+                  "enum": [
+                    "default-branch",
+                    "open-pr"
+                  ]
+                },
+                "pr": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "head": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "match": {
+                  "type": "string",
+                  "enum": [
+                    "file",
+                    "title",
+                    "body",
+                    "branch"
+                  ]
+                },
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "repo",
+                "where",
+                "match"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "unread": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "query",
+          "checkedAt",
+          "hits",
+          "unread"
+        ],
+        "additionalProperties": false,
+        "description": "Where a path, prefix or bean id exists on main or an open PR head; `unread` names what could not be read.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/OpenWorkLookup"
       },
       "PackageName": {
         "type": "string",
@@ -15851,6 +17676,73 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9:._-]*$",
         "description": "A package script name",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/ScriptName"
+      },
+      "SessionSweep": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "string"
+          },
+          "commitsScanned": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "session": {
+                  "type": "string"
+                },
+                "commits": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "first": {
+                  "type": "string"
+                },
+                "last": {
+                  "type": "string"
+                },
+                "branches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "latestSubject": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "session",
+                "commits",
+                "first",
+                "last",
+                "branches",
+                "latestSubject"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "untrailered": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "since",
+          "commitsScanned",
+          "sessions",
+          "untrailered"
+        ],
+        "additionalProperties": false,
+        "description": "The sessions that committed in a window, read from Claude-Session trailers.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/SessionSweep"
       },
       "skill.content-test.input": {
         "title": "Content Test Input",
@@ -16873,6 +18765,12 @@
         "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?Z$",
         "description": "An ISO-8601 UTC instant, e.g. 2026-09-20T14:03:11Z",
         "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/Timestamp"
+      },
+      "TimeWindow": {
+        "type": "string",
+        "pattern": "^(\\d{1,4}[hdw]|\\d{4}-\\d{2}-\\d{2})$",
+        "description": "A history window: a count with a unit (4h, 2d, 1w) or an ISO date.",
+        "x-iri": "https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/TimeWindow"
       },
       "TranslationLevel": {
         "type": "string",

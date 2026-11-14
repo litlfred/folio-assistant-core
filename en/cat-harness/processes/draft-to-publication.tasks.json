@@ -170,7 +170,8 @@
    "laneHref": "draft-to-publication.html#lane-Lane_Build",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -240,7 +241,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -332,7 +334,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -428,7 +431,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -513,6 +517,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -769,7 +774,8 @@
    "laneHref": "draft-to-publication.html#lane-Lane_PubMgr",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     },
     {
      "name": "content-feedback",
@@ -923,7 +929,8 @@
    "laneHref": "draft-to-publication.html#lane-Lane_PubMgr",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "role": {
@@ -975,7 +982,8 @@
    "laneHref": "draft-to-publication.html#lane-Lane_PubMgr",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {

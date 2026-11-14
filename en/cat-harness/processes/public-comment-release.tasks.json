@@ -201,7 +201,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -285,6 +286,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -356,6 +358,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -465,6 +468,7 @@
      },
      {
       "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
      },
      {
@@ -548,7 +552,8 @@
       "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",

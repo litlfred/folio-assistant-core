@@ -55,10 +55,17 @@
 /* The theme's own stacks (just-the-docs sets `-apple-system, …` on body and
  * `"SFMono-Regular", …` on code) and the browser's Arial on form controls are
  * brought onto the same tokens, so the sidebar, the page and a search box are
- * one face. */
-body { font-family: var(--fa-font-sans); }
-code, kbd, pre, samp, tt { font-family: var(--fa-font-mono); }
-button, input, select, textarea { font-family: inherit; }
+ * one face.
+ *
+ * NOT ON A REPLICA. A library page that `folio-mount.ts` mounts the folio on
+ * (`data-fa-folio-mount`) is an ingested copy whose own type is the point, and
+ * this file reaches it too: unscoped, these three rules repainted every element
+ * of who-iris in system-ui (`folio-mount.e2e`). `:where()` keeps each rule at
+ * the specificity of its bare element selector, so it still wins over the theme
+ * by order and loses, as before, to anything more specific. */
+:where(html:not(:has(script[data-fa-folio-mount]))) body { font-family: var(--fa-font-sans); }
+:where(html:not(:has(script[data-fa-folio-mount]))) :is(code, kbd, pre, samp, tt) { font-family: var(--fa-font-mono); }
+:where(html:not(:has(script[data-fa-folio-mount]))) :is(button, input, select, textarea) { font-family: inherit; }
 
 /*
  * Docs-site UI affordances: the header QR toggle, and zoom / full-width
@@ -2587,6 +2594,48 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   font-size: var(--fa-text-sm);
 }
 
+/* PROMINENT (owner, 2026-11-13: "need VERY prominent disclaimer when any
+   translated text on page has not been human translated/adjudicated"),
+   superseding the one-line form above for an unreviewed translation. It is
+   full width, first in the content, and in the page's language then English.
+   The colour pair is the same `--fa-trwarn-*` tokens, so both schemes keep
+   their measured contrast; only the weight changes. */
+.fa-translation-warning--prominent {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border-width: 3px;
+  border-inline-start-width: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.fa-translation-warning--prominent p { margin: 0 0 0.35rem; }
+
+.fa-translation-warning__title { font-size: 1.25rem; }
+
+.fa-translation-warning--prominent .fa-translation-warning__text {
+  white-space: normal;
+  overflow: visible;
+}
+
+.fa-translation-warning__lang + .fa-translation-warning__lang {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--fa-trwarn-border);
+  font-size: 0.95rem;
+}
+
+.fa-translation-warning__source {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.fa-translation-warning__more { margin-top: 0.5rem; font-size: var(--fa-text-sm); }
+
 /* The summary IS the notice, so it carries the whole line and stays on one
    where there is room. `list-style: none` plus the WebKit pseudo-element:
    Safari ignores the former on a summary and keeps drawing its own triangle,
@@ -4550,9 +4599,11 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
    overflows SIDEWAYS into columns nobody can see, while a grid overflows
    down into the body's own scroll. A phone keeps the single column, and
    the body scrolls.
-   60rem, not wider: at 1280 it leaves empty glass either side to grab and
-   pan the folio by (`glass-pop-outs.e2e.ts` presses at x = 1150). */
-.fa-glass-panel[data-fa-panel="glass-settings"] { max-width: 60rem; padding-bottom: 0.5rem; }
+   62rem, not wider: at 1280 it leaves empty glass either side to grab and
+   pan the folio by (x 144-1136). It was 60rem until the system font stack
+   (b8afe1f): in a wider face such as DejaVu, Theme's hints wrapped and put
+   the actions under the dock at 1280x800 (`glass-panel-in-view.e2e.ts`). */
+.fa-glass-panel[data-fa-panel="glass-settings"] { max-width: 62rem; padding-bottom: 0.5rem; }
 .fa-glass-settings-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.5rem; }
 .fa-glass-settings-actions .fa-glass-settings-note { flex: 1 1 100%; margin: 0.25rem 0 0; }
 @media (min-width: 48rem) {
@@ -4588,7 +4639,13 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-setting:nth-of-type(2) { grid-area: avatars; }
   .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-setting:nth-of-type(3) { grid-area: opacity; align-self: start; }
   .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-settings-actions { grid-area: actions; margin-top: 0.25rem; gap: 0.5rem; }
-  .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-settings-actions .fa-glass-reset { margin: 0; }
+  /* The three actions in one row, in the same font one step down the scale
+     (owner, 2026-11-13: "use same font, but scale as needed"). At the
+     browser's button size their labels outgrew 60rem in DejaVu Sans, the system-ui of
+     a Linux runner, and the third wrapped to a second row that put "Back to
+     the default glass" under the dock at 1280x800. Their height is still the
+     2.75rem touch target. */
+  .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-settings-actions .fa-glass-reset { margin: 0; font-size: var(--fa-text-xs); }
   .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-settings-actions .fa-glass-settings-note { flex: 0 1 auto; margin: 0; }
 }
 .fa-glass-panel-head { display: flex; align-items: center; gap: 0.5rem; }
@@ -4720,6 +4777,11 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
  * and ends in an ellipsis rather than running underneath it. */
 @media not all and (min-width: 50rem) {
   .site-header .site-title {
+    /* The width below is the WHOLE box, padding included, or the padding
+       carries the box past the pill: content-box at 390px ended it at 161px
+       against a pill from 157px. The theme sets border-box globally; this
+       does not lean on it. */
+    box-sizing: border-box;
     max-width: calc(50vw - 3rem);
     overflow: hidden;
     text-overflow: ellipsis;

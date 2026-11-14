@@ -251,7 +251,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -268,7 +269,8 @@
    "laneHref": "editing-hci-validation.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "bean-coordination"
+     "name": "bean-coordination",
+     "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
     }
    ],
    "calls": {
@@ -294,7 +296,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -461,7 +464,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -536,7 +540,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -579,7 +584,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -746,7 +752,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1061,7 +1068,8 @@
    "laneHref": "editing-hci-validation.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "role": {
@@ -1082,7 +1090,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -1249,7 +1258,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1332,7 +1342,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -1371,7 +1382,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -1538,7 +1550,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1613,7 +1626,8 @@
       "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -1656,7 +1670,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -1823,7 +1838,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -1882,7 +1898,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -2049,7 +2066,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
@@ -2086,7 +2104,8 @@
    "laneHref": "editing-hci-validation.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "todo-manager"
+     "name": "todo-manager",
+     "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
     }
    ],
    "calls": {
@@ -2112,7 +2131,8 @@
       "href": "../../../en/cat-harness/processes/skills/ask-the-person.html"
      },
      {
-      "name": "bean-coordination"
+      "name": "bean-coordination",
+      "href": "../../../en/cat-harness/processes/skills/bean-coordination.html"
      },
      {
       "name": "before-after-preview",
@@ -2279,7 +2299,8 @@
       "href": "../../../en/cat-harness/processes/skills/test-data-sets.html"
      },
      {
-      "name": "todo-manager"
+      "name": "todo-manager",
+      "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
       "name": "translation-manager",
