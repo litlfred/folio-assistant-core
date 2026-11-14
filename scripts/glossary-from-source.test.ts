@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { candidates, merge, readRows, sectionKind, splitAcronym, termId, termSection } from "./glossary-from-source.ts";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { candidates, merge, readRows, rowsOf, sectionKind, sectionsUnder, splitAcronym, termId, termSection } from "./glossary-from-source.ts";
 
 const terms = `| Term | Definition |
 | --- | --- |
@@ -67,5 +70,58 @@ describe("glossary-from-source (folio-assistant-core#498)", () => {
     expect(again.terms.find((t) => t.id === "deploy")!.definition).toBe("Ship it.");
     expect(again.terms.length).toBe(first.terms.length);
     expect(merge(first, found, { id: "s", title: "S" })).toEqual(first);
+  });
+});
+
+// An L1 section as a PDF prints a glossary: term on its own line(s), definition below (9789240116191-eng).
+const l1 = (title: string, body: string) => `---\ndoc_id: d\nsection_id: sec-002\nsection_title: "${title}"\nsource_pdf: d.pdf\n---\n${body}`;
+const stackedGlossary = l1("Glossary", [
+  "Glossary",
+  "Data element",
+  "A unit of data that has a specific and precise meaning.",
+  "Digitization",
+  "The process of converting and organizing data from paper records into a digital format for easier ",
+  "entry, storage and retrieval. Digitization is the initial step towards digital transformation.1, 2",
+  "Generic product ",
+  "or product information",
+  "In this handbook, the terms 'generic product' or 'product information' pertain to the general details.",
+].join("\n"));
+const stackedAbbrev = l1("Abbreviations and acronyms", ["AEFI", "Adverse effects following immunisation", "DH&I WG", "Digital Health and Interoperability Working Group", "eLMIS", "Electronic logistic management information system"].join("\n"));
+
+describe("glossaries as a PDF prints them (re-ingest pilot, 2026-11-14)", () => {
+  test("stackedTermsRead", () => {
+    const rows = rowsOf(stackedGlossary, "terms");
+    expect(rows.map((r) => r.head)).toEqual(["Data element", "Digitization", "Generic product or product information"]);
+    expect(rows[1]!.body).toBe("The process of converting and organizing data from paper records into a digital format for easier entry, storage and retrieval. Digitization is the initial step towards digital transformation.");
+    expect(rows[0]!.line).toBe(8);
+  });
+
+  test("stackedAcronymsFoldIntoTerms", () => {
+    const rows = rowsOf(stackedAbbrev, "abbreviations");
+    expect(rows.map((r) => [r.head, r.body])).toEqual([
+      ["AEFI", "Adverse effects following immunisation"],
+      ["DH&I WG", "Digital Health and Interoperability Working Group"],
+      ["eLMIS", "Electronic logistic management information system"],
+    ]);
+  });
+
+  test("titleWordsOpenTheTitle", () => {
+    expect(sectionKind(l1("Step 2. Define coding scheme, data definitions and structures", ""))).toBeUndefined();
+    expect(sectionKind(l1("II.\u0003Definition of key terms", ""))).toBe("terms");
+    expect(sectionKind(l1("Annex G. Definition of terms used in the Toolkit", ""))).toBe("terms");
+    expect(sectionKind(l1("Annex 5. Standardized definitions used in this guide", ""))).toBe("terms");
+    expect(sectionKind(l1("List of abbreviations", ""))).toBe("abbreviations");
+    expect(sectionKind(l1("Defining the DHSC architecture", ""))).toBeUndefined();
+  });
+
+  test("titledSectionWithNoRowIsAnInput", () => {
+    // The arm then reports partial ("found but no term read"), never "none in the source".
+    const dir = join(mkdtempSync(join(tmpdir(), "glo-")), "sections");
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, "sec-002-glossary.md"), l1("Glossary", "A paragraph of prose with no term layout in it at all, ending here."));
+    writeFileSync(join(dir, "sec-003-intro.md"), l1("Introduction", "Prose."));
+    const inputs = sectionsUnder(dir, dir);
+    expect(inputs.map((i) => [i.path, i.kind])).toEqual([["sec-002-glossary.md", "terms"]]);
+    expect(candidates(inputs)).toEqual([]);
   });
 });
