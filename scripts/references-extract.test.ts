@@ -85,6 +85,16 @@ describe("listsOf", () => {
     expect(lists).toHaveLength(1);
     expect(lists[0]!.entries.map((e) => e.n)).toEqual([1, 2, 3]);
   });
+  test("a whole References section that opens with the previous page's footnote reads the list after its heading", () => {
+    // 9789240101197-eng, sec-031: the inferred split puts footnote 2 of the page before above the heading,
+    // and the list was read as that one line.
+    const { root, dir, w } = entry();
+    w("sec-031-references.md", section("References", "2\t All linked references were accessed on 15 October 2024.\nReferences\n1.\t\nDigital implementation investment guide (DIIG). Geneva: World Health Organization; 2020 (https://iris.who.int/handle/10665/334306).\n2.\t\nDigital Health & Interoperability Working Group [website]. Digital Square; 2024 (https://wiki.digitalsquare.io/).\n3. \t\nDigitization [website]. Gartner; 2024 (https://www.gartner.com/en/glossary/digitization)."));
+    const lists = listsOf(root, dir);
+    expect(lists).toHaveLength(1);
+    expect(lists[0]!.entries.map((e) => e.n)).toEqual([1, 2, 3]);
+    expect(lists[0]!.entries[0]!.text).toStartWith("Digital implementation investment guide");
+  });
   test("headings in the six UN languages", () => {
     const { root, dir, w } = entry();
     for (const [i, h] of ["Références", "Referencias", "Литература", "المراجع", "参考文献"].entries())

@@ -56,6 +56,11 @@ Feature: a document's reference lists split into its own bibliography
     When an entry is read one page per section and a list runs onto the next page
     Then it is one list, read once
 
+  @test:scripts/references-extract.test.ts::listsOf::a_whole_References_section_that_opens_with_the_previous_page's_footnote_reads_the_list_after_its_heading
+  Scenario: a References section that opens with a stray footnote
+    When an inferred split puts the page before's footnote above the References heading
+    Then the list is read from after the heading, every entry of it
+
   @test:scripts/references-extract.test.ts::listsOf::headings_in_the_six_UN_languages
   Scenario: headings in other languages
     When the heading is Références, Referencias, Литература, المراجع or 参考文献
