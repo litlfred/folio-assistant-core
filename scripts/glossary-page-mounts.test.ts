@@ -3,10 +3,12 @@
  * `cat-tools-sm8r`, item 4, plan step 3; owner, 2026-11-13, "own layers
  * only"): they are committed in that layer's own repository at its pin.
  */
-import { describe, expect, test } from "bun:test";
+import { afterAll, describe, expect, test } from "bun:test";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { inMount, isMountedScheme } from "./glossary-page.ts";
+import { inMount, isMountedScheme, ownedFilesUnder, writeAt } from "./glossary-page.ts";
 
 const root = "/checkout";
 const mounts = [join(root, "core-layer"), join(root, "ig-layer")];
@@ -31,5 +33,33 @@ describe("isMountedScheme", () => {
   });
   test("any other file in a mount (the site's pages, step 4) is not this filter's", () => {
     expect(isMountedScheme(join(root, "core-layer", "docs", "page.md"), generated, mounts)).toBe(false);
+  });
+});
+
+// The site's pages and SKOS (bean `cat-tools-sm8r`, item 4): a MOUNTED
+// site's output goes to the layer's output root, never into the mount.
+describe("the site's pages, at the output root", () => {
+  const co = mkdtempSync(join(tmpdir(), "glossary-out-"));
+  afterAll(() => rmSync(co, { recursive: true, force: true }));
+  const mounted = new Map([["site-layer", "site-layer"]]);
+  const site = join(co, "site-layer", "docs");
+  const twin = join(co, "build", "layers", "site-layer", "docs");
+  const page = join(site, "en", "glossary", "index.md");
+
+  test("a page in a mounted site is written at the output root", () => {
+    expect(writeAt(page, co, mounted)).toBe(join(twin, "en", "glossary", "index.md"));
+  });
+  test("a page in no mount is written where it is", () => {
+    const own = join(co, "own-site", "x.md");
+    expect(writeAt(own, co, mounted)).toBe(own);
+  });
+  test("orphans come from the pinned site until an output root exists, then from it alone", () => {
+    mkdirSync(join(site, "en", "glossary", "old"), { recursive: true });
+    writeFileSync(join(site, "en", "glossary", "old", "index.md"), "pinned");
+    const dir = join(site, "en", "glossary");
+    expect(ownedFilesUnder(dir, co, mounted)).toEqual([join(dir, "old", "index.md")]);
+    mkdirSync(join(twin, "en", "glossary"), { recursive: true });
+    writeFileSync(join(twin, "en", "glossary", "index.md"), "computed");
+    expect(ownedFilesUnder(dir, co, mounted)).toEqual([join(dir, "index.md")]);
   });
 });
