@@ -2189,6 +2189,7 @@ if (import.meta.main) {
   // an asset type that is no longer extracted is an orphan.
   // Each locale's glossary directory is this generator's own too (bean c592):
   // a locale whose last .po is removed leaves an orphan page.
+  const siteTwin = outputTwinOf(REPO, SITE, MOUNTED);
   const localeDirs = [...new Set([SITE, writeAt(SITE)].filter((d) => existsSync(d)).flatMap((d) => readdirSync(d, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name)))]
     .map((name) => (ROUTE_SEGMENT.test(name) ? dirname(localePagePath(name)) : undefined))
     .filter((d): d is string => d !== undefined && existsSync(readPathAt(REPO, join(d, "index.md"), MOUNTED)));
@@ -2198,6 +2199,11 @@ if (import.meta.main) {
   const legacyDir = visualiserPageDir(SITE, forwardingParts(PARTS));
   const orphans = [...new Set([...ownedFilesUnder(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().filter((g) => !inMount(g)).flatMap(filesUnder)), ...ownedFilesUnder(dirname(PAGE)), ...localeDirs.flatMap((d) => ownedFilesUnder(d)), ...ownedFilesUnder(legacyDir)])]
     .filter((p) => !files.has(p));
+  const computedHere = siteTwin !== undefined && existsSync(siteTwin);
+  const pinnedOrphans = computedHere
+    ? [...new Set([...filesUnder(ASSETS), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)])]
+        .filter((p) => !files.has(p) && writeAt(p) !== p && !existsSync(writeAt(p)))
+    : [];
   const stale = [...files].filter(([p, s]) => differs(p, s)).map(([p]) => p);
   const n = counts(c);
   const summary = `${n.authored} authored + ${n.extracted} extracted terms, ${c.glossaries.length} scheme(s), ${c.ledgers.length} swimlane ledger(s), ${c.external.length} external scheme(s)`;
@@ -2208,6 +2214,10 @@ if (import.meta.main) {
   }
   if (over.length) process.exit(1);
   if (check) {
+    // Once this checkout has computed the site at the mounted layer's output
+    // root, an orphan left only in the pinned mount is that layer's to drop
+    // at its next pin, which no run here can do: reported, never charged.
+    for (const p of pinnedOrphans) console.log(`! orphan in the pinned mount, left until the layer is re-pinned: ${relative(REPO, p)}`);
     if (stale.length || orphans.length) {
       for (const p of stale) console.error(`✗ stale: ${relative(REPO, p)}`);
       for (const p of orphans) console.error(`✗ orphan: ${relative(REPO, p)}`);
@@ -2222,8 +2232,10 @@ if (import.meta.main) {
     mkdirSync(dirname(at), { recursive: true });
     writeFileSync(at, s);
   }
-  // An orphan is this generator's own output for a scheme that is gone.
+  // An orphan is this generator's own output for a scheme that is gone. It is
+  // removed where this run writes; one in a pinned mount stays until re-pin.
   for (const p of orphans) rmSync(writeAt(p), { force: true });
+  for (const p of pinnedOrphans) console.log(`! ${relative(REPO, p)} is an orphan in the pinned mount — left until the layer is re-pinned`);
   // ONE WRITE IS NOT A FIXED POINT, so render again until nothing moves.
   //
   // `mappingStates` runs `check:term-mapping`, which reads every
