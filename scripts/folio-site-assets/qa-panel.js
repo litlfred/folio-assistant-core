@@ -4,6 +4,14 @@
 // `qa/<chapter>/<block>.json` (folio-site-qa-report/v1, folio-site-blocks.ts):
 // each criterion's MOST RECENT verdict, who gave it and when, and whether the
 // block's files have changed since (stale). Milnor exposition comes first.
+//
+// On a preview build that carries `preview-qa.json` beside its pages
+// (preview-qa/v1, cat-harness-tools scripts/preview-qa.ts, written by
+// stage-local and folio-site-publish), the panel opens with "This change
+// (preview)": the tests and gates in the change's dependency cone, each judged
+// against main's stored answer, and the main QA report follows below it
+// (owner, 2026-11-14). No file (the main site, or an older build) shows the
+// main report alone. The report is advisory; the release tier judges merges.
 (() => {
   const el = (tag, attrs = {}, text) => {
     const e = document.createElement(tag);
@@ -23,7 +31,66 @@
   const blob = (s, p) => (s ? `https://github.com/${s.repository}/blob/${s.ref}/${p}` : null);
   const linkOrCode = (s, p) => { const u = blob(s, p); return u ? el("a", { href: u, target: "_blank", rel: "noopener" }, p) : el("code", {}, p); };
 
-  const open = ({ report, error, title, lean, source, leanStatus }) => {
+  // ── "This change (preview)": the cone run, read once per page ──
+  let previewReport;
+  const loadPreview = (url) => {
+    if (!url) return Promise.resolve(null);
+    // Absent (404) or unreadable is "not a preview": the main report alone.
+    previewReport ??= fetch(url, { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => (j && j.$schema === "preview-qa/v1" ? j : null))
+      .catch(() => null);
+    return previewReport;
+  };
+  const DELTA = { new: "new failure", fixed: "fixed", both: "changed failure", still: "still failing", clean: "clean", unknown: "main unknown" };
+  const ORDER = ["new", "both", "unknown", "still", "fixed", "clean"];
+  const previewSection = (r) => {
+    const sec = el("section", { class: "qa-preview", "aria-label": "This change (preview)" });
+    sec.append(el("h3", {}, "This change (preview)"));
+    const short = (x) => (x || "").slice(0, 7);
+    if (r.notRun || !r.cone) {
+      sec.append(el("p", { class: "qa-meta" }, `commit ${short(r.head)} · not run. No cone run is recorded for this commit: label the PR \`preview\` to run the tests and gates in the change's dependency cone, judged against main.`));
+      return sec;
+    }
+    const meta = el("p", { class: "qa-meta" });
+    meta.append(`commit ${short(r.head)} against ${r.base} · ${r.main && r.main.available ? `main ${short(r.main.sha) || "answer"}` : "main's answer not stored"}`);
+    if (r.run) { meta.append(" · "); meta.append(el("a", { href: r.run, target: "_blank", rel: "noopener" }, "cone run")); }
+    sec.append(meta);
+    const c = r.counts || {};
+    const tests = r.cone.tests.kind === "all" ? "every test (none run here; the release tier runs the suite)" : `${r.cone.tests.files.length} test file(s)`;
+    sec.append(el("p", { class: "qa-meta" }, `The cone: ${r.cone.changed.length} changed path(s), ${tests}, ${r.cone.gates.length} gate(s); ${r.cone.outside} gate(s) outside it. ` +
+      (ORDER.filter((k) => c[k]).map((k) => `${c[k]} ${DELTA[k]}`).join(", ") || "nothing in the cone to run") + "."));
+    if (r.results && r.results.length) {
+      const rows = [...r.results].sort((a, b) => ORDER.indexOf(a.delta) - ORDER.indexOf(b.delta));
+      const notClean = rows.filter((x) => x.delta !== "clean" && x.delta !== "fixed").length;
+      const det = el("details", { class: "qa-group" });
+      if (notClean) det.open = true;
+      det.append(el("summary", {}, `${rows.length} check(s) in the cone${notClean ? `, ${notClean} not clean against main` : ""}`));
+      const tb = el("table");
+      const hr = el("tr");
+      for (const h of ["vs main", "kind", "check", "here", "main", "findings"]) hr.append(el("th", {}, h));
+      tb.append(hr);
+      for (const x of rows) {
+        const tr = el("tr");
+        tr.append(el("td", { class: `delta delta-${x.delta}` }, DELTA[x.delta] || x.delta));
+        tr.append(el("td", {}, x.kind));
+        tr.append(el("td", {}, x.name));
+        tr.append(el("td", {}, x.head));
+        tr.append(el("td", {}, x.main));
+        const f = [...(x.added || []).map((a) => `+ ${a}`), ...(x.removed || []).map((a) => `− ${a}`)];
+        tr.append(el("td", { class: "notes" }, f.join("\n") || x.why || ""));
+        tb.append(tr);
+      }
+      det.append(tb);
+      sec.append(det);
+    }
+    for (const n of r.notes || []) sec.append(el("p", { class: "qa-meta" }, n));
+    sec.append(el("p", { class: "qa-meta qa-advisory" }, "Advisory: run because the PR is labelled `preview`. The release tier and merge-guard judge the merge. The main QA report follows."));
+    return sec;
+  };
+
+  const open = async ({ report, error, title, lean, source, leanStatus, previewUrl }) => {
+    const preview = await loadPreview(previewUrl);
     const d = dialog();
     d.replaceChildren();
     const head = el("div", { class: "qa-head" });
@@ -32,6 +99,10 @@
     x.onclick = () => d.close();
     head.append(x);
     d.append(head);
+    if (preview) {
+      d.append(previewSection(preview));
+      d.append(el("h3", { class: "qa-main-h" }, "Main QA"));
+    }
 
     const meta = el("p", { class: "qa-meta" });
     if (error) d.append(error);

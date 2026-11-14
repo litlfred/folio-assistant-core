@@ -190,7 +190,7 @@
     const panel = await qaPanel;
     let report = null, err = null;
     if (n.qa) { try { report = await getJSON(url); } catch (e) { err = e; } }
-    panel.open({ report, error: err && failed("QA report", url, err), title, lean: n.lean, source: src, leanStatus: outline.leanStatus });
+    panel.open({ report, error: err && failed("QA report", url, err), title, lean: n.lean, source: src, leanStatus: outline.leanStatus, previewUrl: `${root}preview-qa.json` });
   };
   const leanLink = (L) => {
     if (L.path) {
