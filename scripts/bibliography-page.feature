@@ -40,6 +40,27 @@ Feature: the bibliography pages and their exports
     When the bibliography is collected
     Then nothing is invalid and the catalogued document is one asset holding itself and its two extracted references, in order
     And its asset page carries the extracted entries
+
+  @test:scripts/bibliography-page.test.ts::pages_and_exports::extractedReferencesOpenInThePanelNotTheirOwnPage
+  Scenario: a reference extracted from a document opens in the side panel, with no page of its own
+    Given a reference extracted from a catalogued document's references section
+    When the pages are written
+    Then the extracted reference has no page of its own
+    And its document's page carries its detail inline, for the side panel
+    And an authored reference keeps its own page
+
+  @test:scripts/bibliography-page.test.ts::pages_and_exports::everyPageIsOutOfTheSiteSearch
+  Scenario: every bibliography page stays out of the site's search index
+    When the pages are written
+    Then every page's front matter carries search_exclude
+
+  @test:scripts/bibliography-page.test.ts::pages_and_exports::aLongListIsSummarised
+  Scenario: a list longer than the limit is summarised, and its exports still hold it
+    Given more references in one sub-graph than a page lists
+    When the pages are written
+    Then the whole page and the sub-graph page summarise them with no list
+    And the whole page links the sub-graph
+    And the exports still carry every reference
     And without an extracted list a catalogued copy gets no page of its own
 
   @test:scripts/bibliography-page.test.ts::pages_and_exports::subgraphPageOwnRefsOnly

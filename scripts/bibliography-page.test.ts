@@ -12,6 +12,7 @@ import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-
 import { leakingLinesIn } from "../../cat-harness-tools/scripts/check-escaped-markup.ts";
 import { ReferenceNodeSchema } from "../schemas/reference.ts";
 import {
+  LIST_LIMIT,
   EXPORTS,
   addReferenceHtml,
   segmentOf,
@@ -211,6 +212,55 @@ describe("pages and exports", () => {
     expect(page).toContain("Printed entry who-handbook.sec-009.10");
     // Without an extracted list, a catalogued copy gets no page of its own.
     expect(c.assets).toEqual([]);
+  });
+
+  test("extractedReferencesOpenInThePanelNotTheirOwnPage", () => {
+    // Owner, 2026-11-15, card Q-BIBSCALE-2: "A. Summaries, panel, no lunr".
+    const sec = "iris-x/library/who-handbook/sections/sec-009-references.md";
+    const withRefs = collect(
+      checkout((root) => {
+        put(join(root, "folio-x"), "references/who-handbook.sec-009.2.json", {
+          $schema: "folio-reference/v1",
+          id: "who-handbook.sec-009.2",
+          type: "document",
+          provenance: "extracted",
+          derivedFrom: sec,
+          printed: "Printed entry two. Geneva: WHO; 2001.",
+        });
+      }),
+    );
+    const out = outputs(withRefs);
+    expect([...out.keys()].some((p) => p.includes("who-handbook.sec-009.2/"))).toBe(false);
+    const page = out.get([...out.keys()].find((p) => p.endsWith("iris-x-library/who-handbook/index.md"))!)!;
+    expect(page).toContain('data-fa-bib-key="who-handbook.sec-009.2" data-fa-bib-inline');
+    expect(page).toContain('<template class="fa-bib-inline"><section class="fa-bib-detail" data-fa-bib-key="who-handbook.sec-009.2">');
+    // An authored reference keeps its own page.
+    expect([...out.keys()].some((p) => p.endsWith("folio-x-references/garoufalidis2004/index.md"))).toBe(true);
+  });
+
+  test("everyPageIsOutOfTheSiteSearch", () => {
+    for (const [p, s] of files) if (p.endsWith(".md")) expect(s).toContain("\nsearch_exclude: true\n");
+  });
+
+  test("aLongListIsSummarised", () => {
+    const many = Array.from({ length: LIST_LIMIT + 1 }, (_, i) => `ref${i}`);
+    const big = collect(
+      checkout((root) => {
+        for (const id of many) put(join(root, "folio-x"), `references/${id}.json`, { $schema: "folio-reference/v1", id, type: "book", title: `Book ${id}` });
+      }),
+    );
+    const out = outputs(big);
+    const whole = out.get([...out.keys()].find((p) => p.endsWith("bibliography/index.md"))!)!;
+    expect(whole).toContain('<p class="fa-bib-summary">');
+    expect(whole).not.toContain('<ol class="fa-bib">');
+    expect(whole).toContain('<a href="folio-x-references/">folio-x-references</a>');
+    // The exports still hold every reference.
+    const bib = out.get([...out.keys()].find((p) => p.endsWith("bibliography/references.bib"))!)!;
+    expect(bib).toContain("@book{ref500,");
+    // A sub-graph page with no document page below it says so, and lists nothing.
+    const sub = out.get([...out.keys()].find((p) => p.endsWith("folio-x-references/index.md"))!)!;
+    expect(sub).toContain("Take all of them in an export.");
+    expect(sub).not.toContain('<ol class="fa-bib">');
   });
 
   test("subgraphPageOwnRefsOnly", () => {
