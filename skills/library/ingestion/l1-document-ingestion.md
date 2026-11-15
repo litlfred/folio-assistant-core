@@ -283,7 +283,8 @@ library holds gets `heldAt`. An entry longer than any citation (the list ran
 into the text after it) is left out rather than kept wrong.
 
 The bibliography page lists the nodes under the document they came from
-(`bibliography/library/<doc-id>/`). Re-run the tool after a section is
+(`bibliography/library/<doc-id>/`). They get no page of their own: a reader
+opens one in the side panel from its document's page. Re-run the tool after a section is
 re-derived; `--check` fails when a node is stale or has no list left to come
 from. Nodes with any other `provenance` are never touched.
 

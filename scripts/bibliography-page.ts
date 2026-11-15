@@ -472,12 +472,35 @@ function exportLinksHtml(r: ReferenceNode): string {
 export function entryHtml(e: Entry, hrefOf: HrefOf = (x) => `${referenceSegment(x.ref.id)}/`): string {
   const r = e.ref;
   const href = esc(hrefOf(e));
-  return `<li data-fa-bib-key="${esc(r.id)}" data-fa-bib-href="${href}" data-fa-bib="${esc([r.id, r.title ?? r.printed ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
+  const words = esc([r.id, r.title ?? r.printed ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "));
+  // An entry with no page of its own (an extracted reference, see `hasOwnPage`)
+  // carries its detail inline, and the side panel shows that; its own export
+  // is there too, not repeated in the list.
+  const open = href
+    ? `<a class="fa-bib-open" href="${href}"><code>${esc(r.id)}</code></a>`
+    : `<button type="button" class="fa-bib-open"><code>${esc(r.id)}</code></button>`;
+  return `<li data-fa-bib-key="${esc(r.id)}" ${href ? `data-fa-bib-href="${href}"` : "data-fa-bib-inline"} data-fa-bib="${words}">
   ${citationHtml(r)}<br>
-  <small><a class="fa-bib-open" href="${href}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
-  export: ${exportLinksHtml(r)}</small>
+  <small>${open} · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}${href ? `<br>
+  export: ${exportLinksHtml(r)}` : ""}</small>${href ? "" : `\n  <template class="fa-bib-inline">${detailHtml(e)}</template>`}
 </li>`;
 }
+
+/**
+ * Whether a reference gets a page of its own. A reference EXTRACTED from a
+ * document's reference list does not: it is read on its document's page, in
+ * the side panel. At IRIS scale they were 7,219 pages of the 8,576 in the
+ * route (owner, 2026-11-15, card Q-BIBSCALE-2: "A. Summaries, panel, no lunr").
+ */
+export const hasOwnPage = (e: Entry) => e.ref.provenance !== "extracted";
+
+/**
+ * A list longer than this is not written out on a page: the page summarises
+ * it (counts, and links to the sub-graphs and documents that hold it), and
+ * the exports beside the page still carry every reference. The whole IRIS
+ * list was a 24 MB page (Q-BIBSCALE-2).
+ */
+export const LIST_LIMIT = 500;
 
 const nameList = (ns: ReferenceNode["author"]) => (ns ?? []).map(nameText).join("; ");
 const dateText = (d: unknown): string | undefined => {
@@ -610,6 +633,7 @@ export function renderEntryPage(opts: { permalink: string; entry: Entry; listHre
 title: ${yamlQuoted(title)}
 permalink: ${opts.permalink}
 nav_exclude: true
+search_exclude: true
 ${navParentFm(opts.under)}${GENERATED_FM}
 ---
 ${GENERATED}
@@ -729,7 +753,8 @@ const PANEL_STYLE = `<style>
 .fa-bib-panel h3{font-size:1rem}
 .fa-bib-fields{display:grid;grid-template-columns:max-content 1fr;gap:.2rem .8rem;margin:.6rem 0}
 .fa-bib-fields dt{font-weight:600}.fa-bib-fields dd{margin:0;overflow-wrap:anywhere}
-li[data-fa-bib-href]{cursor:pointer}
+li[data-fa-bib-href],li[data-fa-bib-inline]{cursor:pointer}
+button.fa-bib-open{background:none;border:0;padding:0;color:inherit;cursor:pointer;min-height:24px}
 </style>`;
 
 const PANEL_SCRIPT = `<script>
@@ -738,9 +763,11 @@ function close(){if(panel)panel.classList.remove("open");if(from&&from.focus)fro
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x)e.textContent=x;return e;}
 function ensure(){if(panel)return panel;panel=el("aside","fa-block-panel fa-bib-panel");panel.tabIndex=-1;panel.setAttribute("aria-label","Reference details");document.body.appendChild(panel);document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});return panel;}
 function show(href,origin){if(window.faBlockPanel&&window.faBlockPanel.close)window.faBlockPanel.close();from=origin;var p=ensure();var x=el("button","bp-x","\u2715");x.type="button";x.title="Close (Esc)";x.onclick=close;
-var page=el("a","",  "Open its own page");page.href=href;var body=el("div","bp-body","Loading\u2026");p.replaceChildren(x,el("h3","","Reference"),page,body);p.classList.add("open");p.focus();
+var body=el("div","bp-body","Loading\u2026");var tpl=origin&&origin.closest&&origin.closest("li")?origin.closest("li").querySelector("template.fa-bib-inline"):null;
+if(tpl){p.replaceChildren(x,el("h3","","Reference"),body);body.replaceChildren(document.importNode(tpl.content,true));p.classList.add("open");p.focus();return;}
+var page=el("a","",  "Open its own page");page.href=href;p.replaceChildren(x,el("h3","","Reference"),page,body);p.classList.add("open");p.focus();
 fetch(href).then(function(r){if(!r.ok)throw r.status;return r.text();}).then(function(t){var d=new DOMParser().parseFromString(t,"text/html");var sec=d.querySelector(".fa-bib-detail");if(!sec)throw 0;body.replaceChildren(document.importNode(sec,true));}).catch(function(){location.href=href;});}
-document.addEventListener("click",function(e){if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;var t=e.target;if(!t.closest)return;var li=t.closest("li[data-fa-bib-href]");if(!li||(t.closest("a,button,input,summary,select,textarea")&&!t.closest("a.fa-bib-open")))return;e.preventDefault();show(li.getAttribute("data-fa-bib-href"),li.querySelector("a.fa-bib-open")||li);});
+document.addEventListener("click",function(e){if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;var t=e.target;if(!t.closest)return;var li=t.closest("li[data-fa-bib-href],li[data-fa-bib-inline]");if(!li||(t.closest("a,button,input,summary,select,textarea")&&!t.closest(".fa-bib-open")))return;e.preventDefault();show(li.getAttribute("data-fa-bib-href"),li.querySelector(".fa-bib-open")||li);});
 })();
 </script>`;
 
@@ -799,19 +826,32 @@ export function renderPage(opts: {
   detail?: string;
   /** The page it sits under in the site's Pages list (`parent`, `grand_parent`). */
   under?: NavParent;
+  /** What the page shows in place of a list longer than `LIST_LIMIT`. Unset: the whole list. */
+  summary?: string;
+  /** On a summarised page, the few references no sub-graph or document page below it lists: listed here. */
+  listed?: Entry[];
 }): string {
   const { title, permalink, intro, entries, nav, targetDir, own, detail } = opts;
+  const summarised = opts.summary !== undefined && entries.length > LIST_LIMIT;
   const exports = EXPORTS.map(([f, label]) => `<a href="${f}">${label}</a>`).join(" · ");
   const addPanel = addReferenceHtml({ targetDir });
   const grouped = own !== undefined && entries.some((e) => e.instance !== own);
   const anchor = opts.hrefOf;
-  const list = entries.length
-    ? `<label for="fa-bib-q">Filter references</label>
+  const listed = opts.listed ?? [];
+  const shown = !summarised ? entries : listed.length <= LIST_LIMIT ? listed : [];
+  const filtered = (es: Entry[], body: string) => `<label for="fa-bib-q">Filter references</label>
 <input id="fa-bib-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
-<p aria-live="polite"><span id="fa-bib-n">${entries.length}</span> shown</p>
+<p aria-live="polite"><span id="fa-bib-n">${es.length}</span> shown</p>
 
-${grouped && own !== undefined ? ownAndDependenciesHtml(own, entries, anchor) : `<ol class="fa-bib">\n${entries.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>`}`
-    : "<p>No references here yet.</p>";
+${body}`;
+  const plainList = (es: Entry[]) => `<ol class="fa-bib">\n${es.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>`;
+  const list = summarised
+    ? `<p class="fa-bib-summary">${plural(entries.length, "reference")}: too many to list on one page. ${opts.summary}</p>${
+        shown.length ? `\n\nListed here: the ${plural(shown.length, "reference")} that no page below lists.\n\n${filtered(shown, plainList(shown))}` : ""
+      }`
+    : entries.length
+      ? filtered(entries, grouped && own !== undefined ? ownAndDependenciesHtml(own, entries, anchor) : plainList(entries))
+      : "<p>No references here yet.</p>";
   const ownCount = grouped ? entries.filter((e) => e.instance === own).length : entries.length;
   const exportLead = grouped
     ? `**Export all ${plural(entries.length, "reference")}** (${ownCount} of ${own}'s own and ${entries.length - ownCount} from dependencies):`
@@ -819,6 +859,7 @@ ${grouped && own !== undefined ? ownAndDependenciesHtml(own, entries, anchor) : 
   return `---
 title: ${yamlQuoted(title)}
 permalink: ${permalink}
+search_exclude: true
 ${navParentFm(opts.under)}${GENERATED_FM}
 ---
 ${GENERATED}
@@ -834,8 +875,7 @@ ${addPanel}
 ${list}
 
 ${PANEL_STYLE}
-${FILTER_SCRIPT}
-${PANEL_SCRIPT}
+${shown.length ? `${FILTER_SCRIPT}\n${PANEL_SCRIPT}` : ""}
 `;
 }
 
@@ -909,7 +949,7 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
   /** Hrefs from a page `depth` directories below the route. */
   const hrefsAt = (depth: number, here?: string): HrefOf => (e) => {
     const at = place.get(e);
-    if (!at) return "";
+    if (!at || !hasOwnPage(e)) return "";
     return depth === 1 && at.slug === here ? `${at.seg}/` : `${"../".repeat(depth)}${at.slug}/${at.seg}/`;
   };
   const write = (dir: string, page: string, entries: Entry[]) => {
@@ -947,14 +987,19 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
       targetDir: defaultTargetDir,
       own,
       hrefOf: hrefsAt(0),
+      summary: "Open a sub-graph above to read its references, or take all of them in an export.",
     }),
     c.entries,
   );
   for (const s of pages) {
     const entries = inSub(s);
-    const subAssets = (c.assets ?? []).filter((a) => a.slug === s.slug);
+    // The documents whose pages list this sub-graph's references: its own
+    // assets, and the documents its extracted references were read from.
+    const mine = new Set(entries);
+    const subAssets = (c.assets ?? []).filter((a) => a.slug === s.slug || a.entries.some((e) => mine.has(e)));
+    const onAssetPage = new Set(subAssets.flatMap((a) => a.entries));
     const assetNav = subAssets.length
-      ? `**By asset:** ${subAssets.map((a) => `<a href="${a.asset}/">${a.asset}</a> (${a.entries.length})`).join(" · ")}`
+      ? `**By asset:** ${subAssets.map((a) => `<a href="${a.slug === s.slug ? "" : `../${a.slug}/`}${a.asset}/">${a.asset}</a> (${a.entries.length})`).join(" · ")}`
       : undefined;
     write(
       join(ROOT, s.slug),
@@ -967,6 +1012,8 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
         nav: assetNav,
         targetDir: s.kind === "references" ? s.path : defaultTargetDir,
         hrefOf: hrefsAt(1, s.slug),
+        summary: subAssets.length ? "Open a document above to read the references it holds, or take all of them in an export." : "Take all of them in an export.",
+        listed: entries.filter((e) => !onAssetPage.has(e)),
       }),
       entries,
     );
@@ -991,7 +1038,7 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
     );
   }
   for (const [e, at] of place) {
-    if (assetDirs.has(`${at.slug}/${at.seg}`)) continue;
+    if (assetDirs.has(`${at.slug}/${at.seg}`) || !hasOwnPage(e)) continue;
     out.set(
       join(ROOT, at.slug, at.seg, "index.md"),
       renderEntryPage({ permalink: `${prefix}/${ROUTE}/${at.slug}/${at.seg}/`, entry: e, listHref: "../", listLabel: `All references of ${at.slug}`, under: underSubgraph(at.slug, layer) }),
