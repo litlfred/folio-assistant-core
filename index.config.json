@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "775426b8e6d72a2baf036065564554794df71ee0",
+          "ref": "d41ff7ce9916b863c30c61c5a5c7744c968793cc",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -39,9 +39,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-14",
-              "ref": "775426b8e6d72a2baf036065564554794df71ee0",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 (cat-harness moves with tools)"
+              "on": "2026-11-15",
+              "ref": "d41ff7ce9916b863c30c61c5a5c7744c968793cc",
+              "evidence": "owner litlfred, 2026-11-15 16:36Z, decision card 'Re-pin core#814 to whatever is main when I push?' option A 'Yes, main at push time' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2314 and #2316"
             }
           }
         }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "d17f5201becfdaad2a0021b60f8a2f0428edfdd8",
+          "ref": "1e6ea30233ee6a1164c98120c01787db32db2cd5",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -64,9 +64,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-14",
-              "ref": "d17f5201becfdaad2a0021b60f8a2f0428edfdd8",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 was on the owner-approved merge-manager plan"
+              "on": "2026-11-15",
+              "ref": "1e6ea30233ee6a1164c98120c01787db32db2cd5",
+              "evidence": "owner litlfred, 2026-11-15 16:36Z, decision card 'Re-pin core#814 to whatever is main when I push?' option A 'Yes, main at push time' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2314 and #2316"
             }
           }
         }
@@ -77,7 +77,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap",
-          "ref": "17204fe9ed49e87b165bf0a8b626b6c69329a2a6",
+          "ref": "7db8457701ebb9b99284d639128f3c82ad4fc6ea",
           "overrides": {
             "bootstrap": {
               "whole": true
@@ -86,9 +86,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-12",
-              "ref": "17204fe9ed49e87b165bf0a8b626b6c69329a2a6",
-              "evidence": "litlfred, 2026-11-12, merge-manager thread: owner card Q-CONSENT-1 = A (re-pin + merge window to ~21:05Z 11-12, Q-WIN-1 C); bottom-up re-pin T2 (smart-ra#242), follow-up to Q-RA-241 A (Q-CASCADE-FREEZE B: mains read at re-pin). Coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "on": "2026-11-15",
+              "ref": "7db8457701ebb9b99284d639128f3c82ad4fc6ea",
+              "evidence": "owner litlfred, 2026-11-15 12:16Z, decision card 'Re-pin core's four harnesses to main for core#814?' option A 'Yes, re-pin all four' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn)"
             }
           }
         }
@@ -99,7 +99,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "b653e0577a1649969319196ec738353fe2068793",
+          "ref": "174a567db34db10b007a45b13f960f218a6b04f5",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -111,9 +111,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-14",
-              "ref": "b653e0577a1649969319196ec738353fe2068793",
-              "evidence": "owner litlfred, 2026-11-13 ~20:56Z, in Claude Code session https://claude.ai/code/session_01VQDpPffYARDQ8juksAZScf: 'send to you as merge manager to handle merge AND repin'; core tools pin past #2106 for core#788 was on the owner-approved merge-manager plan"
+              "on": "2026-11-15",
+              "ref": "174a567db34db10b007a45b13f960f218a6b04f5",
+              "evidence": "owner litlfred, 2026-11-15 12:16Z, decision card 'Re-pin core's four harnesses to main for core#814?' option A 'Yes, re-pin all four' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn)"
             }
           }
         }
