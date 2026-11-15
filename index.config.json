@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "58d3f3eedf2fd1e38c36f81523936e635c782888",
+          "ref": "562a227fd8e7f49d7a0350cdf3c2aea6af29afba",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,7 +40,7 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "58d3f3eedf2fd1e38c36f81523936e635c782888",
+              "ref": "562a227fd8e7f49d7a0350cdf3c2aea6af29afba",
               "evidence": "litlfred 2026-11-15T19:01:19Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9L7BityLCAN5rXMwLd53Kkn): \"Yes, +12 hours\" — extend the repin and merge window so the stable point can finish (every pin to its main), to 2026-11-16T07:01Z"
             }
           }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "372d6ae6d78ae628adc18bfe57e37baf3e4cc01a",
+          "ref": "6d272fac1ea08f5d22d3fd68bf84baaf8f73b83a",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -65,7 +65,7 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "372d6ae6d78ae628adc18bfe57e37baf3e4cc01a",
+              "ref": "6d272fac1ea08f5d22d3fd68bf84baaf8f73b83a",
               "evidence": "litlfred 2026-11-15T19:01:19Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9L7BityLCAN5rXMwLd53Kkn): \"Yes, +12 hours\" — extend the repin and merge window so the stable point can finish (every pin to its main), to 2026-11-16T07:01Z"
             }
           }
