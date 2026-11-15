@@ -227,8 +227,11 @@ describe("it does not fail open", () => {
     writeFileSync(join(platform, "skills/pkg/workflow-policy.json"), "{ not json");
 
     // Treating a broken policy as "no relaxations" would refuse work a package
-    // had legitimately declared.
-    await expect(checkCorpusGate(repo, { files: [], platformRoot: platform, labelFor })).rejects.toThrow(
+    // had legitimately declared. The gate loads the editing process and its
+    // policy only once a changed file is a block (cat-harness-tools#2195: a
+    // change with no block is not a corpus write), so the change carries one.
+    const f = block("carbon", "rem:carbon");
+    await expect(checkCorpusGate(repo, { files: [f], platformRoot: platform, labelFor })).rejects.toThrow(
       /policy is not loadable/,
     );
     rmSync(platform, { recursive: true, force: true });
