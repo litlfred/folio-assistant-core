@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "2e959408e5a8167460fb9566933be299a17f0d8d",
+          "ref": "d1e8425cf84f148e99c391243ec0b03abac3e4af",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,8 +40,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "2e959408e5a8167460fb9566933be299a17f0d8d",
-              "evidence": "owner litlfred, 2026-11-15 12:16Z, decision card 'Re-pin core's four harnesses to main for core#814?' option A 'Yes, re-pin all four' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn)"
+              "ref": "d1e8425cf84f148e99c391243ec0b03abac3e4af",
+              "evidence": "owner litlfred, 2026-11-15 14:36Z, decision card 'Re-pin core#814 again to today's newer mains?' option A 'Yes, re-pin to current mains' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2308"
             }
           }
         }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "39ee6af57dc09d2f25d1caf89ee4484d3df24327",
+          "ref": "389fda7eb30b0105fd4f94fe5b7bd2cd5ed7b4d3",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -65,8 +65,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "39ee6af57dc09d2f25d1caf89ee4484d3df24327",
-              "evidence": "owner litlfred, 2026-11-15 12:16Z, decision card 'Re-pin core's four harnesses to main for core#814?' option A 'Yes, re-pin all four' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn)"
+              "ref": "389fda7eb30b0105fd4f94fe5b7bd2cd5ed7b4d3",
+              "evidence": "owner litlfred, 2026-11-15 14:36Z, decision card 'Re-pin core#814 again to today's newer mains?' option A 'Yes, re-pin to current mains' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2308"
             }
           }
         }
