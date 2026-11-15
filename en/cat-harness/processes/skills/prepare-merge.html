@@ -816,9 +816,9 @@ review process needs to be documented as part of making it ready”.</p>
 text or what a reader of the folio sees as its substance: block wording,
 tables, figures and the models they are drawn from (ArchiMate, BPMN, DMN),
 glossary terms and definitions, references, a change set (<code class="language-plaintext highlighter-rouge">CS-</code>), a public
-comment response, or a summary re-derivation (who-iris). It is not content
-when it changes only harness or tool code, workflows, pins
-(<code class="language-plaintext highlighter-rouge">index.lock.json</code>), beans, tests or docs about the platform. A PR that
+comment response, or a re-derivation of a content layer’s generated
+summaries. It is not content when it changes only harness or tool code, workflows, pins
+(<code class="language-plaintext highlighter-rouge">index.lock.json</code>), work items, tests or docs about the platform. A PR that
 regenerates a content table or figure from its source is content too: what
 the reader sees changes. When in doubt, label it <code class="language-plaintext highlighter-rouge">content</code>; the owner can
 take the label off.</p>
@@ -841,7 +841,7 @@ record. One or more of:
 corpus-gate waiver card;</li>
       <li>the committee decision or public-comment review-log entry (a link);</li>
       <li>the editing-hci-validation instance of the changed blocks (its path or
-bean), the record <code class="language-plaintext highlighter-rouge">check:corpus-gate</code> reads;</li>
+work item), the record <code class="language-plaintext highlighter-rouge">check:corpus-gate</code> reads;</li>
       <li>the review page of the preview with its verdicts (a link), and the
 review coverage numbers of §”Recipe” step 5.
 Say what is still open, if anything. A placeholder (“TODO”, “pending”)

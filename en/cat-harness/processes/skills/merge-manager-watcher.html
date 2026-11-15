@@ -903,7 +903,7 @@ pushing the old approach.</li>
   <li><strong>Never commit to a shared state branch from a sparse or partial
 checkout.</strong> A commit records the whole tree, so files missing from a
 sparse checkout are recorded as deleted. On 2026-11-15 one such commit
-wiped the beans branch. Use a full checkout (a worktree of the branch, or
+wiped the work-item branch. Use a full checkout (a worktree of the branch, or
 a full clone at depth 1) for any write to a state branch. A state branch
 is checked out the same way every time, so a write never depends on how
 the last session happened to clone it.</li>

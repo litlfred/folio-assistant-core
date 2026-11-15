@@ -4,34 +4,6 @@
  "shortfall": [],
  "droppedByRuling": [],
  "current": {
-  "pages": 1231,
-  "counts": {
-   "siteNav": 0,
-   "search": 281,
-   "navbarRow": 280,
-   "rail": 956,
-   "translationMeta": 280
-  },
-  "dirs": [
-   "ar",
-   "assets",
-   "cat-harness",
-   "en",
-   "es",
-   "folio-assistant-core",
-   "fr",
-   "id-lookup",
-   "ru",
-   "zh"
-  ],
-  "index": [
-   "search",
-   "navbarRow",
-   "rail",
-   "translationMeta"
-  ]
- },
- "candidate": {
   "pages": 1280,
   "counts": {
    "siteNav": 0,
@@ -59,14 +31,42 @@
    "translationMeta"
   ]
  },
+ "candidate": {
+  "pages": 1279,
+  "counts": {
+   "siteNav": 0,
+   "search": 283,
+   "navbarRow": 283,
+   "rail": 1002,
+   "translationMeta": 282
+  },
+  "dirs": [
+   "ar",
+   "assets",
+   "cat-harness",
+   "en",
+   "es",
+   "folio-assistant-core",
+   "fr",
+   "id-lookup",
+   "ru",
+   "zh"
+  ],
+  "index": [
+   "search",
+   "navbarRow",
+   "rail",
+   "translationMeta"
+  ]
+ },
  "baseline": {
   "features": {
-   "pages": 1280,
+   "pages": 1279,
    "counts": {
     "siteNav": 0,
     "search": 283,
     "navbarRow": 283,
-    "rail": 1003,
+    "rail": 1002,
     "translationMeta": 282
    },
    "dirs": [
@@ -88,6 +88,6 @@
     "translationMeta"
    ]
   },
-  "from": "0b8b9d144a3e"
+  "from": "6e996c79aa9e"
  }
 }
