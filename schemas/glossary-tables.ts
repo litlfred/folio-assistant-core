@@ -35,9 +35,34 @@ export const GlossaryTablesSchema = z
           .object({
             glossary: RelPath.refine((f) => f.endsWith(".json"), "a .json glossary"),
             block: RelPath.refine((f) => f.endsWith(".md"), "a document block, a .md file"),
-            kind: z.enum(["terms", "acronyms"]),
+            kind: z.enum(["terms", "acronyms", "element-types"]),
+            /** `element-types` only: the ArchiMate model and the view whose placeholder elements are the types. */
+            archimate: z
+              .object({
+                model: RelPath.refine((f) => f.endsWith(".archimate"), "an Archi model, a .archimate file"),
+                view: z.string().min(1),
+              })
+              .strict()
+              .optional(),
+            /**
+             * `element-types` only: the rows, in the document's order. `type` is
+             * the ArchiMate type as the exchange format names it
+             * (`ApplicationComponent`), and the view must show a placeholder
+             * element of that type. `term` is the glossary term that defines it,
+             * by default the one whose prefLabel is the type's name. `icon` is
+             * the image the first column shows.
+             */
+            rows: z
+              .array(z.object({ type: z.string().regex(/^[A-Z][A-Za-z]+$/), term: z.string().min(1).optional(), icon: z.string().min(1).optional() }).strict())
+              .min(1)
+              .optional(),
           })
-          .strict(),
+          .strict()
+          .refine((t) => (t.kind === "element-types") === (t.archimate !== undefined), {
+            message: "`archimate` is given for an element-types table, and only for one",
+            path: ["archimate"],
+          })
+          .refine((t) => t.kind === "element-types" || t.rows === undefined, { message: "`rows` is only for an element-types table", path: ["rows"] }),
       )
       .min(1),
   })
