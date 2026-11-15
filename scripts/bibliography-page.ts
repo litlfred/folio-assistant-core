@@ -875,7 +875,8 @@ ${addPanel}
 ${list}
 
 ${PANEL_STYLE}
-${shown.length ? `${FILTER_SCRIPT}\n${PANEL_SCRIPT}` : ""}
+${FILTER_SCRIPT}
+${shown.length ? PANEL_SCRIPT : ""}
 `;
 }
 

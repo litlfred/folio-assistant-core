@@ -261,6 +261,9 @@ describe("pages and exports", () => {
     const sub = out.get([...out.keys()].find((p) => p.endsWith("folio-x-references/index.md"))!)!;
     expect(sub).toContain("Take all of them in an export.");
     expect(sub).not.toContain('<ol class="fa-bib">');
+    // The + Add reference panel still works there: its script is the filter's.
+    expect(whole).toContain('id="fa-bib-add-form"');
+    expect(whole).toContain('var form=document.getElementById("fa-bib-add-form")');
   });
 
   test("subgraphPageOwnRefsOnly", () => {
