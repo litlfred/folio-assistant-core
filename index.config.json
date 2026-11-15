@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "d41ff7ce9916b863c30c61c5a5c7744c968793cc",
+          "ref": "58d3f3eedf2fd1e38c36f81523936e635c782888",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,8 +40,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "d41ff7ce9916b863c30c61c5a5c7744c968793cc",
-              "evidence": "owner litlfred, 2026-11-15 16:36Z, decision card 'Re-pin core#814 to whatever is main when I push?' option A 'Yes, main at push time' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2314 and #2316"
+              "ref": "58d3f3eedf2fd1e38c36f81523936e635c782888",
+              "evidence": "litlfred 2026-11-15T19:01:19Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9L7BityLCAN5rXMwLd53Kkn): \"Yes, +12 hours\" — extend the repin and merge window so the stable point can finish (every pin to its main), to 2026-11-16T07:01Z"
             }
           }
         }
@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "1e6ea30233ee6a1164c98120c01787db32db2cd5",
+          "ref": "372d6ae6d78ae628adc18bfe57e37baf3e4cc01a",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -65,8 +65,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-15",
-              "ref": "1e6ea30233ee6a1164c98120c01787db32db2cd5",
-              "evidence": "owner litlfred, 2026-11-15 16:36Z, decision card 'Re-pin core#814 to whatever is main when I push?' option A 'Yes, main at push time' (project thread cmsg_017WNUkNK8kdDziPK58Pv6G92pvwMqVLKEkd1j4fMabEkn); carries cat-harness-tools#2314 and #2316"
+              "ref": "372d6ae6d78ae628adc18bfe57e37baf3e4cc01a",
+              "evidence": "litlfred 2026-11-15T19:01:19Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9L7BityLCAN5rXMwLd53Kkn): \"Yes, +12 hours\" — extend the repin and merge window so the stable point can finish (every pin to its main), to 2026-11-16T07:01Z"
             }
           }
         }
