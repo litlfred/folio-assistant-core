@@ -195,6 +195,12 @@ export const TermSchema = z
      * brackets after the definition, as the document does (smart-ra Q-RAC-8 A).
      */
     editorialNote: z.string().min(1).optional(),
+    /**
+     * An instance of the concept (`skos:example`), such as "The Client
+     * Registry" for Application Component. A table drawn from the glossary
+     * prints it in its own column (smart-ra Q-RAC-7 A, Table 3.1).
+     */
+    example: LangTextSchema.optional(),
     /** Local term ids or absolute IRIs. */
     broader: z.array(z.string().min(1)).optional(),
     related: z.array(z.string().min(1)).optional(),
@@ -554,6 +560,7 @@ export function toSkos(
     if (t.notation) node["skos:notation"] = t.notation;
     if (t.scopeNote) node["skos:scopeNote"] = t.scopeNote;
     if (t.editorialNote) node["skos:editorialNote"] = t.editorialNote;
+    if (t.example) node["skos:example"] = langValues(t.example);
     if (t.broader?.length) node["skos:broader"] = t.broader.map(ref);
     if (t.related?.length) node["skos:related"] = t.related.map(ref);
     for (const m of ["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const) {
