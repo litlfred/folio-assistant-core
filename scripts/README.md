@@ -18,6 +18,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`backfill-materialized-fixity.ts`](backfill-materialized-fixity.ts) | a file |  |
 | [`bibliography-page.test.ts`](bibliography-page.test.ts) | a file |  |
 | [`bibliography-page.ts`](bibliography-page.ts) | a file |  |
+| [`bibliography-search.test.ts`](bibliography-search.test.ts) | a file |  |
+| [`bibliography-search.ts`](bibliography-search.ts) | a file |  |
 | [`block-actions.test.ts`](block-actions.test.ts) | a file |  |
 | [`block-actions.ts`](block-actions.ts) | a file |  |
 | [`build-document-site.test.ts`](build-document-site.test.ts) | a file |  |
