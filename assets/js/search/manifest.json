@@ -2,9 +2,9 @@
   "$schema": "folio-search-manifest/v1",
   "source": {
     "path": "assets/js/search-data.json",
-    "sha256": "d7795e684df09eea1ad434ce15ae48b3fcbbb723db5f57bb1b1a907a7b1022fd",
+    "sha256": "28e92fa4f28391f3780b63dcba9738de4522c3693451a313a161d01e60bdbf2a",
     "entries": 2000,
-    "bytes": 3338292
+    "bytes": 3339041
   },
   "scopes": [
     {
@@ -19,10 +19,10 @@
       "kind": "instance",
       "path": "assets/js/search/cat-harness.json",
       "entries": 1903,
-      "bytes": 3210754,
+      "bytes": 3211503,
       "index": {
         "path": "assets/js/search/cat-harness.idx.json",
-        "bytes": 10370658
+        "bytes": 10373326
       }
     },
     {

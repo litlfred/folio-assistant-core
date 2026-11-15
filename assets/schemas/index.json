@@ -79371,6 +79371,13 @@
           "doc": "A note for the editors, not part of the meaning (`skos:editorialNote`):"
         },
         {
+          "name": "example",
+          "type": "LangTextSchema.optional()",
+          "optional": true,
+          "array": false,
+          "doc": "An instance of the concept (`skos:example`), such as \"The Client"
+        },
+        {
           "name": "broader",
           "type": "z.array(z.string().min(1)).optional()",
           "optional": true,
@@ -96429,6 +96436,14 @@
       "from": "schemas/glossary.ts#TermSchema",
       "to": "schemas/glossary.ts#LangTextSchema",
       "via": "definition",
+      "kind": "field",
+      "optional": true,
+      "array": false
+    },
+    {
+      "from": "schemas/glossary.ts#TermSchema",
+      "to": "schemas/glossary.ts#LangTextSchema",
+      "via": "example",
       "kind": "field",
       "optional": true,
       "array": false
