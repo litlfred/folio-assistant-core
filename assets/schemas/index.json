@@ -1420,6 +1420,15 @@
       "isTest": false
     },
     {
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "instance": "cat-harness-tools",
+      "name": "publishing-profile",
+      "graphNode": "none",
+      "reason": "configuration schema and pure functions, no graph node",
+      "summary": "Where a layer's site and IRIs live, DERIVED from one shared publishing",
+      "isTest": false
+    },
+    {
       "module": "cat-harness-tools/schemas/kg/qa-record-shapes.ts",
       "instance": "cat-harness-tools",
       "name": "qa-record-shapes",
@@ -1450,6 +1459,15 @@
       "name": "repo-full-name",
       "graphNode": "schema",
       "summary": "`owner/name` — a forge repository's full name, in its own module so a",
+      "isTest": false
+    },
+    {
+      "module": "cat-harness-tools/schemas/kg/repo-owner.ts",
+      "instance": "cat-harness-tools",
+      "name": "repo-owner",
+      "graphNode": "none",
+      "reason": "repository naming helpers, not a schema",
+      "summary": "Who owns a checkout on GitHub, and how a SAME-OWNER repository name resolves.",
       "isTest": false
     },
     {
@@ -46825,6 +46843,168 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/kg/publishing-profile.ts#LayerPublish",
+      "name": "LayerPublish",
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "kind": "type-alias",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
+      "id": "cat-harness-tools/schemas/kg/publishing-profile.ts#LayerPublishSchema",
+      "name": "LayerPublishSchema",
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "kind": "zod-object",
+      "fields": [
+        {
+          "name": "id",
+          "type": "z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]*(?:\\/[A-Za-z0-9][A-Za-z0-9._-]*)*$/, \"a path segment or segments, no slash…",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]*(?:\\/[A-Za-z0-9][A-Za-z0-9._-]*)*$/, \"a path segment or segments, no slash…",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          },
+          "doc": "The layer's path under `publishedRoot` (for an IG, the id in its canonical)."
+        },
+        {
+          "name": "stage",
+          "type": "z.enum([\"staging\", \"published\"])",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "enum",
+          "links": {
+            "enum": "https://zod.dev/api#enums"
+          },
+          "doc": "`staging` until the layer is published; then `published`."
+        },
+        {
+          "name": "profile",
+          "type": "z.string().min(1)",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          },
+          "doc": "The profile file, checkout-relative (usually in a mounted layer)."
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [
+        "z"
+      ],
+      "source": "zod",
+      "exported": true
+    },
+    {
+      "id": "cat-harness-tools/schemas/kg/publishing-profile.ts#PublishingProfile",
+      "name": "PublishingProfile",
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "kind": "type-alias",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
+      "id": "cat-harness-tools/schemas/kg/publishing-profile.ts#PublishingProfileSchema",
+      "name": "PublishingProfileSchema",
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "kind": "zod-object",
+      "fields": [
+        {
+          "name": "$schema",
+          "type": "z.string().optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          }
+        },
+        {
+          "name": "_comment",
+          "type": "z.string().optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          }
+        },
+        {
+          "name": "stagingRoot",
+          "type": "RootSchema",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "doc": "The checkout's own staging site root; `{owner}` is replaced by the checkout's owner."
+        },
+        {
+          "name": "iriRoot",
+          "type": "RootSchema.refine((u) => !u.includes(\"{owner}\"), \"the IRI root is fixed: no {owner}\")",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "RootSchema",
+          "doc": "The fixed root IRIs are minted under while a layer is staged."
+        },
+        {
+          "name": "publishedRoot",
+          "type": "RootSchema.refine((u) => !u.includes(\"{owner}\"), \"the published root is fixed: no {owner}\")",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "RootSchema",
+          "doc": "The root a published layer's IRIs and site move to."
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [
+        "cat-harness-tools/schemas/kg/publishing-profile.ts#RootSchema"
+      ],
+      "unresolved": [],
+      "external": [
+        "z"
+      ],
+      "source": "zod",
+      "exported": true
+    },
+    {
+      "id": "cat-harness-tools/schemas/kg/publishing-profile.ts#RootSchema",
+      "name": "RootSchema",
+      "module": "cat-harness-tools/schemas/kg/publishing-profile.ts",
+      "kind": "zod-scalar",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "zod",
+      "exported": false
+    },
+    {
       "id": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#LsiOptions",
       "name": "LsiOptions",
       "module": "cat-harness-tools/schemas/kg/qa-record-shapes.ts",
@@ -48353,10 +48533,24 @@
         },
         {
           "name": "repository",
-          "type": "RepoFullNameSchema",
+          "type": "z.union([RepoFullNameSchema, SameOwnerNameSchema])",
           "optional": false,
           "array": false,
-          "card": "1..1"
+          "card": "1..1",
+          "utype": "union",
+          "links": {
+            "union": "https://zod.dev/api#unions"
+          },
+          "doc": "`owner/name`, or a bare `name`: a SAME-OWNER name, resolved to the"
+        },
+        {
+          "name": "sameOwner",
+          "type": "z.literal(true).optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "true",
+          "doc": "In memory: `repository` was declared without an owner. Accepted on disk; written as a bare name."
         },
         {
           "name": "ref",
@@ -48414,6 +48608,7 @@
         "cat-harness-tools/schemas/kg/remote-mount.ts#CommitShaSchema",
         "cat-harness-tools/schemas/kg/remote-mount.ts#InstanceNameSchema",
         "cat-harness-tools/schemas/kg/remote-mount.ts#MountOverrideSchema",
+        "cat-harness-tools/schemas/kg/remote-mount.ts#SameOwnerNameSchema",
         "cat-harness-tools/schemas/kg/repo-full-name.ts#RepoFullNameSchema"
       ],
       "unresolved": [],
@@ -48514,6 +48709,21 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/kg/remote-mount.ts#SameOwnerNameSchema",
+      "name": "SameOwnerNameSchema",
+      "module": "cat-harness-tools/schemas/kg/remote-mount.ts",
+      "kind": "zod-scalar",
+      "doc": "A bare repository name: a same-owner name (`schemas/kg/repo-owner.ts`).",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "zod",
+      "exported": true
+    },
+    {
       "id": "cat-harness-tools/schemas/kg/remote-mount.ts#VisualizerRouteClaim",
       "name": "VisualizerRouteClaim",
       "module": "cat-harness-tools/schemas/kg/remote-mount.ts",
@@ -48587,6 +48797,35 @@
       "external": [],
       "source": "zod",
       "exported": true
+    },
+    {
+      "id": "cat-harness-tools/schemas/kg/repo-owner.ts#LockShape",
+      "name": "LockShape",
+      "module": "cat-harness-tools/schemas/kg/repo-owner.ts",
+      "kind": "type-alias",
+      "fields": [
+        {
+          "name": "mounts",
+          "type": "Array<{ repository?: unknown }>",
+          "optional": true,
+          "array": false,
+          "card": "0..1"
+        },
+        {
+          "name": "instances",
+          "type": "Array<{ repository?: unknown }>",
+          "optional": true,
+          "array": false,
+          "card": "0..1"
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": false
     },
     {
       "id": "cat-harness-tools/schemas/kg/semantic-zoom.ts#KindZoom",
@@ -138400,6 +138639,30 @@
       "array": false
     },
     {
+      "from": "cat-harness-tools/schemas/kg/publishing-profile.ts#PublishingProfileSchema",
+      "to": "cat-harness-tools/schemas/kg/publishing-profile.ts#RootSchema",
+      "via": "iriRoot",
+      "kind": "field",
+      "optional": false,
+      "array": false
+    },
+    {
+      "from": "cat-harness-tools/schemas/kg/publishing-profile.ts#PublishingProfileSchema",
+      "to": "cat-harness-tools/schemas/kg/publishing-profile.ts#RootSchema",
+      "via": "publishedRoot",
+      "kind": "field",
+      "optional": false,
+      "array": false
+    },
+    {
+      "from": "cat-harness-tools/schemas/kg/publishing-profile.ts#PublishingProfileSchema",
+      "to": "cat-harness-tools/schemas/kg/publishing-profile.ts#RootSchema",
+      "via": "stagingRoot",
+      "kind": "field",
+      "optional": false,
+      "array": false
+    },
+    {
       "from": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#LsiSidecar",
       "to": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#LsiOptions",
       "via": "options",
@@ -138589,6 +138852,14 @@
       "via": "overrides",
       "kind": "field",
       "optional": true,
+      "array": false
+    },
+    {
+      "from": "cat-harness-tools/schemas/kg/remote-mount.ts#RemoteMountSchema",
+      "to": "cat-harness-tools/schemas/kg/remote-mount.ts#SameOwnerNameSchema",
+      "via": "repository",
+      "kind": "field",
+      "optional": false,
       "array": false
     },
     {
