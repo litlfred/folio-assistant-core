@@ -8,7 +8,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { inMount, isMountedScheme, ownedFilesUnder, writeAt } from "./glossary-page.ts";
+import { inMount, isMountedScheme, ownedFilesUnder, writeAt, writesIntoSite } from "./glossary-page.ts";
 
 const root = "/checkout";
 const mounts = [join(root, "core-layer"), join(root, "ig-layer")];
@@ -61,5 +61,28 @@ describe("the site's pages, at the output root", () => {
     mkdirSync(join(twin, "en", "glossary"), { recursive: true });
     writeFileSync(join(twin, "en", "glossary", "index.md"), "computed");
     expect(ownedFilesUnder(dir, co, mounted)).toEqual([join(dir, "index.md")]);
+  });
+});
+
+describe("writesIntoSite: a repository's own site, `--instance`", () => {
+  const site = join("/s");
+  const g = join(site, "en", "folio-assistant-core", "glossary");
+  const assets = join(g, "assets");
+  const at = { site, assets, only: "dpi-h-ra", page: join(g, "instance", "dpi-h-ra", "index.md") };
+  test("the instance page and its schemes' SKOS", () => {
+    expect(writesIntoSite(at.page, at)).toBe(true);
+    expect(writesIntoSite(join(assets, "dpi-h-ra--dpi-h-ra.jsonld"), at)).toBe(true);
+  });
+  test("its term pages, under the page's own directory", () => {
+    expect(writesIntoSite(join(g, "instance", "dpi-h-ra", "dpi-h-ra", "product-registry", "index.md"), at)).toBe(true);
+  });
+  test("not another layer's page, term pages or SKOS", () => {
+    expect(writesIntoSite(join(g, "instance", "smart-base", "index.md"), at)).toBe(false);
+    expect(writesIntoSite(join(g, "instance", "smart-base", "smart-base", "actor", "index.md"), at)).toBe(false);
+    expect(writesIntoSite(join(assets, "smart-base--smart-base.jsonld"), at)).toBe(false);
+  });
+  test("nothing outside the site; everything inside it without --instance", () => {
+    expect(writesIntoSite(join("/elsewhere", "x.md"), at)).toBe(false);
+    expect(writesIntoSite(join(g, "instance", "smart-base", "index.md"), { site, assets })).toBe(true);
   });
 });
