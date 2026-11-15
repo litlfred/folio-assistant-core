@@ -22,6 +22,7 @@ import { MaterializationSchema } from "../schemas/materialization.ts";
 import { run as fixityRun } from "./check-materialized-fixity.ts";
 import { checkMaterializations, materialize, materializeNodes, sizeGate, type FetchedPart, type PartFetcher } from "./kg-materialize.ts";
 import { fetchSubgraphIndex, packSubgraphIndex, type SubgraphIndexFetch } from "@litlfred/cat-harness-tools/scripts/subgraph-index-package.ts";
+import { overlayPath } from "@litlfred/cat-harness-tools/scripts/lib/layer-output.ts";
 
 const SHA = "0123456789abcdef0123456789abcdef01234567";
 const SHA2 = "89abcdef0123456789abcdef0123456789abcdef";
@@ -477,7 +478,8 @@ const NODES_SUBSTRATE = {
   ],
 };
 const SDLC_HYDRATED_PATH = "docs/subgraph/cat-harness/sdlc/skills/index.hydrated.jsonld";
-const SDLC_HYDRATED = readFileSync(join(import.meta.dir, "..", "..", "cat-harness", SDLC_HYDRATED_PATH), "utf8");
+// Written at publish into the layer output overlay (bean sm8r), not the mount.
+const SDLC_HYDRATED = readFileSync(overlayPath(join(import.meta.dir, "..", "..", "cat-harness", SDLC_HYDRATED_PATH)), "utf8");
 const NODES_UPSTREAM: Record<string, string> = {
   "cat-harness.json": JSON.stringify(NODES_SUBSTRATE),
   [SDLC_HYDRATED_PATH]: SDLC_HYDRATED,
