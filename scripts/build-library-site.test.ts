@@ -9,7 +9,7 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFi
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildLibrarySite, entryContents, entryView, HANDLER, materialisedEdits, siteReads } from "./build-library-site.js";
+import { buildLibrarySite, entryContents, entryView, HANDLER, LIB_CLASS, materialisedEdits, siteReads } from "./build-library-site.js";
 
 const ENTRY = "review-v1";
 const FIXTURE = join(import.meta.dir, "test-fixtures", "library-structure.json");
@@ -87,6 +87,28 @@ describe("build-library-site (bean zcak)", () => {
     expect(existsSync(join(at, "index.html"))).toBe(false);
     expect(readFileSync(join(out, "en", HANDLER, "library", "index.html"), "utf-8")).toContain(`href="${ENTRY}/"`);
     expect(existsSync(join(out, HANDLER, "library", "index.html"))).toBe(false);
+  });
+
+  test("themedWithLayout", () => {
+    const d = scaffold();
+    const out = join(d, "_t");
+    buildLibrarySite(d, out, { repo: "o/r", layout: "default" });
+    const html = readFileSync(join(out, "en", HANDLER, "library", ENTRY, "index.html"), "utf-8");
+    // A Jekyll page in the site's layout, so the theme wraps it (#805).
+    expect(html.startsWith("---\nlayout: default\n")).toBe(true);
+    expect(html).not.toContain("<!doctype html>");
+    expect(html).not.toContain("max-width: 72rem");
+    expect(html).toContain("{% raw %}");
+    expect(html).toContain(`<div class="${LIB_CLASS}"><div class="lib-page">`);
+    expect(html).toContain("loadDocument(");
+    expect(html).toContain("data-fa-visualiser-nav");
+    const index = readFileSync(join(out, "en", HANDLER, "library", "index.html"), "utf-8");
+    expect(index.startsWith("---\nlayout: default\n")).toBe(true);
+    expect(index).toContain(`href="${ENTRY}/"`);
+    // Without --layout the page is the standalone one, unchanged.
+    buildLibrarySite(d, join(d, "_p"), { repo: "o/r" });
+    expect(readFileSync(join(d, "_p", "en", HANDLER, "library", ENTRY, "index.html"), "utf-8").startsWith("<!doctype html>")).toBe(true);
+    expect(() => buildLibrarySite(d, join(d, "_x"), { layout: "bad name" })).toThrow(/not a layout name/);
   });
 
   test("saysWhatItReads", () => {

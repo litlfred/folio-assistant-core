@@ -30,3 +30,10 @@ Feature: the library site's entry pages
     When the entry's contents are made and the site is built
     Then the top-level sections are rows pointing at #sec- anchors
     And the page carries the rail declaration
+
+  @test:scripts/build-library-site.test.ts::build-library-site_(bean_zcak)::themedWithLayout
+  Scenario: with --layout, every library page is a Jekyll page in the site's layout, so it carries the site theme
+    When the library site is built with a layout
+    Then the entry page and the index start with front matter naming that layout
+    And the content sits in a Liquid raw block inside the library class, with no standalone shell
+    And without a layout the page is the standalone one, and a bad layout name is refused
