@@ -8,7 +8,8 @@
  * set through textContent. The only innerHTML assignment takes the vendored
  * encoder's own <svg>, which is built from bits rather than from the string.
  *
- * Depends on vendor/qrcode.js and vendor/qrcode_UTF8.js being loaded first.
+ * The QR encoder (vendor/qrcode.js, qrcode_UTF8.js) is loaded on first use by
+ * navbar-row.js's `window.faEnsureQrcode`.
  * Cross-checked by scripts/tests/qr.test.ts, which decodes the encoder's
  * output with an independent reader.
  *
@@ -2491,7 +2492,22 @@
     var views = {};
     var openTile = null;   // the tile to return focus to when Back is pressed
 
+    // The encoder is loaded the first time the tile opens (owner, 2026-11-14:
+    // "do lazy load content and libs"), by navbar-row.js's shared loader.
     function renderQr() {
+      if (typeof qrcode === "function") { drawQr(); return; }
+      qrCaption.textContent = "Loading the QR code\u2026";
+      var ensure = window.faEnsureQrcode;
+      if (typeof ensure !== "function") {
+        qrCaption.textContent = "The QR code could not be drawn: its encoder is not available on this page.";
+        return;
+      }
+      ensure(drawQr, function () {
+        qrCaption.textContent = "The QR code could not be drawn: its encoder did not load.";
+      });
+    }
+
+    function drawQr() {
       var url = window.location.href;
       var q = qrcode(0, "M");
       q.addData(url);
@@ -2653,12 +2669,10 @@
 
       views.language = buildLanguageBar();
 
-      if (typeof qrcode === "function") {
-        var qr = el("div", { class: "fa-qr-panel fa-tile-content", "data-open": "true" });
-        qr.appendChild(qrArt);
-        qr.appendChild(qrCaption);
-        views.qr = qr;
-      }
+      var qr = el("div", { class: "fa-qr-panel fa-tile-content", "data-open": "true" });
+      qr.appendChild(qrArt);
+      qr.appendChild(qrCaption);
+      views.qr = qr;
     }
 
     /* ── Navigation between the grid and a view ────────────────────────── */
@@ -2771,16 +2785,13 @@
       showView("settings", SETTINGS_NAMES.page, pageSettingsTile);
     };
     grid.appendChild(tileButton(GLOBE_GLYPH, "Language", "language"));
-    // The encoder is a separate vendor script. Without it the OTHER tiles must
-    // still work -- the old code returned early from the whole mount when it
-    // was missing, so a failed vendor request took the theme switch, the
-    // reading preferences and the language switch down with the QR code.
-    if (typeof qrcode === "function") {
-      grid.appendChild(tileButton(GLYPH, "QR code", "qr"));
-    } else {
-      console.warn("docs-ui: QR encoder not loaded (vendor/qrcode.js must be included " +
-                   "first); the other action tiles were mounted without it.");
-    }
+    // The encoder is a separate vendor script, loaded when the tile first
+    // opens (renderQr), so the tile is always offered. If it cannot load, the
+    // QR view says so; the OTHER tiles never depend on it -- the old code
+    // returned early from the whole mount when it was missing, so a failed
+    // vendor request took the theme switch, the reading preferences and the
+    // language switch down with the QR code.
+    grid.appendChild(tileButton(GLYPH, "QR code", "qr"));
 
     // A tile that DOES something rather than opening a sidebar view. The board
     // lives in the main display, so `showView` is the wrong machinery for it.
@@ -9260,7 +9271,7 @@
         return;
       }
       setOpen(false);
-      handle.focus();
+      focusFolioControl(handle);
     });
 
     /* HOW MANY ARE WAITING, on the handle — bean `c132`. On a phone a closed
@@ -9315,6 +9326,7 @@
     }
 
     layer.__faSetGlassOpen = setOpen;
+    bindFolioIcon();
     return layer;
   }
 
@@ -11282,7 +11294,10 @@
   }
 
   function mountFigures() {
-    document.querySelectorAll(".bpmn-figure").forEach(function (f) { mountFigure(f, false); });
+    document.querySelectorAll(".bpmn-figure").forEach(function (f) {
+      if (f.querySelector("[data-fa-inline-pending]")) return;
+      mountFigure(f, false);
+    });
 
     // Any other SVG in the body gets the same controls -- but only if it is a
     // FIGURE. The first version of this matched `.main-content svg`, which in
@@ -11318,6 +11333,10 @@
       (rasterOk ? ", .main-content img" : "");
 
     document.querySelectorAll(sel).forEach(function (node) {
+      // A drawing still waiting to be inlined is mounted once it is, by
+      // `inlineDiagrams` calling back here: wrapped now, the scan would see
+      // an <img> and size its controls for that.
+      if (node.hasAttribute("data-fa-inline-pending")) return;
       if (node.closest(".bpmn-figure") || node.closest(".fa-qr-host")) return;
       if (node.closest(".fa-figure-scope")) return;
       // An <svg> nested in another is part of that drawing, never its own figure.
@@ -11457,6 +11476,22 @@
     return svg;
   }
 
+  // LAZY, AS THEY NEAR THE VIEWPORT (owner, 2026-11-14: "do lazy load content
+  // and libs"). Every drawing used to be fetched and parsed at load, wherever
+  // it sat, and the figure controls of the whole page waited for the slowest.
+  // Now `done` (mountFigures) runs at once for everything already drawable,
+  // each drawing is inlined when it comes within INLINE_MARGIN of the
+  // viewport, and its own controls are mounted when it is. A drawing still an
+  // <img> carries `data-fa-inline-pending`, which mountFigures skips.
+  //
+  // PRINT (owner, 2026-11-14: "Make sure printing loads all of the content
+  // before it renders the PDF"): an un-inlined drawing is still its own
+  // <img>, which prints; `beforeprint` turns any `loading="lazy"` image in
+  // the content eager and starts inlining every pending drawing, and
+  // `faInlineAllDiagrams()` returns a promise for a caller that can wait
+  // (a Print button would await it, then call window.print()).
+  var INLINE_MARGIN = "1000px 0px";
+  var inlineQueue = [];
   function inlineDiagrams(done) {
     var imgs = [].slice.call(
       document.querySelectorAll(
@@ -11468,13 +11503,55 @@
       done();
       return;
     }
-    var pending = imgs.length;
-    function settle() { if (--pending === 0) done(); }
+    imgs.forEach(function (img) { img.setAttribute("data-fa-inline-pending", ""); });
+    inlineQueue = imgs;
+    done();
+    if (typeof window.IntersectionObserver !== "function") {
+      // No observer: the old behaviour, every drawing now.
+      inlineAll();
+      return;
+    }
+    var io = new window.IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        inlineOne(e.target);
+      });
+    }, { rootMargin: INLINE_MARGIN });
+    imgs.forEach(function (img) { io.observe(img); });
+  }
 
-    imgs.forEach(function (img) {
+  /** Inline every drawing not yet inlined; resolves when all have settled. */
+  function inlineAll() {
+    return Promise.all(inlineQueue.map(inlineOne));
+  }
+  window.faInlineAllDiagrams = inlineAll;
+
+  window.addEventListener("beforeprint", function () {
+    [].forEach.call(document.querySelectorAll('.main-content img[loading="lazy"], .bpmn-figure img[loading="lazy"]'), function (img) {
+      img.loading = "eager";
+    });
+    inlineAll();
+  });
+
+  var remountPending = null;
+  function remountSoon() {
+    if (remountPending !== null) return;
+    remountPending = window.setTimeout(function () { remountPending = null; mountFigures(); }, 30);
+  }
+
+  /** Inline one drawing, once; the same promise however often it is asked. */
+  function inlineOne(img) {
+    if (img.faInlined) return img.faInlined;
+    if (!img.hasAttribute("data-fa-inline-pending")) return Promise.resolve();
+    function settle() {
+      img.removeAttribute("data-fa-inline-pending");
+      remountSoon();
+    }
+    img.faInlined = (function () {
       var isObject = img.tagName.toLowerCase() === "object";
       var src = img.getAttribute(isObject ? "data" : "src");
-      window
+      return window
         .fetch(src)
         .then(function (r) {
           if (!r.ok) throw new Error("HTTP " + r.status);
@@ -11517,7 +11594,8 @@
           console.warn("docs-ui: could not inline " + src + " (" + e.message + "); it stays a static image, so its links will not work.");
         })
         .then(settle, settle);
-    });
+    })();
+    return img.faInlined;
   }
 
   /* ── The navbar filters by the selected locale ───────────────────────── */
@@ -13232,6 +13310,56 @@
     }
   }
 
+  /* THE FOLIO IN THE ROW — owner, 2026-11-13: *"remove the folio purple tab
+   * at top instead add an icon to the controls for the folio."* The icon
+   * drives the EXISTING handle (one control over one state, `l4zi`): a click
+   * clicks it, and its name and pressed state follow the handle's, count and
+   * all. While the row carries it, `docs-ui.css` hides the handle; a page
+   * with no row keeps the tab, so the glass is never out of reach. */
+  var FOLIO_GLYPH =
+    '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<rect x="4" y="6.5" width="12" height="14.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/>' +
+    '<path d="M8 6.5V4.5A1.5 1.5 0 0 1 9.5 3H18.5A1.5 1.5 0 0 1 20 4.5V16.5A1.5 1.5 0 0 1 18.5 18H16" ' +
+    'fill="none" stroke="currentColor" stroke-width="1.6"/>' +
+    '<path d="M7 11h6M7 14h6M7 17h4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>' +
+    "</svg>";
+  function folioIcon() {
+    var b = el("button", {
+      type: "button", class: "fa-nav-icon fa-nav-folio", "aria-expanded": "false",
+      "aria-label": "Pull down your folio", title: "Pull down your folio", "data-fa-tip": "Pull down your folio"
+    });
+    b.innerHTML = FOLIO_GLYPH;
+    b.addEventListener("click", function () {
+      var h = document.querySelector(".fa-glass-handle");
+      if (h) h.click();
+      bindFolioIcon();
+    });
+    return b;
+  }
+  /** Mirror the handle's name and state onto the row's folio icon. Idempotent; called from both sides, whichever mounts last. */
+  function bindFolioIcon() {
+    var b = document.querySelector(".fa-nav-folio");
+    var h = document.querySelector(".fa-glass-handle");
+    if (!b || !h) return;
+    function sync() {
+      var name = h.getAttribute("aria-label") || "Pull down your folio";
+      b.setAttribute("aria-label", name);
+      b.setAttribute("data-fa-tip", name);
+      b.title = name;
+      b.setAttribute("aria-expanded", h.getAttribute("aria-expanded") === "true" ? "true" : "false");
+    }
+    sync();
+    if (b.__faFolioBound === h || typeof MutationObserver !== "function") return;
+    b.__faFolioBound = h;
+    new MutationObserver(sync).observe(h, { attributes: true, attributeFilter: ["aria-label", "aria-expanded"] });
+  }
+  /** Where focus goes back to when the glass closes: the handle, or the row's folio icon while the handle is hidden. */
+  function focusFolioControl(handle) {
+    var b = document.querySelector(".fa-nav-folio");
+    if (b && handle.getClientRects().length === 0) b.focus();
+    else handle.focus();
+  }
+
   function mountNavIconRow() {
     // THE ROW IS DRAWN BY `navbar-row.js` — beans `lhvt`, `9rq1`. That file is
     // the one drawing for every navbar: it also runs on the 2,709 railed pages
@@ -13273,6 +13401,7 @@
         });
         scheme.addEventListener("click", toggleScheme);
         host.appendChild(scheme);
+        host.appendChild(folioIcon());
         // A row mounted LATE (the path below) has a fish nobody wired yet.
         // Idempotent per button, so the synchronous path is unaffected.
         mountFshGutsNav();
@@ -13793,6 +13922,10 @@
     // Figures are mounted only after the inlining settles, so the scan sees the
     // real <svg> rather than the <img> it replaces and does not wrap both.
     inlineDiagrams(mountFigures);
+    // A diagram drawn LATER -- a Mermaid block rendered as it nears the
+    // viewport (`_includes/components/mermaid.html`) -- says so, and gets its
+    // controls then; the observer below stops watching after ten seconds.
+    document.addEventListener("fa:figures-changed", remountSoon);
 
     // Mermaid renders AFTER this runs, and nothing tells us when.
     //

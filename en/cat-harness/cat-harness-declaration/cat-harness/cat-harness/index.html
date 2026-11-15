@@ -147,12 +147,10 @@ ca&amp;at-harness
 <dt>icon</dt><dd>mark</dd>
 <dt>navbarIcons</dt><dd><pre>[
   &quot;close&quot;,
-  &quot;todos&quot;,
-  &quot;beans&quot;,
-  &quot;fsh-guts&quot;,
   &quot;qr&quot;,
   &quot;launcher&quot;
 ]</pre></dd>
+<dt>_navbarIcons_comment</dt><dd>todos, beans and fsh-guts left the row on 2026-11-13 (owner: &quot;remove the fsh-guts, beans and todos&quot;); they are still reached from the glass strip, the Folders list and Page settings. The row is now at the foot of the rail, and the rail and docs-ui.js add the Folio and Harnesses icons to it, which are not declared slots: each is drawn where its panel exists.</dd>
 <dt>glassStrip</dt><dd><pre>[
   {
     &quot;chrome&quot;: &quot;todos&quot;
@@ -1869,6 +1867,15 @@ ca&amp;at-harness
     &quot;index&quot;: true
   },
   {
+    &quot;path&quot;: &quot;docs/en/cat-harness-tools/qa-attestations/&quot;,
+    &quot;writer&quot;: [
+      &quot;node-kind:pages&quot;
+    ],
+    &quot;because&quot;: &quot;checkout&quot;,
+    &quot;reason&quot;: &quot;the qa-attestations kind&#39;s pages, one per attestation file (owner, 2026-11-13, node-kind audit: every listed node kind gets per-node pages). The kind is cat-harness-tools&#39; (its validators/qa-attestations-kind.json); its nodes are this layer&#39;s test/attestations/, which every QA run and reviewer judgement changes, so the pages are built at publish rather than committed&quot;,
+    &quot;index&quot;: true
+  },
+  {
     &quot;path&quot;: &quot;docs/en/folio-assistant-core/changeset/&quot;,
     &quot;writer&quot;: [
       &quot;node-kind:pages&quot;
@@ -1895,6 +1902,14 @@ ca&amp;at-harness
     &quot;reason&quot;: &quot;the bibliography folio-assistant-core renders over every instance in the checkout: one page per layer&#39;s references, catalogue and library directories, so its bytes are a function of the consuming index&#39;s lock. Never committed, but no entry named it, so `check:bibliography` judged a fresh mount (no pages yet) as 582 stale files (dth-hrh#105, run 42366701605)&quot;
   },
   {
+    &quot;path&quot;: &quot;docs/en/fhir-harness/ig-ast/&quot;,
+    &quot;writer&quot;: [
+      &quot;ig-ast:pages&quot;
+    ],
+    &quot;because&quot;: &quot;checkout&quot;,
+    &quot;reason&quot;: &quot;fhir-harness&#39;s IG AST viewer: an index and one page per IG in the checkout carrying an AST, written into this site by fhir-harness/scripts/gen-ig-ast-pages.ts, so its bytes move with the IGs&#39; pins. Undeclared, a publish wrote it into a mounted cat-harness (bean cat-tools-sm8r, item 9)&quot;
+  },
+  {
     &quot;path&quot;: &quot;docs/assets/glossary/&quot;,
     &quot;writer&quot;: [
       &quot;glossary:page&quot;
@@ -1918,6 +1933,14 @@ ca&amp;at-harness
     ],
     &quot;because&quot;: &quot;checkout&quot;,
     &quot;reason&quot;: &quot;this instance&#39;s JSON-LD @context, generated from the prefixes its documents use (published ones included, which docs/subgraph/ and the SKOS exports above are) flattened with the prefix tables of the instances it needs, read at the checkout&#39;s pins (bean folio-assistant-63q4)&quot;
+  },
+  {
+    &quot;path&quot;: &quot;docs/en/smart-base/l1-extraction/&quot;,
+    &quot;writer&quot;: [
+      &quot;smart-base:l1-extraction:pages&quot;
+    ],
+    &quot;because&quot;: &quot;checkout&quot;,
+    &quot;reason&quot;: &quot;smart-base&#39;s L1 extraction viewer: an index and one page per IG in the checkout with an L1 extraction, written into this site by smart-base/scripts/gen-l1-extraction-pages.ts, so its bytes move with those layers&#39; pins. Undeclared, a publish wrote it into a mounted cat-harness (bean cat-tools-sm8r, item 9)&quot;
   },
   {
     &quot;path&quot;: &quot;docs/en/cat-harness/tools/&quot;,
@@ -2559,6 +2582,17 @@ ca&amp;at-harness
     ],
     &quot;because&quot;: &quot;checkout&quot;,
     &quot;reason&quot;: &quot;a page per diagram of every instance, 32 of 100 of them other instances&#39; (measured: a foreign task name rewrote public-comment.md); listed after the render:bpmn drawings, because its Findings section reports which diagrams have one. It also reads the bean stores&#39; workflow instances (beans/workflows/, kept on the beans branch and mounted by state:mount before this runs) to link each diagram&#39;s running instances (bean v49e, cat-harness-tools#684), so a state:push moves it as well as a re-pin&quot;
+  },
+  {
+    &quot;path&quot;: &quot;docs/en/cat-harness/fsh-guts/&quot;,
+    &quot;writer&quot;: [
+      &quot;fsh-guts:viz&quot;
+    ],
+    &quot;because&quot;: &quot;state&quot;,
+    &quot;from&quot;: [
+      &quot;fsh-guts&quot;
+    ],
+    &quot;reason&quot;: &quot;the fsh-guts viewer page, drawn from the cat/cat-harness/fsh-guts state branch, so no commit of this layer can hold it current; committing it made every re-render (a test, qa:refresh) rewrite it (bean cat-tools-sm8r, item 4, step 6)&quot;
   },
   {
     &quot;path&quot;: &quot;docs/assets/processes/index.json&quot;,

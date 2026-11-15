@@ -22,7 +22,9 @@
      starts at the gutter, so the first icon does too and the two lines read as
      one block. */
   padding: 0.25rem calc(var(--fa-nav-pad, 0.75rem) - 0.25rem);
-  border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+  /* At the FOOT of the navbar since 2026-11-13 (owner: "put these controls at
+     the bottom of the navbar"), so its rule is on top. */
+  border-top: 1px solid rgba(128, 128, 128, 0.25);
 }
 
 /* THE SAME ROW ON THE RAIL — bean `wckf` (#2147). `mountNavIconRow` now draws
@@ -197,4 +199,21 @@ button.fa-nav-icon {
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.45);
   }
   .fa-qr-panel svg, .fa-qr-caption { max-width: 100%; }
+}
+
+/* ARRIVING ON AN ICON DOES NOT OPEN THE RAIL EITHER — the `.side-bar` rule in
+ * `docs-ui.css` (bean `ob3m` finding 1), for `nav.fa-nav`. With the row at the
+ * rail's foot (owner, 2026-11-13) a pointer arriving on an icon widened the
+ * rail and laid the row flat, moving the icon out from under it before the
+ * click landed. `navbar-row.js` sets `.fa-nav-tip-hold` while the pointer is
+ * in the row's resting box; the rail stays at rest until it leaves. */
+nav.fa-nav.fa-nav-tip-hold:hover:not(:has(:focus-visible)):not(:has(.fa-nav-open:checked)) {
+  width: var(--fa-nav-collapsed, 3.5rem);
+}
+nav.fa-nav.fa-nav-tip-hold:hover:not(:has(:focus-visible)):not(:has(.fa-nav-open:checked)) .fa-nav-in > .fa-nav-icons {
+  width: var(--fa-nav-collapsed, 3.5rem);
+  flex-wrap: wrap;
+}
+body:has(nav.fa-nav.fa-nav-tip-hold:hover:not(:has(:focus-visible)):not(:has(.fa-nav-open:checked))) {
+  padding-inline-start: var(--fa-nav-collapsed, 3.5rem);
 }

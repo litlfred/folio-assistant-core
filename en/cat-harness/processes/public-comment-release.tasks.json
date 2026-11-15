@@ -205,6 +205,14 @@
       "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
      },
      {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
+     },
+     {
+      "name": "translation-candidate-source",
+      "href": "../../../en/cat-harness/processes/skills/translation-candidate-source.html"
+     },
+     {
       "name": "translation-manager",
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
@@ -290,6 +298,10 @@
       "via": "author"
      },
      {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
+     },
+     {
       "name": "voice-authoring-guidance"
      }
     ]
@@ -360,6 +372,10 @@
       "name": "todo-manager",
       "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
+     },
+     {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -472,6 +488,10 @@
       "via": "author"
      },
      {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
+     },
+     {
       "name": "voice-authoring-guidance"
      }
     ]
@@ -554,6 +574,14 @@
      {
       "name": "todo-manager",
       "href": "../../../en/cat-harness/processes/skills/todo-manager.html"
+     },
+     {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
+     },
+     {
+      "name": "translation-candidate-source",
+      "href": "../../../en/cat-harness/processes/skills/translation-candidate-source.html"
      },
      {
       "name": "translation-manager",

@@ -551,6 +551,10 @@
       "via": "author"
      },
      {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
+     },
+     {
       "name": "voice-authoring-guidance"
      }
     ]
@@ -622,6 +626,10 @@
       "name": "todo-manager",
       "href": "../../../en/cat-harness/processes/skills/todo-manager.html",
       "via": "author"
+     },
+     {
+      "name": "translation-adjudication",
+      "href": "../../../en/cat-harness/processes/skills/translation-adjudication.html"
      },
      {
       "name": "voice-authoring-guidance"

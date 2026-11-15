@@ -283,9 +283,42 @@ function labelOf(g) {
 /** Shown means laid out by the browser: a graph inside a hidden view waits until it is picked. */
 const shown = (el) => el.getClientRects().length > 0;
 
+/*
+ * AND NEAR THE VIEWPORT (owner, 2026-11-14: "do lazy load content and libs"): a shown graph far
+ * below the fold waits until it comes within 800px, so Graphviz is not fetched for it at load.
+ * PRINT ("Make sure printing loads all of the content before it renders the PDF"): once the
+ * page is idle every shown graph is laid out in the background, and `beforeprint` lays out any
+ * still waiting; `window.faMountAllGraphs()` returns a promise for a caller that can wait.
+ */
+const unmounted = () => [...document.querySelectorAll(".kg-graph[data-dot-src]:not([data-kg-mounted])")];
+const near = typeof IntersectionObserver === "function"
+  ? new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      near.unobserve(e.target);
+      if (!e.target.dataset.kgMounted && shown(e.target)) mount(e.target);
+    }
+  }, { rootMargin: "800px 0px" })
+  : null;
+
 function mountShown() {
-  document.querySelectorAll(".kg-graph[data-dot-src]:not([data-kg-mounted])").forEach((el) => { if (shown(el)) mount(el); });
+  unmounted().forEach((el) => {
+    if (!shown(el)) return;
+    if (near) near.observe(el);
+    else mount(el);
+  });
 }
+
+function mountAllShown() {
+  return Promise.all(unmounted().filter(shown).map((el) => mount(el)));
+}
+window.faMountAllGraphs = mountAllShown;
+window.addEventListener("beforeprint", () => { mountAllShown(); });
+const whenIdle = () => (typeof requestIdleCallback === "function"
+  ? requestIdleCallback(() => mountAllShown(), { timeout: 5000 })
+  : setTimeout(() => mountAllShown(), 2000));
+if (document.readyState === "complete") whenIdle();
+else window.addEventListener("load", whenIdle);
 
 mountShown();
 // The UML pages switch views with radio buttons and CSS; a pick may reveal a graph.

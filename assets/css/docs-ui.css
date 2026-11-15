@@ -2556,6 +2556,48 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
    the dark panel in the drawer's first screenshot (2026-10-20). */
 .fa-tr-drawer a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
+/* A block's translation, in its feedback panel (translation-review.js; owner,
+   2026-11-14). The state is words, never colour alone; the controls are 44px
+   targets, in the text's own colour so they read in either scheme. */
+.fa-trf .fa-trf-list { list-style: none; margin: 0; padding: 0; }
+.fa-trf .fa-trf-cat { margin: 0 0 0.6em; }
+.fa-trf .fa-trf-state { display: inline-block; font-weight: 600; padding: 0.15em 0.5em; border: 1px solid rgba(128, 128, 128, 0.5); border-radius: 4px; }
+.fa-trf .fa-trf-state[data-fa-tr-state="machine"],
+.fa-trf .fa-trf-state[data-fa-tr-state="flagged"],
+.fa-trf .fa-trf-state[data-fa-tr-state="stale"] { border-style: dashed; border-width: 2px; }
+.fa-trf .fa-trf-state[data-fa-tr-state="reviewed"],
+.fa-trf .fa-trf-state[data-fa-tr-state="official"] { border-style: double; border-width: 3px; }
+.fa-trf-dim { opacity: 0.85; font-size: var(--fa-text-sm); }
+.fa-trf-why { margin: 0.3em 0 0; }
+.fa-trf-warn { font-weight: 600; }
+.fa-trf-actions { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.5em 0 0; }
+.fa-trf-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; min-width: 44px; padding: 0.4em 0.9em;
+  border: 1px solid currentcolor; border-radius: 6px;
+  background: color-mix(in srgb, currentcolor 6%, transparent); color: inherit;
+  font: inherit; font-size: var(--fa-text-base); text-decoration: none; cursor: pointer;
+}
+.fa-trf-btn:hover { background: color-mix(in srgb, currentcolor 14%, transparent); }
+.fa-trf-btn:focus-visible { outline: 3px solid currentcolor; outline-offset: 2px; }
+.fa-trf-primary { border-width: 2px; font-weight: 600; }
+.fa-trf-issue { display: flex; flex-wrap: wrap; gap: 0.5em; align-items: center; margin: 0.5em 0 0; }
+.fa-trf-issue p { flex-basis: 100%; margin: 0; }
+.fa-trf-body { width: 100%; }
+.fa-trf-more { color: inherit; text-decoration: underline; text-underline-offset: 2px; display: inline-block; min-height: 44px; line-height: 44px; }
+.fa-trf-dialog { max-width: min(48rem, 95vw); width: 95vw; color: #1b1b1b; background: #fff; border: 2px solid currentcolor; }
+:root[data-fa-scheme="dark"] .fa-trf-dialog { color: #ecebe4; background: #27262b; }
+@media (prefers-color-scheme: dark) { :root:not([data-fa-scheme]) .fa-trf-dialog { color: #ecebe4; background: #27262b; } }
+.fa-trf-dialog h2 { margin-top: 0; font-size: var(--fa-text-lg); }
+.fa-trf-strings { padding-left: 1.4em; }
+.fa-trf-strings li { margin: 0 0 1em; }
+.fa-trf-strings label { display: block; font-weight: 600; margin-top: 0.3em; }
+.fa-trf-cands { border: 1px solid rgba(128, 128, 128, 0.5); border-radius: 6px; margin: 0.4em 0 0; padding: 0.2em 0.6em 0.4em; }
+.fa-trf-cands legend { font-size: var(--fa-text-sm); font-weight: 600; }
+.fa-trf-strings .fa-trf-cand { display: flex; align-items: center; gap: 0.5em; min-height: 44px; margin: 0; font-weight: normal; cursor: pointer; }
+.fa-trf-cand input[type="radio"] { width: 1.4rem; height: 1.4rem; flex: none; }
+.fa-trf-strings textarea, .fa-trf-dialog input[type="text"] { width: 100%; min-height: 44px; font: inherit; font-size: var(--fa-text-base); box-sizing: border-box; }
+
 /* The unverified-translation notice. It is the `partial` pair at panel size,
    not a fourth palette: it says the same thing the amber badge says, at more
    length, and a second set of oranges would be two answers to one question.
@@ -9581,3 +9623,11 @@ a.fa-block-kind:hover, a.fa-block-kind:focus-visible { text-decoration: underlin
 .fa-ext-glossaries-note {
   opacity: 0.75;
 }
+
+/* THE FOLIO TAB GIVES WAY TO THE ROW'S FOLIO ICON — owner, 2026-11-13:
+ * "remove the folio purple tab at top instead add an icon to the controls for
+ * the folio". Only where the row carries that icon (`folioIcon` in
+ * `docs-ui.js`), which drives this same handle: a page with no row keeps the
+ * tab, so the glass is never out of reach. The handle stays in the page for
+ * the icon to click. */
+html:has(.fa-nav-icons .fa-nav-folio) body > .fa-glass-handle { display: none !important; }
