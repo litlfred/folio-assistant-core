@@ -59,6 +59,7 @@ Feature: the bibliography pages and their exports
     Given more references in one sub-graph than a page lists
     When the pages are written
     Then the whole page and the sub-graph page summarise them with no list
+    And both offer the search box over the route's search index
     And the whole page links the sub-graph
     And the exports still carry every reference
     And without an extracted list a catalogued copy gets no page of its own

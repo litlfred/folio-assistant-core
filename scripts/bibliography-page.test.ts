@@ -148,7 +148,9 @@ describe("pages and exports", () => {
     // …and the route's self-ignoring marker (bean folio-assistant-uldr): the
     // route is built at publish, so git and the mount digest leave it alone.
     // …and one own page per reference, `<sub-graph>/<key>/index.md` (owner, 2026-11-08).
-    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1 + c.entries.length);
+    // …and the search index, `search/` (manifest, facets, one terms and one refs file here).
+    expect([...files.keys()].filter((p) => p.includes("/bibliography/search/")).length).toBe(4);
+    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1 + c.entries.length + 4);
     expect([...files.keys()].filter((p) => p.endsWith("/.gitignore"))).toHaveLength(1);
   });
 
@@ -254,13 +256,18 @@ describe("pages and exports", () => {
     expect(whole).toContain('<p class="fa-bib-summary">');
     expect(whole).not.toContain('<ol class="fa-bib">');
     expect(whole).toContain('<a href="folio-x-references/">folio-x-references</a>');
+    expect(whole).toContain('<div class="fa-bib-search" data-fa-bib-index="search/" data-fa-bib-root="">');
     // The exports still hold every reference.
     const bib = out.get([...out.keys()].find((p) => p.endsWith("bibliography/references.bib"))!)!;
     expect(bib).toContain("@book{ref500,");
     // A sub-graph page with no document page below it says so, and lists nothing.
     const sub = out.get([...out.keys()].find((p) => p.endsWith("folio-x-references/index.md"))!)!;
-    expect(sub).toContain("Take all of them in an export.");
+    expect(sub).toContain("Search them below, or take all of them in an export.");
+    expect(sub).toContain('data-fa-bib-index="../search/" data-fa-bib-root="../" data-fa-bib-scope="');
     expect(sub).not.toContain('<ol class="fa-bib">');
+    // The + Add reference panel still works there: its script is the filter's.
+    expect(whole).toContain('id="fa-bib-add-form"');
+    expect(whole).toContain('var form=document.getElementById("fa-bib-add-form")');
   });
 
   test("subgraphPageOwnRefsOnly", () => {

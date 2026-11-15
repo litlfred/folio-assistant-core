@@ -63,6 +63,7 @@ import { scopeLabel, siteScopeArg } from "./lib/site-scope.ts";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { libraryEntries } from "./lib/library-entries.ts";
+import { buildSearchIndex, searchHtml, type SearchRecord } from "./bibliography-search.ts";
 
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
 import { safeHref } from "@litlfred/cat-harness-tools/schemas/ui/safe-url.ts";
@@ -830,6 +831,8 @@ export function renderPage(opts: {
   summary?: string;
   /** On a summarised page, the few references no sub-graph or document page below it lists: listed here. */
   listed?: Entry[];
+  /** On a summarised page, the search box over the route's index (`searchHtml`). */
+  search?: string;
 }): string {
   const { title, permalink, intro, entries, nav, targetDir, own, detail } = opts;
   const summarised = opts.summary !== undefined && entries.length > LIST_LIMIT;
@@ -846,7 +849,7 @@ export function renderPage(opts: {
 ${body}`;
   const plainList = (es: Entry[]) => `<ol class="fa-bib">\n${es.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>`;
   const list = summarised
-    ? `<p class="fa-bib-summary">${plural(entries.length, "reference")}: too many to list on one page. ${opts.summary}</p>${
+    ? `<p class="fa-bib-summary">${plural(entries.length, "reference")}: too many to list on one page. ${opts.search ? `Search them below, or ${opts.summary}` : `${opts.summary!.charAt(0).toUpperCase()}${opts.summary!.slice(1)}`}</p>${opts.search ? `\n\n${opts.search}` : ""}${
         shown.length ? `\n\nListed here: the ${plural(shown.length, "reference")} that no page below lists.\n\n${filtered(shown, plainList(shown))}` : ""
       }`
     : entries.length
@@ -875,7 +878,8 @@ ${addPanel}
 ${list}
 
 ${PANEL_STYLE}
-${shown.length ? `${FILTER_SCRIPT}\n${PANEL_SCRIPT}` : ""}
+${FILTER_SCRIPT}
+${shown.length ? PANEL_SCRIPT : ""}
 `;
 }
 
@@ -952,6 +956,37 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
     if (!at || !hasOwnPage(e)) return "";
     return depth === 1 && at.slug === here ? `${at.seg}/` : `${"../".repeat(depth)}${at.slug}/${at.seg}/`;
   };
+  // The search index over every reference (`bibliography-search.ts`), at
+  // `<route>/search/`: what a page too long to list offers instead.
+  const assetOf = new Map<Entry, AssetView>();
+  for (const a of c.assets ?? []) for (const e of a.entries) if (!assetOf.has(e)) assetOf.set(e, a);
+  const pageOf = (e: Entry): string => {
+    const at = place.get(e);
+    if (at && hasOwnPage(e)) return `${at.slug}/${at.seg}/`;
+    const a = assetOf.get(e);
+    if (a) return `${a.slug}/${a.asset}/`;
+    return at ? `${at.slug}/` : "";
+  };
+  const searchSlugs = [...new Set(c.subgraphs.map((s) => s.slug))];
+  const sgOf = new Map(searchSlugs.map((slug, i) => [slug, i]));
+  const plainCite = (r: ReferenceNode) => {
+    const authors = (r.author ?? []).map(nameText);
+    const who = authors.length > 3 ? `${authors.slice(0, 3).join("; ")}; et al.` : authors.join("; ");
+    return [who, (r.title ?? r.printed ?? (typeof r.note === "string" ? r.note : undefined) ?? r.id).replace(/\s+/g, " ").trim()].filter(Boolean).join(". ");
+  };
+  const placed = c.entries.filter((e) => place.has(e));
+  const records: SearchRecord[] = placed.map((e) => ({
+    k: e.ref.id,
+    c: plainCite(e.ref),
+    y: Number(yearOf(e.ref)) || 0,
+    s: sgOf.get(place.get(e)!.slug) ?? 0,
+    h: pageOf(e),
+  }));
+  for (const [f, text] of buildSearchIndex(records, searchSlugs, (r, i) => {
+    const ref = placed[i]!.ref;
+    return [r.c, r.k, r.y || "", ref["container-title"] ?? "", ref.publisher ?? "", ref.DOI ?? "", ref.printed ?? ""].join(" ");
+  }))
+    out.set(join(ROOT, "search", f), text);
   const write = (dir: string, page: string, entries: Entry[]) => {
     out.set(join(dir, "index.md"), page);
     const refs = entries.map((e) => e.ref);
@@ -987,7 +1022,8 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
       targetDir: defaultTargetDir,
       own,
       hrefOf: hrefsAt(0),
-      summary: "Open a sub-graph above to read its references, or take all of them in an export.",
+      summary: "open a sub-graph above to read its references, or take all of them in an export.",
+      search: searchHtml({ index: "search/", root: "" }),
     }),
     c.entries,
   );
@@ -1012,7 +1048,8 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
         nav: assetNav,
         targetDir: s.kind === "references" ? s.path : defaultTargetDir,
         hrefOf: hrefsAt(1, s.slug),
-        summary: subAssets.length ? "Open a document above to read the references it holds, or take all of them in an export." : "Take all of them in an export.",
+        summary: subAssets.length ? "open a document above to read the references it holds, or take all of them in an export." : "take all of them in an export.",
+        search: searchHtml({ index: "../search/", root: "../", scope: sgOf.get(s.slug) }),
         listed: entries.filter((e) => !onAssetPage.has(e)),
       }),
       entries,
