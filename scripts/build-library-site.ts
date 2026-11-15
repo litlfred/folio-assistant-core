@@ -25,7 +25,10 @@
  * the links come from the shared recipe (`EDIT_LINKS_RUNTIME`, bean v433), so
  * a fix to the Document view or to the links reaches this page too.
  *
- *   bun run folio-assistant-core/scripts/build-library-site.ts [--repo <folio root>] --out _site
+ *   bun run folio-assistant-core/scripts/build-library-site.ts [--repo <folio root>] [--layout <name>] --out _site
+ *
+ * `--layout default` writes every page as a Jekyll page in the site's layout,
+ * so it carries the theme like the rest of the site (#805).
  *
  * Writes, at `<handler>/<library dir>/` (the route rule every viewer
  * follows: `<base>/<handler>/<kind>/<subject>`, handler = this layer,
@@ -45,7 +48,9 @@ import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks
 import { VIEWER_CSS } from "@litlfred/cat-harness-tools/scripts/gen-library-viz.ts";
 import { EDIT_LINKS_RUNTIME } from "@litlfred/cat-harness-tools/src/core/edit-links.js";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
+import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { defaultBlockActions } from "./build-document-site.js";
+import { scopeCss } from "./scope-css.js";
 import { fromPageDir, localisedPage } from "./document-site-route.js";
 
 /** This layer: the HANDLER segment of every page it publishes. */
@@ -153,7 +158,33 @@ export function entryView(repoRoot: string, entryDir: string, repo?: string): Do
   return view;
 }
 
-function page(title: string, body: string, script = ""): string {
+/** The class a themed page's own content sits in, so its styles restyle nothing of the theme's. */
+export const LIB_CLASS = "fa-lib";
+
+const PAGE_EXTRA_CSS = `.doc-actions a { margin-left: .4em; font-size: .8rem; font-weight: normal; }`;
+
+/** A layout name as front matter may carry it, or a throw. */
+function layoutName(layout: string): string {
+  if (!/^[A-Za-z0-9_-]+$/.test(layout)) throw new Error(`library layout ${JSON.stringify(layout)} is not a layout name`);
+  return layout;
+}
+
+/**
+ * A library page. With no `layout`, a standalone HTML page, as before. With
+ * one (`--layout default`), a JEKYLL page in that layout, the way
+ * `build-document-site.ts --document-layout` writes the document: front
+ * matter, then one Liquid raw block holding the viewer's styles scoped under
+ * {@link LIB_CLASS}, the content in `.lib-page` (the class the viewer's
+ * styles are written for, as on the platform's own library viewer) and its script. The step runs before Jekyll,
+ * so the theme then wraps the page in the site's own chrome: its stylesheet,
+ * side bar and main column (folio-assistant-core#805; smart-ra's library
+ * entries were the only pages on the site without them).
+ */
+function page(title: string, body: string, script = "", layout?: string): string {
+  if (layout !== undefined) {
+    const inner = [`<style>${scopeCss(VIEWER_CSS + PAGE_EXTRA_CSS, `.${LIB_CLASS}`)}</style>`, `<div class="${LIB_CLASS}"><div class="lib-page">`, body, `</div></div>`, ...(script ? [script] : [])].join("\n");
+    return [`---`, `layout: ${layoutName(layout)}`, `title: ${JSON.stringify(title)}`, `search_exclude: true`, `---`, ...wrapRaw(inner), ``].join("\n");
+  }
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -162,7 +193,7 @@ function page(title: string, body: string, script = ""): string {
 <title>${esc(title)}</title>
 <style>${VIEWER_CSS}
 body { max-width: 72rem; margin: 0 auto; padding: 1rem 16px; }
-.doc-actions a { margin-left: .4em; font-size: .8rem; font-weight: normal; }
+${PAGE_EXTRA_CSS}
 </style>
 </head>
 <body>
@@ -199,7 +230,7 @@ export function entryContents(view: DocumentView): string {
  * the page is under the locale and its data is not. The view reads only the
  * directory of `DATA_HREF` (`docHref`), so `index.json` there need not exist.
  */
-function entryPage(id: string, title: string, contents = "", data = "."): string {
+function entryPage(id: string, title: string, contents = "", data = ".", layout?: string): string {
   const dir = data.replace(/\/+$/, "").split("/").map((seg) => (seg === "." || seg === ".." ? seg : encodeURIComponent(seg))).join("/");
   const js = `
 function $(i){ return document.getElementById(i); }
@@ -217,6 +248,7 @@ loadDocument(${JSON.stringify(id)});
 <section id="document"><p class="note">Loading the document…</p></section>${contents}
 <noscript><p>This page draws the document from <a href="${esc(dir)}/entries/${esc(encodeURIComponent(id))}.doc.json">its JSON</a>; it needs JavaScript.</p></noscript>`,
     `<script>${js}</script>`,
+    layout,
   );
 }
 
@@ -229,7 +261,8 @@ export interface LibrarySiteResult {
   entries: { seg: string; id: string; title: string; pages: number | null; sections: number; editable: number }[];
 }
 
-export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?: string } = {}): LibrarySiteResult {
+export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?: string; layout?: string } = {}): LibrarySiteResult {
+  if (opts.layout !== undefined) layoutName(opts.layout);
   const repo = opts.repo ?? defaultBlockActions(repoRoot).repo;
   const result: LibrarySiteResult = { entries: [] };
   for (const lib of libraryDirs(repoRoot)) {
@@ -247,7 +280,7 @@ export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?
       mkdirSync(join(at, "entries"), { recursive: true });
       mkdirSync(pageAt, { recursive: true });
       writeFileSync(join(at, "entries", `${name}.doc.json`), JSON.stringify(view) + "\n");
-      writeFileSync(join(pageAt, "index.html"), entryPage(name, title, entryContents(view), fromPageDir(pageRoute, dataRoute)));
+      writeFileSync(join(pageAt, "index.html"), entryPage(name, title, entryContents(view), fromPageDir(pageRoute, dataRoute), opts.layout));
       result.entries.push({ seg: basename(lib), id: name, title, pages: view.pages, sections: view.sections.length, editable: view.sections.filter((s) => s.edit).length });
     }
   }
@@ -255,7 +288,7 @@ export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?
     const rows = result.entries
       .map((e) => `<li><a href="${esc(encodeURIComponent(e.id))}/">${esc(e.title)}</a> <span class="note">${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections${e.editable ? `, ${e.editable} materialised in the folio` : ""}</span></li>`)
       .join("\n");
-    writeFileSync(join(outDir, ...localisedPage(`${HANDLER}/${result.entries[0]!.seg}`).split("/"), "index.html"), page("Library", `<h1>Library</h1>\n<p class="note">Frozen sources. Each opens on its table of contents.</p>\n<ul>\n${rows}\n</ul>`));
+    writeFileSync(join(outDir, ...localisedPage(`${HANDLER}/${result.entries[0]!.seg}`).split("/"), "index.html"), page("Library", `<h1>Library</h1>\n<p class="note">Frozen sources. Each opens on its table of contents.</p>\n<ul>\n${rows}\n</ul>`, "", opts.layout));
   }
   return result;
 }
@@ -279,7 +312,8 @@ if (import.meta.main) {
   };
   const repoRoot = resolve(opt("repo") ?? process.cwd());
   const out = resolve(opt("out") ?? "_site");
-  const r = buildLibrarySite(repoRoot, out, opt("github") ? { repo: opt("github") } : {});
+  const layout = opt("layout");
+  const r = buildLibrarySite(repoRoot, out, { ...(opt("github") ? { repo: opt("github") } : {}), ...(layout ? { layout } : {}) });
   if (!r.entries.length) console.error("· no library entry with a structure.json — nothing to draw");
   for (const e of r.entries) console.error(`✓ ${localisedPage(`${HANDLER}/${e.seg}/${e.id}`)}/: ${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections, ${e.editable} with ✎ edit into the folio`);
 }
