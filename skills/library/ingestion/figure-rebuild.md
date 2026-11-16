@@ -122,6 +122,7 @@ computable view and add a styled one; never trade one for the other.
    | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture, or for an IG or demonstrator its own `archimate/` model (declared with graph typology `archimate`, so the archimate-pages visualiser draws it) |
    | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the L1 library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's L1 library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
+   | any of the above, kept looking as printed: the as-drawn companion of a model view, or a drawing no model route fits (an illustration, a diagram of pictograms, a country example the folio may copy) | an **as-drawn SVG**: `as-drawn-figure/v1` data transcribed from the PDF by `scripts/pdf-as-drawn.py`, drawn by Tool `as-drawn-svg` (§"A drawing kept as printed becomes as-drawn data") | the folio's `figure-data/as-drawn/`; the folio commits the SVG |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
    **One source, never a copy.** Every rebuilt figure is generated from, or
@@ -224,6 +225,36 @@ library:
   translated and read aloud.
 - A label that names a glossary concept (L1 Narrative, Digital adaptation
   kit, Localisation) links to the SKOS term, an `<a href>` around the text.
+
+### A drawing kept as printed becomes as-drawn data
+
+When the reader should see the figure as printed (every figure needs that
+companion beside a model view, and some figures have no model route), do not
+redraw it by hand. Transcribe it:
+
+1. `python3 -I folio-assistant-core/scripts/pdf-as-drawn.py --entry <L1 entry>
+   --pdf <its PDF> --out figure-data/as-drawn --glossary <file>=<IRI base>...`
+   writes one `as-drawn-figure/v1` file per L1 render. It holds every path,
+   clip, text run and image inside the render's region, in paint order, at
+   the printed coordinates, colours, line widths, dashes, font sizes and
+   weights. Nothing is placed by hand, so the layout is the original's by
+   construction. The caption line is left out, because the block prints it.
+2. `bun run folio-assistant-core/scripts/as-drawn-svg.ts figure-data/as-drawn
+   --out-dir folio/<doc>/media` draws `as-drawn-fig-<N>.svg`, and `--check`
+   holds the SVGs to the data. Labels are SVG `<text>` held to their printed
+   width. A label that equals a glossary prefLabel or altLabel links to the
+   term, and nothing else is linked.
+3. The block records `meta.source.method: "generated"` with the data, the
+   tools and the PDF crop as evidence. For a figure that is also a model
+   view, keep the view's render as well, and name the as-drawn SVG in the
+   ArchiMate config's `figures[].asDrawn`.
+4. **Review by looking**: render each SVG next to the L1 PNG. The extractor
+   handles compound paths, clips, form XObjects, CMYK (as poppler converts
+   it), rotated text and invisible text. It leaves out soft-masked paint
+   (drop shadows) and counts it in `omitted`. Say so in the PR.
+5. Skip, with `--skip-page`, a figure that already has a generated SVG, and
+   third-party content the folio may not copy. That one gets a signed-off
+   `scope: "block"` exclusion.
 
 ### Mermaid and PlantUML are renderings, never a source
 
