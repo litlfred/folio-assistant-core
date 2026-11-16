@@ -42,7 +42,8 @@ const NUMBERS = /^\s*\d+(?:\s*[-–—]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–—]\s*\d
 /** A range longer than this is not a citation ("1–2000" is a span of years). */
 const MAX_RANGE = 50;
 
-const text = (h: string) => h.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+/** A heading's words, for comparing with {@link LIST_TITLE} only: never written to the page. */
+const text = (h: string) => h.split(/<[^>]*>/).join("").split(/\s+/).filter(Boolean).join(" ");
 const escAttr = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
 /** The `<ol>…</ol>` that starts at `from`, as [start, end) offsets; nested lists are inside it. */
