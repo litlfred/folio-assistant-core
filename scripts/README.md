@@ -51,6 +51,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`dc-render.ts`](dc-render.ts) | a file |  |
 | [`diig-phases-svg.test.ts`](diig-phases-svg.test.ts) | a file |  |
 | [`diig-phases-svg.ts`](diig-phases-svg.ts) | a file |  |
+| [`document-contents.test.ts`](document-contents.test.ts) | a file |  |
 | [`document-export.lua`](document-export.lua) | a file |  |
 | [`document-export.test.ts`](document-export.test.ts) | a file |  |
 | [`document-export.ts`](document-export.ts) | a file |  |
