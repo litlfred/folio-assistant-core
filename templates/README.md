@@ -15,5 +15,6 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-templates`
 |---|---|---|
 | [`issue-forms/`](issue-forms/) | _nothing declares what this holds_ | |
 | [`public-comment/`](public-comment/) | _nothing declares what this holds_ | |
+| [`site-presets/`](site-presets/) | _nothing declares what this holds_ | |
 
 <!-- kg:subgraph:end -->
