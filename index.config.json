@@ -41,7 +41,7 @@
               "by": "litlfred",
               "on": "2026-11-16",
               "ref": "618d620f99a05e1224ff95ac42fd0a94ce1b2417",
-              "evidence": "litlfred 2026-11-16T06:36:48Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9GbDZs1PWPLeRr9h1WjnESP): \"Yes, +12 hours\" — extend the repin and merge window past 07:01Z to 2026-11-16T19:01Z, to merge smart-base#430 and re-pin every leaf and folio-assistant onto it"
+              "evidence": "litlfred 2026-11-16T06:36:48Z, card in thread cmsg_017WNUkNK8kdDziPK58Pv6G9HtujCofFVVPVPppfDRTSNR (decision cmsg_017WNUkNK8kdDziPK58Pv6G9GbDZs1PWPLeRr9h1WjnESP): \"Yes, +12 hours\" — extend the repin and merge window past 07:01Z to 2026-11-16T19:01Z, to merge the base layer's open fix and re-pin every leaf and folio-assistant onto it"
             }
           }
         }
