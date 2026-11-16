@@ -41171,6 +41171,17 @@
           }
         },
         {
+          "name": "extends",
+          "type": "z.string().regex(/^[a-z0-9][a-z0-9-]*$/).optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          }
+        },
+        {
           "name": "pre",
           "type": "z.array(PackageScriptName).default([])",
           "optional": true,
