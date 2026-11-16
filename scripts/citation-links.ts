@@ -90,7 +90,10 @@ function items(html: string, [start, end]: [number, number]): Array<[number, num
     const tag = m[2]!.toLowerCase();
     if (tag !== "li") depth += closing ? -1 : 1;
     else if (depth === 1 && !closing) open = [m.index, m.index + m[0].length];
-    else if (depth === 1 && closing && open) out.push([open[0], open[1], m.index]), (open = undefined);
+    else if (depth === 1 && closing && open) {
+      out.push([open[0], open[1], m.index]);
+      open = undefined;
+    }
   }
   return out;
 }
@@ -180,10 +183,16 @@ export function linkCitations(parts: readonly CitationPart[], opts: { refBlock?:
       if (p.label !== opts.refBlock) return;
       const ol = p.html.search(/<ol\b/i);
       const s = ol >= 0 ? olAt(p.html, ol) : undefined;
-      if (s) (at = i), (span = s);
+      if (s) {
+        at = i;
+        span = s;
+      }
     } else {
       const f = findReferenceList(p.html);
-      if (f) (at = i), (span = [f.start, f.end]);
+      if (f) {
+        at = i;
+        span = [f.start, f.end];
+      }
     }
   });
   if (!span) return parts.map((p) => p.html);
