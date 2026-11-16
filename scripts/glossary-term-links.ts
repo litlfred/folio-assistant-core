@@ -176,3 +176,110 @@ export function linkTerms(links: readonly TermLink[]) {
     walk(tree);
   };
 }
+
+// ── The document's glossary table (owner, 2026-11-16) ─────────────────────
+//
+// A document's own glossary is a table, "Term | Definition". Each Term cell
+// links to the term's row on the glossary-folder page
+// (`glossary/instance/<instance>/#<instance>--<scheme>--<id>`), the anchor
+// `glossary-page.ts` writes (`anchorOf`), so the two cannot drift. Owner
+// cards, 2026-11-16: the term text is the link (no icon), and it goes to the
+// folder anchor, not the term's own page. A term with no entry stays plain
+// text and is reported (a QA line, not a failure). Always on: unlike the
+// prose links it changes nothing a reader did not already see as a term.
+
+/** A term of the document's own glossary, and its row on the glossary-folder page. */
+export interface GlossaryEntry {
+  id: string;
+  prefLabel: string;
+  altLabel: readonly string[];
+  /** The term's row on the glossary-folder page, relative to the document's page. */
+  href: string;
+}
+
+/**
+ * The entries a glossary table of a document whose page is in `pageDir` can
+ * link: every term of the authored schemes the document's own layer declares.
+ * Empty when the layer has none, and then its tables are left alone.
+ */
+export async function glossaryEntries(repoRoot: string, pageDir: string): Promise<GlossaryEntry[]> {
+  const { anchorOf, collect, pageOf, permalinkOf } = await import("./glossary-page.ts");
+  // The layer's own name: the first of neededInstances, as for the prose links.
+  const self = [...neededInstances(repoRoot)][0];
+  if (!self) return [];
+  const out: GlossaryEntry[] = [];
+  for (const s of collect(repoRoot).glossaries) {
+    if (s.extracted || (s.declaredBy ?? s.instance) !== self) continue;
+    const page = `${posix.relative(pageDir, permalinkOf(pageOf(s)).replace(/^\/|\/$/g, ""))}/`;
+    for (const t of s.glossary.terms) {
+      out.push({
+        id: t.id,
+        prefLabel: labelOf(t.prefLabel as LangText),
+        altLabel: (t.altLabel ?? []).map((l) => labelOf(l as LangText)),
+        href: `${page}#${anchorOf(s, t.id)}`,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * The entry a Term cell names: its exact prefLabel, else its exact altLabel,
+ * else a label equal ignoring case. The first of these that names exactly
+ * one entry wins; none, or more than one at every step, is no entry.
+ */
+export function resolveGlossaryTerm(entries: readonly GlossaryEntry[], text: string): { entry?: GlossaryEntry; ambiguous?: string[] } {
+  const term = text.trim();
+  const lower = term.toLowerCase();
+  const steps: Array<(e: GlossaryEntry) => boolean> = [
+    (e) => e.prefLabel === term,
+    (e) => e.altLabel.includes(term),
+    (e) => [e.prefLabel, ...e.altLabel].some((l) => l.toLowerCase() === lower),
+  ];
+  let ambiguous: string[] | undefined;
+  for (const step of steps) {
+    const hits = [...new Map(entries.filter(step).map((e) => [e.href, e])).values()];
+    if (hits.length === 1) return { entry: hits[0] };
+    if (hits.length > 1) ambiguous ??= hits.map((e) => e.id);
+  }
+  return ambiguous ? { ambiguous } : {};
+}
+
+const plainText = (n: MdNode): string => (n.type === "text" || n.type === "inlineCode" ? (n.value ?? "") : (n.children ?? []).map(plainText).join(""));
+
+/** A glossary table: its header names "Term" first and has a "Definition" column. */
+function isGlossaryTable(table: MdNode): boolean {
+  const head = table.children?.[0]?.children?.map((c) => plainText(c).trim()) ?? [];
+  return /^terms?$/i.test(head[0] ?? "") && head.slice(1).some((h) => /^definitions?$/i.test(h));
+}
+
+/**
+ * A remark plugin: each Term cell of a glossary table becomes a link to its
+ * entry on the glossary-folder page. A cell that is not plain text (already a
+ * link, say) is left alone; a term with no entry, or more than one, stays
+ * plain and is passed to `report`.
+ */
+export function linkGlossaryTables(entries: readonly GlossaryEntry[], report: (message: string) => void = () => undefined) {
+  if (entries.length === 0) return () => () => undefined;
+  return () => (tree: MdNode) => {
+    const walk = (node: MdNode) => {
+      if (node.type === "table") {
+        if (isGlossaryTable(node)) for (const row of node.children?.slice(1) ?? []) linkCell(row.children?.[0]);
+        return;
+      }
+      for (const c of node.children ?? []) walk(c);
+    };
+    const linkCell = (cell: MdNode | undefined) => {
+      if (!cell?.children?.length || !cell.children.every((c) => c.type === "text")) return;
+      const text = plainText(cell).trim();
+      if (!text) return;
+      const { entry, ambiguous } = resolveGlossaryTerm(entries, text);
+      if (!entry) {
+        report(ambiguous ? `glossary table: "${text}" names more than one glossary entry (${ambiguous.join(", ")}); left as plain text` : `glossary table: "${text}" has no glossary entry; left as plain text`);
+        return;
+      }
+      cell.children = [{ type: "link", url: entry.href, title: null, data: { hProperties: { className: ["fa-term"] } }, children: cell.children }];
+    };
+    walk(tree);
+  };
+}
