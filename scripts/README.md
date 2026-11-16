@@ -43,6 +43,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`check-security-gate.test.ts`](check-security-gate.test.ts) | a file |  |
 | [`check-security-gate.ts`](check-security-gate.ts) | a file |  |
 | [`check-voices.ts`](check-voices.ts) | a file |  |
+| [`citation-links.test.ts`](citation-links.test.ts) | a file |  |
+| [`citation-links.ts`](citation-links.ts) | a file |  |
 | [`codemod-refterm-usage.test.ts`](codemod-refterm-usage.test.ts) | a file |  |
 | [`codemod-refterm.test.ts`](codemod-refterm.test.ts) | a file |  |
 | [`codemod-refterm.ts`](codemod-refterm.ts) | a file |  |
