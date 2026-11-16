@@ -46,3 +46,18 @@ Feature: numbered citations and the reference list, linked both ways
   Scenario: the same work matches across DOI, handle and URL spellings
     When a DOI is written as "doi:" and as a doi.org link, and a handle as hdl.handle.net
     Then each normalises to the same key
+
+  @test:scripts/citation-links.test.ts::bracketed_citations::whoStyleBracketLinks
+  Scenario: a WHO-style bracketed citation links to its reference
+    When running text cites "(2)" and "(1, 3)" after words
+    Then each number links to its reference, and the references link back
+
+  @test:scripts/citation-links.test.ts::bracketed_citations::enumerationLeftAlone
+  Scenario: an enumeration is not read as citations
+    When "(1)" follows a colon and "(2)" a semicolon
+    Then neither is linked
+
+  @test:scripts/citation-links.test.ts::bracketed_citations::notInsideLinksOrCode
+  Scenario: a bracketed number inside a link or code is not a citation
+    When "(1)" is in a link's text and "(2)" in code
+    Then neither is linked

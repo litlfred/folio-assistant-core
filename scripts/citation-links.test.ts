@@ -57,6 +57,25 @@ describe("linkCitations", () => {
   });
 });
 
+describe("bracketed citations", () => {
+  test("whoStyleBracketLinks", () => {
+    const out = one(doc("Use cases matter (2). Both (1, 3).", "A.", "B.", "C."));
+    expect(out).toContain('cases matter <span class="fa-cite" id="cite-1">(<a href="#ref-2">2</a>)</span>.');
+    expect(out).toContain('Both <span class="fa-cite" id="cite-2">(<a href="#ref-1">1</a>, <a href="#ref-3">3</a>)</span>.');
+    expect(out).toContain('<li id="ref-2">B. <a class="fa-cite-back" href="#cite-1"');
+  });
+
+  test("enumerationLeftAlone", () => {
+    const out = one(doc("Steps: (1) plan; (2) build.", "A.", "B."));
+    expect(out).toContain("Steps: (1) plan; (2) build.");
+  });
+
+  test("notInsideLinksOrCode", () => {
+    const out = one(doc('See <a href="x">item (1)</a> and <code>f(2)</code>.', "A.", "B."));
+    expect(out).toContain('<a href="x">item (1)</a> and <code>f(2)</code>');
+  });
+});
+
 describe("identifierKeys", () => {
   test("doiHandleAndUrlNormalised", () => {
     expect(identifierKeys("doi:10.1093/OODH/oqad018.")).toContain("doi:10.1093/oodh/oqad018");

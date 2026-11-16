@@ -8,9 +8,11 @@
  * block's Markdown is not changed:
  *
  * - each item of the reference list gets the anchor `ref-N`;
- * - each `<sup>` whose text is citation numbers (`7`, `3,5`, `3–5`) links each
+ * - each `<sup>` whose text is citation numbers (`7`, `3,5`, `3–5`), and each
+ *   WHO-style bracketed number in running text (`(29)`, `(3, 5)`), links each
  *   number to its item, and carries the anchor `cite-K`, K counting citations
- *   in document order;
+ *   in document order. A bracketed number that opens a paragraph or follows a
+ *   colon or semicolon is an enumeration, "(1) … (2) …", and is left alone;
  * - each item ends with back-links to every citation of it: `↩` for one,
  *   `↩ a b c` for several;
  * - an item whose DOI, URL, ISBN or handle names exactly one entry of the
@@ -37,7 +39,8 @@ export interface LibraryLink {
 /** The reference list heading, in the languages documents here are written in. */
 const HEADING = /<h([1-6])\b[^>]*>([\s\S]*?)<\/h\1>/gi;
 const LIST_TITLE = /^(references|bibliography|works cited|références|referencias|bibliografía)$/i;
-const SUP = /<sup>([^<]*)<\/sup>/g;
+/** WHO style: "(29)", "(3, 5)", "(3–5)" in running text. */
+const PAREN = /\((\d{1,3}(?:\s*[-–—]\s*\d{1,3})?(?:\s*,\s*\d{1,3}(?:\s*[-–—]\s*\d{1,3})?)*)\)/g;
 const NUMBERS = /^\s*\d+(?:\s*[-–—]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–—]\s*\d+)?)*\s*$/;
 /** A range longer than this is not a citation ("1–2000" is a span of years). */
 const MAX_RANGE = 50;
@@ -204,14 +207,53 @@ export function linkCitations(parts: readonly CitationPart[], opts: { refBlock?:
   // The citations, numbered across the parts; the list itself cites nothing.
   const citedAt = new Map<number, number[]>();
   let k = 0;
-  const cite = (h: string) =>
-    h.replace(SUP, (whole, inner: string) => {
-      const ns = citedNumbers(inner);
-      if (!ns || ns.some((n) => n < first || n > last)) return whole;
-      const id = ++k;
-      for (const n of new Set(ns)) citedAt.set(n, [...(citedAt.get(n) ?? []), id]);
-      return `<sup class="fa-cite" id="cite-${id}">${inner.replace(/\d+/g, (n) => `<a href="#ref-${n}">${n}</a>`)}</sup>`;
-    });
+  const link = (inner: string, sup: boolean): string | undefined => {
+    const ns = citedNumbers(inner);
+    if (!ns || ns.some((n) => n < first || n > last)) return undefined;
+    const id = ++k;
+    for (const n of new Set(ns)) citedAt.set(n, [...(citedAt.get(n) ?? []), id]);
+    const linked = inner.replace(/\d+/g, (n) => `<a href="#ref-${n}">${n}</a>`);
+    return sup ? `<sup class="fa-cite" id="cite-${id}">${linked}</sup>` : `<span class="fa-cite" id="cite-${id}">(${linked})</span>`;
+  };
+  // Tag by tag, so a citation is never read inside a tag, a link, code or a
+  // heading, and both forms are numbered in the order they are read.
+  const cite = (h: string): string => {
+    const toks = h.split(/(<[^>]*>)/);
+    let skip = 0;
+    let prev = "";
+    for (let i = 0; i < toks.length; i++) {
+      const t = toks[i]!;
+      if (t.startsWith("<")) {
+        const m = /^<(\/?)(a|code|pre|h[1-6]|script|style)\b/i.exec(t);
+        if (m) skip = Math.max(0, skip + (m[1] ? -1 : 1));
+        if (skip === 0 && /^<sup>$/i.test(t) && /^<\/sup>$/i.test(toks[i + 2] ?? "")) {
+          const r = link(toks[i + 1] ?? "", true);
+          if (r) {
+            toks[i] = r;
+            toks[i + 1] = "";
+            toks[i + 2] = "";
+            i += 2;
+            prev = "x";
+            continue;
+          }
+        }
+        if (/^<\/?(p|li|td|th|br|div|ol|ul|blockquote)\b/i.test(t)) prev = "";
+        continue;
+      }
+      if (skip === 0) {
+        toks[i] = t.replace(PAREN, (whole: string, inner: string, at: number) => {
+          // After a word or closing punctuation, as "… use cases (29)."; not
+          // opening a paragraph or item, nor after a colon or semicolon,
+          // where "(1) … (2) …" is an enumeration.
+          const lead = t.slice(0, at) || prev;
+          if (!/[\p{L}\p{N}.,'"’”)\]]\s?$/u.test(lead)) return whole;
+          return link(inner, false) ?? whole;
+        });
+      }
+      if (t) prev = t;
+    }
+    return toks.join("");
+  };
   let before = "";
   let after = "";
   const out = parts.map((p, i) => {
