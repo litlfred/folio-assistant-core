@@ -149,16 +149,27 @@ const ownSchemes = (files: Map<string, string>): Map<string, string> => {
   const generated = allGeneratedDirs();
   return new Map([...files].filter(([p]) => !isMountedScheme(p, generated)));
 };
-const written = (files: Map<string, string>): Map<string, string> =>
-  INTO_SITE
-    ? new Map(
-        [...files].filter(
-          ([p]) =>
-            p.startsWith(`${SITE}${sep}`) &&
-            (ONLY === undefined || p === pagePath(`@${ONLY}`) || (p.startsWith(`${ASSETS}${sep}`) && p.slice(ASSETS.length + 1).startsWith(`${ONLY}--`))),
-        ),
-      )
-    : ownSchemes(files);
+/**
+ * Whether a `--site` run writes `p`. With `--instance`, that layer's page,
+ * its term pages beside it (`termPagePath`, one directory per scheme under
+ * the page's own directory) and its schemes' SKOS. Leaving the term pages out
+ * left every "Term page" link on the instance page, and every term link in
+ * the document (`glossary-term-links.ts`), a 404 on a repository's own site.
+ */
+export function writesIntoSite(p: string, at: { site: string; assets: string; page?: string; only?: string }): boolean {
+  if (!p.startsWith(`${at.site}${sep}`)) return false;
+  if (at.only === undefined || at.page === undefined) return true;
+  return (
+    p === at.page ||
+    p.startsWith(`${dirname(at.page)}${sep}`) ||
+    (p.startsWith(`${at.assets}${sep}`) && p.slice(at.assets.length + 1).startsWith(`${at.only}--`))
+  );
+}
+const written = (files: Map<string, string>): Map<string, string> => {
+  if (!INTO_SITE) return ownSchemes(files);
+  const at = { site: SITE, assets: ASSETS, only: ONLY, page: ONLY === undefined ? undefined : pagePath(`@${ONLY}`) };
+  return new Map([...files].filter(([p]) => writesIntoSite(p, at)));
+};
 /**
  * The visualiser core DECLARES for its glossary — `folio-assistant-core/glossary`
  * in `folio-assistant-core.json` `visualisers` (owner, 2026-10-09: *"Need
