@@ -320,7 +320,8 @@ export function contentsList(html: string): string {
     const rows: Row[] = [];
     const re = new RegExp(`<strong>(${kind} [^<]+?)\\.?</strong>\\s*(?:<em>([\\s\\S]*?)</em>)?\\s*<a href="#([^"]+)" class="block-anchor"`, "g");
     for (const m of html.matchAll(re)) {
-      const caption = (m[2] ?? "").replace(/<[^>]*>/g, "").trim();
+      // The caption's words; escaped again below, before they reach the page.
+      const caption = (m[2] ?? "").split(/<[^>]*>/).join("").trim();
       rows.push({ label: caption ? `${m[1]}. ${caption}` : m[1]!, href: `#${m[3]}` });
     }
     return rows.length ? `<p class="fa-contents-title"><strong>${kind === "Figure" ? "Figures" : "Tables"}</strong></p>\n${list(rows)}\n` : "";
