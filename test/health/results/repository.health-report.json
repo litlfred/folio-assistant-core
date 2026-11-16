@@ -2,13 +2,13 @@
   "$schema": "health-report/v1",
   "producer": {
     "script": "test/health/run.ts",
-    "script_hash": "e48001dfcdfa"
+    "script_hash": "dc18d3dec992"
   },
   "subject": {
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-14T01:43:02.152Z",
+  "updated_at": "2026-11-16T12:01:20.193Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -84,7 +84,7 @@
       "measurements": [
         {
           "metric": "special-branch-bytes:qa-reports",
-          "value": 3487874,
+          "value": 11771185,
           "unit": "bytes",
           "command": "git ls-remote --heads origin; git fetch --depth=1 + git ls-tree -r -l <tip> per budgeted branch (unique blobs summed)"
         },
@@ -138,11 +138,11 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/e9c1a613d1bdade09842c5f0529ba6fbabb36a2b — miss: main/e9c1a613d1bdade09842c5f0529ba6fbabb36a2b has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/51bbd89a81bf6944cbd0f7ed7ba5ab573988cec2 — miss: main/51bbd89a81bf6944cbd0f7ed7ba5ab573988cec2 has nothing under health"
     },
     {
       "id": "remote-mounts",
-      "state": "ok",
+      "state": "finding",
       "summary": "Each declared remote mount: its pinned bytes on disk, or why not (no network; `mount:remote:check`).",
       "thresholds": [
         {
@@ -162,12 +162,19 @@
         },
         {
           "metric": "remote-mounts-not-mounted",
-          "value": 0,
+          "value": 1,
           "unit": "count",
           "command": "bun run cat mount:remote:check"
         }
       ],
-      "findings": []
+      "findings": [
+        {
+          "summary": "cat-harness: missing — the pinned bytes are not on disk: cat-harness/ modified",
+          "metric": "remote-mounts-not-mounted",
+          "severity": "major",
+          "action": "Move the edits upstream to the fork, or delete or rename the directory, then `bun run cat mount:remote` (`--fresh` discards them)."
+        }
+      ]
     },
     {
       "id": "lsi-indexes",
@@ -188,7 +195,7 @@
     },
     {
       "id": "library-keywords",
-      "state": "ok",
+      "state": "finding",
       "summary": "Each library entry's LSI keywords: whether the extraction gives any, and any keywords.json still committed inside an entry.",
       "thresholds": [
         {
@@ -209,13 +216,13 @@
       "measurements": [
         {
           "metric": "library-keywords-entries",
-          "value": 4,
+          "value": 5,
           "unit": "count",
           "command": "bun run cat library:keywords"
         },
         {
           "metric": "library-keywords-entries-without",
-          "value": 0,
+          "value": 1,
           "unit": "count",
           "command": "bun run cat library:keywords"
         },
@@ -226,7 +233,14 @@
           "command": "ls library/*/keywords.json"
         }
       ],
-      "findings": []
+      "findings": [
+        {
+          "summary": "1 entr(ies) the keyword extraction gives nothing: cat-harness/library/corpus",
+          "metric": "library-keywords-entries-without",
+          "severity": "minor",
+          "action": "Open the entry's sections: a page with no text layer needs OCR at ingest (`l1-document-ingestion`); a very short entry has nothing to extract."
+        }
+      ]
     },
     {
       "id": "staging-preview-orphans",
@@ -345,31 +359,31 @@
       "measurements": [
         {
           "metric": "tracked-tree-bytes",
-          "value": 30174728,
+          "value": 30267575,
           "unit": "bytes",
           "command": "git ls-tree -r -l HEAD (blob sizes summed)"
         },
         {
           "metric": "git-dir-bytes",
-          "value": 161089722,
+          "value": 29700963,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 157890560,
+          "value": 28585984,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
         {
           "metric": "pack-count",
-          "value": 1,
+          "value": 2,
           "unit": "count",
           "command": "git count-objects -v"
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 5.34,
+          "value": 0.98,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
