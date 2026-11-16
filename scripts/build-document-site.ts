@@ -270,6 +270,12 @@ export function themedDocumentPage(layout: string, title: string, html: string):
  * index of the one chapter in view is a menu that does nothing.
  */
 export function pageContents(html: string): string {
+  const entries = contentsEntries(html);
+  return entries.length < 2 ? "" : visualiserNavDeclaration(entries) + "\n";
+}
+
+/** The chapters (`h2`) and their sections (`h3`) that carry an anchor, in document order. */
+function contentsEntries(html: string): VisualiserNavEntry[] {
   const entries: VisualiserNavEntry[] = [];
   const text = (h: string) =>
     h
@@ -289,7 +295,27 @@ export function pageContents(html: string): string {
     if (m[2] === "h3" && parent) parent.items = [...(parent.items ?? []), row];
     else entries.push(row);
   }
-  return entries.length < 2 ? "" : visualiserNavDeclaration(entries) + "\n";
+  return entries;
+}
+
+/**
+ * A "Contents" list in the document itself, under its title (owner,
+ * 2026-11-16: the handbook's page had its contents only in the side panel,
+ * where a reader on a phone does not see it). The same chapters and sections
+ * as the side panel ({@link pageContents}), each a link to its anchor. Not a
+ * heading, so neither the theme's sidebar nor a lazy page's folding counts it
+ * as a chapter. Absent when the document already has a "Contents" heading of
+ * its own, or fewer than two chapters.
+ */
+export function contentsList(html: string): string {
+  if (/<h[1-6]\b[^>]*>\s*(table of )?contents\s*<\/h[1-6]>/i.test(html)) return "";
+  const entries = contentsEntries(html);
+  if (entries.length < 2) return "";
+  const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  type Row = { label: string; href?: string; items?: readonly Row[] };
+  const list = (rows: readonly Row[]): string =>
+    `<ol>${rows.map((r) => `<li><a href="${esc(r.href ?? "")}">${esc(r.label)}</a>${r.items?.length ? list(r.items) : ""}</li>`).join("")}</ol>`;
+  return `<nav class="fa-contents" aria-label="Contents">\n<p class="fa-contents-title"><strong>Contents</strong></p>\n${list(entries)}\n</nav>\n`;
 }
 
 // ── Lazy pages: the block text as data (bean v433, owner 2026-10-06) ────────
@@ -1052,7 +1078,8 @@ export async function buildDocumentSite(
     };
     const pageDirOf = documentPageDir(d.slug);
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
-    const html = afterTitle(await render(built.markdown), downloads);
+    const whole = await render(built.markdown);
+    const html = afterTitle(whole, downloads + contentsList(whole));
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -1106,7 +1133,8 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = afterTitle(await render(split.shell), downloads);
+      const shell = await render(split.shell);
+      const shellHtml = afterTitle(shell, downloads + contentsList(shell));
       const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
