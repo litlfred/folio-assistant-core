@@ -25,3 +25,13 @@ describe("contentsList", () => {
     expect(contentsList(ch("chap:one", "One"))).toBe("");
   });
 });
+
+describe("contentsList figures and tables", () => {
+  test("figuresAndTablesListed", () => {
+    const fig = `<p><a id="fig:1"></a>\n<strong>Figure 1.</strong> <em>From paper to digital</em> <a href="#fig:1" class="block-anchor" aria-label="Link to Figure 1"></a></p>`;
+    const tbl = `<p><a id="tbl:1"></a>\n<strong>Table 1.</strong> <em>BPMN symbols</em> <a href="#tbl:1" class="block-anchor" aria-label="Link to Table 1"></a></p>`;
+    const out = contentsList(`${ch("chap:one", "One")}${fig}${ch("chap:two", "Two")}${tbl}`);
+    expect(out).toContain('<strong>Figures</strong></p>\n<ol><li><a href="#fig:1">Figure 1. From paper to digital</a></li></ol>');
+    expect(out).toContain('<strong>Tables</strong></p>\n<ol><li><a href="#tbl:1">Table 1. BPMN symbols</a></li></ol>');
+  });
+});

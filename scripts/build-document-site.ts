@@ -302,7 +302,8 @@ function contentsEntries(html: string): VisualiserNavEntry[] {
  * A "Contents" list in the document itself, under its title (owner,
  * 2026-11-16: the handbook's page had its contents only in the side panel,
  * where a reader on a phone does not see it). The same chapters and sections
- * as the side panel ({@link pageContents}), each a link to its anchor. Not a
+ * as the side panel ({@link pageContents}), each a link to its anchor, then
+ * the numbered figures and tables by their captions. Not a
  * heading, so neither the theme's sidebar nor a lazy page's folding counts it
  * as a chapter. Absent when the document already has a "Contents" heading of
  * its own, or fewer than two chapters.
@@ -315,7 +316,16 @@ export function contentsList(html: string): string {
   type Row = { label: string; href?: string; items?: readonly Row[] };
   const list = (rows: readonly Row[]): string =>
     `<ol>${rows.map((r) => `<li><a href="${esc(r.href ?? "")}">${esc(r.label)}</a>${r.items?.length ? list(r.items) : ""}</li>`).join("")}</ol>`;
-  return `<nav class="fa-contents" aria-label="Contents">\n<p class="fa-contents-title"><strong>Contents</strong></p>\n${list(entries)}\n</nav>\n`;
+  const numbered = (kind: string) => {
+    const rows: Row[] = [];
+    const re = new RegExp(`<strong>(${kind} [^<]+?)\\.?</strong>\\s*(?:<em>([\\s\\S]*?)</em>)?\\s*<a href="#([^"]+)" class="block-anchor"`, "g");
+    for (const m of html.matchAll(re)) {
+      const caption = (m[2] ?? "").replace(/<[^>]*>/g, "").trim();
+      rows.push({ label: caption ? `${m[1]}. ${caption}` : m[1]!, href: `#${m[3]}` });
+    }
+    return rows.length ? `<p class="fa-contents-title"><strong>${kind === "Figure" ? "Figures" : "Tables"}</strong></p>\n${list(rows)}\n` : "";
+  };
+  return `<nav class="fa-contents" aria-label="Contents">\n<p class="fa-contents-title"><strong>Contents</strong></p>\n${list(entries)}\n${numbered("Figure")}${numbered("Table")}</nav>\n`;
 }
 
 // ── Lazy pages: the block text as data (bean v433, owner 2026-10-06) ────────
@@ -1079,7 +1089,9 @@ export async function buildDocumentSite(
     const pageDirOf = documentPageDir(d.slug);
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
     const whole = await render(built.markdown);
-    const html = afterTitle(whole, downloads + contentsList(whole));
+    // From the whole document, so a lazy page's shell lists the figures its blocks hold.
+    const contents = contentsList(whole);
+    const html = afterTitle(whole, downloads + contents);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -1133,8 +1145,7 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shell = await render(split.shell);
-      const shellHtml = afterTitle(shell, downloads + contentsList(shell));
+      const shellHtml = afterTitle(await render(split.shell), downloads + contents);
       const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));

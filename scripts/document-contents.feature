@@ -23,3 +23,8 @@ Feature: a Contents list in the document page
   Scenario: a one-chapter document gets no Contents list
     When the page has a single anchored chapter
     Then no Contents list is added
+
+  @test:scripts/document-contents.test.ts::contentsList_figures_and_tables::figuresAndTablesListed
+  Scenario: numbered figures and tables are listed by caption
+    When a page has a numbered figure and a numbered table
+    Then the Contents list has a Figures list and a Tables list, each item linking to its block
