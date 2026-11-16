@@ -90,7 +90,7 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 /** The structured-assets page's folder, beside the document page. */
 const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
-import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
+import { glossaryEntries, linkGlossaryTables, linkTerms, termLinks as glossaryTermLinks, type GlossaryEntry, type TermLink } from "./glossary-term-links.ts";
 import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
@@ -797,10 +797,21 @@ export function texInMarkdown(markdown: string): string {
 }
 
 /** One document's Markdown to HTML. */
-export async function renderDocumentHtml(markdown: string, opts: { math: boolean; bibliographyUrl?: string; termLinks?: readonly TermLink[] }): Promise<string> {
+export async function renderDocumentHtml(
+  markdown: string,
+  opts: {
+    math: boolean;
+    bibliographyUrl?: string;
+    termLinks?: readonly TermLink[];
+    /** The document's own glossary entries: each Term cell of a glossary table links its row on the glossary-folder page. */
+    glossaryEntries?: readonly GlossaryEntry[];
+    /** Where a glossary-table term with no entry is reported. */
+    report?: (message: string) => void;
+  },
+): Promise<string> {
   const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown, { bibliographyUrl: opts.bibliographyUrl });
   const base = opts.math ? remark().use(remarkMath) : remark();
-  const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(linkTerms(opts.termLinks ?? [])).use(remarkHtml, { sanitize: false });
+  const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(linkGlossaryTables(opts.glossaryEntries ?? [], opts.report)).use(linkTerms(opts.termLinks ?? [])).use(remarkHtml, { sanitize: false });
   return String(await proc.process(source));
 }
 
@@ -977,6 +988,8 @@ export interface SiteBuildResult {
   /** `downloads`: the current Word and PDF, relative to the site root, when built with `downloads` ({@link downloadLinks}). */
   documents: { slug: string; title: string; blocks: number; page: string; assets?: string; downloads?: { docx: string; pdf: string } }[];
   errors: string[];
+  /** QA lines that do not fail the build, such as a glossary-table term with no glossary entry. */
+  warnings: string[];
 }
 
 export async function buildDocumentSite(
@@ -1005,7 +1018,7 @@ export async function buildDocumentSite(
   // Math defaults on only for a paper layer; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
   const docs = documentManifests(repoRoot);
-  const result: SiteBuildResult = { documents: [], errors: [] };
+  const result: SiteBuildResult = { documents: [], errors: [], warnings: [] };
   const lazyOf = new Map<string, NonNullable<OutlineDocument["lazy"]>>();
   if (docs.length === 0) {
     result.errors.push(`no document manifest under ${folioDir(repoRoot)} (expected folio/<slug>/<slug>.ts)`);
@@ -1030,6 +1043,16 @@ export async function buildDocumentSite(
     const title = withStatus(manifest.title ?? d.slug, status);
     if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
+    // The Term cells of the document's glossary table link the glossary-folder
+    // page's rows (glossary-term-links.ts); always on. A term with no entry is
+    // reported once, though the lazy page renders the table twice.
+    const tableEntries = await glossaryEntries(repoRoot, documentPageDir(d.slug));
+    const reported = new Set<string>();
+    const report = (m: string) => {
+      if (reported.has(m)) return;
+      reported.add(m);
+      result.warnings.push(`${d.slug}: ${m}`);
+    };
     // A figure that is a view of the layer's ArchiMate model is drawn from
     // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
     const live = liveFigures(repoRoot, documentPageDir(d.slug));
@@ -1046,7 +1069,7 @@ export async function buildDocumentSite(
     const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
     const render = async (md: string) => {
       const h = withExternalGlossaries(
-        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live),
+        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report }), live),
         firstEntry,
         extGlossaries,
       );
@@ -1292,6 +1315,7 @@ if (import.meta.main) {
     ...(args.includes("--downloads") ? { downloads: true } : {}),
   });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
+  for (const w of r.warnings) console.error(`⚠ ${w}`);
   if (r.errors.length > 0) {
     for (const e of r.errors) console.error(`✗ ${e}`);
     process.exit(1);
