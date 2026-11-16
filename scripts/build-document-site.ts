@@ -91,6 +91,7 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
+import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
@@ -1018,6 +1019,7 @@ export async function buildDocumentSite(
   // (editor-checker nodes, bean 4dx7), bundled once for every document.
   const contentType = readHarnessConfig(repoRoot)?.contentType;
   const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(outDir, ...SUGGEST_DIR.split("/")), "") : [];
+  let library: LibraryLink[] | undefined;
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
@@ -1052,7 +1054,10 @@ export async function buildDocumentSite(
     };
     const pageDirOf = documentPageDir(d.slug);
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
-    const html = afterTitle(await render(built.markdown), downloads);
+    // Numbered citations and the reference list, linked both ways (citation-links.ts).
+    library ??= opts.bibliographyUrl ? await libraryLinks(repoRoot, opts.bibliographyUrl) : [];
+    const whole = await render(built.markdown);
+    const html = afterTitle(linkCitations([{ html: whole }], { library })[0]!, downloads);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -1094,11 +1099,17 @@ export async function buildDocumentSite(
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
       mkdirSync(join(data, "blocks"), { recursive: true });
+      // Rendered first, so a citation in one chunk and the reference list in
+      // another are numbered and linked together.
+      const parts: { label: string; html: string }[] = [];
+      for (const b of split.blocks) parts.push({ label: b.label, html: await render(b.markdown) });
+      const refs = findReferenceList(whole)?.anchors.filter((a) => parts.some((p) => p.label === a)).pop();
+      const linked = refs ? linkCitations(parts, { refBlock: refs, library }) : parts.map((p) => p.html);
       for (let i = 0; i < split.blocks.length; i += LAZY_CHUNK) {
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
-        for (const b of split.blocks.slice(i, i + LAZY_CHUNK)) {
-          const h = await render(b.markdown);
+        for (const [j, b] of split.blocks.slice(i, i + LAZY_CHUNK).entries()) {
+          const h = linked[i + j]!;
           chunk[b.label] = h;
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
