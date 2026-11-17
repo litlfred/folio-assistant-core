@@ -9,6 +9,7 @@
  * | `diig-phases-figure/v1` | `scripts/diig-phases-svg.ts` |
  * | `diig-phases-adaptation/v1` | `scripts/diig-phases-svg.ts` (a folio's own tiles over a figure) |
  * | `smart-guidelines-approach-figure/v1` | `scripts/smart-approach-svg.ts` |
+ * | `as-drawn-figure/v1` | `scripts/as-drawn-svg.ts` (any figure, transcribed from its PDF by `scripts/pdf-as-drawn.py`) |
  *
  * The library typology routes the two figure families (cat-harness-tools
  * `graph-typology-registry.ts`); `validators/` names these schemas for them.
@@ -125,6 +126,93 @@ export const SmartGuidelinesApproachFigureSchema = z.object({
     country: Cell,
   }).strict()).min(1),
 }).strict();
+
+// --- as-drawn-figure/v1 ------------------------------------------------------
+//
+// A figure's drawing transcribed from the source PDF's vector layer
+// (scripts/pdf-as-drawn.py): every path, text run and image inside the L1
+// figure region, in paint order, at its printed position, colour and size.
+// scripts/as-drawn-svg.ts redraws it as an SVG that keeps the original's
+// layout and style, for figures with no model route (figure-rebuild, "as
+// drawn"), and as the as-drawn companion of a figure rebuilt as a model view.
+// Coordinates are PDF points from the region's top-left corner.
+
+const UpperHex = z.string().regex(/^#[0-9A-F]{6}$/u, "a #RRGGBB colour");
+const Num = z.number().finite();
+const PathD = z.string().regex(/^M[-0-9MLCZ .e]*$/u, "an SVG path of M, L, C and Z commands");
+const ClipRefs = z.array(z.number().int().nonnegative()).min(1);
+
+export const AsDrawnShapeSchema = z.object({
+  d: PathD,
+  fill: UpperHex.optional(),
+  evenodd: z.literal(true).optional(),
+  stroke: UpperHex.optional(),
+  strokeWidth: Num.nonnegative().optional(),
+  dash: z.array(Num.nonnegative()).optional(),
+  cap: z.enum(["round", "square"]).optional(),
+  join: z.enum(["round", "bevel"]).optional(),
+  fillOpacity: Num.min(0).max(1).optional(),
+  strokeOpacity: Num.min(0).max(1).optional(),
+  /** Indices into `clips`: the shape is drawn inside all of them. */
+  clip: ClipRefs.optional(),
+}).strict().refine((s) => s.fill || s.stroke, "a shape is filled, stroked or both");
+
+export const AsDrawnTextSchema = z.object({
+  /** The baseline origin of the run. */
+  x: Num,
+  y: Num,
+  size: Num.positive(),
+  text: z.string().min(1),
+  weight: z.number().int().min(100).max(900).optional(),
+  italic: z.literal(true).optional(),
+  color: UpperHex.optional(),
+  /** The printed width, so the run keeps its place in another font. */
+  width: Num.positive().optional(),
+  /** Degrees clockwise, about the origin. */
+  rotate: Num.optional(),
+  /** The glossary concept the label names (exact prefLabel or altLabel match). */
+  link: z.string().url().optional(),
+  clip: ClipRefs.optional(),
+}).strict();
+
+export const AsDrawnImageSchema = z.object({
+  x: Num, y: Num, width: Num.positive(), height: Num.positive(),
+  /** Base64 PNG cropped from a 600 dpi render of the page. */
+  png: z.string().min(1),
+  clip: ClipRefs.optional(),
+}).strict();
+
+export const AsDrawnFigureSchema = z.object({
+  $schema: z.literal("as-drawn-figure/v1"),
+  figure: z.object({
+    library: z.string().min(1),
+    labels: z.array(z.string().regex(/^Fig\. \d+$/u)).min(1),
+    caption: z.string().min(1).nullable(),
+    page: z.number().int().positive(),
+    /** The L1 render (PNG), kept as the cited source. */
+    file: z.string().min(1),
+    render: z.string().min(1),
+    /** The L1 section the figure sits in. */
+    section: z.object({ id: z.string().min(1), title: z.string().min(1), file: z.string().min(1) }).strict(),
+  }).strict(),
+  basis: z.string().min(1),
+  region: z.tuple([Num, Num, Num, Num]),
+  canvas: z.object({ width: Num.positive(), height: Num.positive() }).strict(),
+  clips: z.array(z.object({ d: PathD, evenodd: z.literal(true).optional() }).strict()),
+  shapes: z.array(AsDrawnShapeSchema),
+  texts: z.array(AsDrawnTextSchema),
+  images: z.array(AsDrawnImageSchema).optional(),
+  /** What the PDF paints that the transcription leaves out, and why. */
+  omitted: z.object({ softMasked: z.number().int().positive(), why: z.string().min(1) }).strict().optional(),
+}).strict().superRefine((f, ctx) => {
+  for (const key of ["shapes", "texts", "images"] as const) {
+    (f[key] ?? []).forEach((s, i) => s.clip?.forEach((c) => {
+      if (c >= f.clips.length) ctx.addIssue({ code: "custom", path: [key, i, "clip"], message: `no clip ${c}` });
+    }));
+  }
+});
+
+export type AsDrawnFigureData = z.infer<typeof AsDrawnFigureSchema>;
 
 /** The node kinds the writer's node-kinds gate reads for the two library families. */
 export const DiigPhasesFigureKind = nodeKind("diig-phases-figure", [], DiigPhasesFigureSchema.shape);
