@@ -59,7 +59,7 @@
  * the folio's own workflow, which is the same trust the build command already
  * has.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { remark } from "remark";
 import remarkDirective from "remark-directive";
@@ -97,6 +97,7 @@ import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { latestNames } from "./document-export.ts";
 import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
+import { crossDocumentIndex, folioDocuments, siteCrossDocumentLinks, siteCrossDocumentRefs } from "./cross-document-refs.ts";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -876,13 +877,7 @@ export async function renderDocumentHtml(
 
 /** Every document in the folio: `folio/<slug>/<slug>.ts`, as the adapter resolves them. */
 export function documentManifests(repoRoot: string): { slug: string; path: string }[] {
-  const root = folioDir(repoRoot);
-  if (!existsSync(root)) return [];
-  return readdirSync(root, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => ({ slug: d.name, path: join(root, d.name, `${d.name}.ts`) }))
-    .filter((d) => existsSync(d.path))
-    .sort((a, b) => a.slug.localeCompare(b.slug));
+  return folioDocuments(folioDir(repoRoot));
 }
 
 export const OUTLINE_SCHEMA = "folio-outline/v1" as const;
@@ -1092,6 +1087,9 @@ export async function buildDocumentSite(
   const contentType = readHarnessConfig(repoRoot)?.contentType;
   const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(outDir, ...SUGGEST_DIR.split("/")), "") : [];
   let library: LibraryLink[] | undefined;
+  // A block of one document may link into another of the same folio,
+  // `<slug>:<label>` (issue #841): the link goes to that document's page.
+  const crossDocs = await crossDocumentIndex(docs);
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     // Every figure, diagram and table shows a number and links its anchor,
@@ -1130,8 +1128,9 @@ export async function buildDocumentSite(
     const extGlossaries = externalGlossaries(repoRoot);
     const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
     const render = async (md: string) => {
+      const rendered = await renderDocumentHtml(siteCrossDocumentRefs(md, d.slug, crossDocs), { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report });
       const h = withExternalGlossaries(
-        linkedSvgFigures(withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report }), live), dirname(d.path)),
+        linkedSvgFigures(withLiveFigures(siteCrossDocumentLinks(rendered, d.slug, crossDocs), live), dirname(d.path)),
         firstEntry,
         extGlossaries,
       );
