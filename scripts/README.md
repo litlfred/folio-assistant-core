@@ -76,6 +76,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`fetch-who-publication.ts`](fetch-who-publication.ts) | a file |  |
 | [`figure-coverage.test.ts`](figure-coverage.test.ts) | a file |  |
 | [`figure-coverage.ts`](figure-coverage.ts) | a file |  |
+| [`figure-numbers.test.ts`](figure-numbers.test.ts) | a file |  |
+| [`figure-numbers.ts`](figure-numbers.ts) | a file |  |
 | [`folio-l1-coverage.test.ts`](folio-l1-coverage.test.ts) | a file |  |
 | [`folio-l1-coverage.ts`](folio-l1-coverage.ts) | a file |  |
 | [`folio-site-blocks.test.ts`](folio-site-blocks.test.ts) | a file |  |

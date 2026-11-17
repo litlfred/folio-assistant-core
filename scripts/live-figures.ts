@@ -235,3 +235,36 @@ export function withLiveFigures(html: string, figures: Map<string, LiveFigure>):
     );
   });
 }
+
+/** Whether an SVG file holds a link a reader can follow (`<a href=…>` or `<a xlink:href=…>`). */
+function svgHasLinks(file: string): boolean {
+  if (!existsSync(file)) return false;
+  return /<a\b[^>]*\s(?:xlink:)?href="[^"#][^"]*"/.test(readFileSync(file, "utf8"));
+}
+
+/**
+ * Rendered HTML with every image that is a linked SVG of the document's own
+ * (`media/…svg`) embedded as an `<object>`, so its links work.
+ *
+ * A browser makes no link inside an SVG loaded through `<img>` clickable. The
+ * DIIG phases chart that every Digital Transformation Handbook shows
+ * (`diig-phases-svg.ts`) links each resource box to its library entry, and as
+ * an `<img>` none of those boxes could be followed (owner, 2026-11-17: "I
+ * thought this was a reusable SVG with linked content in boxes"). An SVG with
+ * no link stays an `<img>`: an `<object>` costs a document load for nothing.
+ * The `<img>` stays inside as the object's fallback content.
+ *
+ * `documentDir` is the document's folder (`folio/<slug>/`), against which a
+ * block's `media/…` path resolves.
+ */
+export function linkedSvgFigures(html: string, documentDir: string): string {
+  // An image already inside an <object> (a model view's fallback) is left as it is.
+  return html.replace(/<object\b[\s\S]*?<\/object>|<img\b[^>]*>/g, (tag) => {
+    if (tag.startsWith("<object")) return tag;
+    const src = /\ssrc="([^"]*)"/.exec(tag)?.[1];
+    if (src === undefined || !/^media\/[^?#]+\.svg$/i.test(src) || src.split("/").includes("..")) return tag;
+    if (!svgHasLinks(join(documentDir, ...src.split("/")))) return tag;
+    const alt = /\salt="([^"]*)"/.exec(tag)?.[1] ?? "";
+    return `<object class="fa-live-figure" type="image/svg+xml" data="${src}"${alt ? ` aria-label="${alt}"` : ""}>${tag}</object>`;
+  });
+}

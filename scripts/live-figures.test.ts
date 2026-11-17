@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { FIGURE_SWITCH_STYLE, liveFiguresFor, withLiveFigures, type FigureTarget } from "./live-figures.ts";
+import { FIGURE_SWITCH_STYLE, linkedSvgFigures, liveFiguresFor, withLiveFigures, type FigureTarget } from "./live-figures.ts";
 
 const target: FigureTarget = {
   block: "folio/doc/ch1/f-1.md",
@@ -115,4 +115,28 @@ describe("a figure with an as-drawn source and a view gets the As drawn / ArchiM
       rmSync(root, { recursive: true, force: true });
     }
   }, 30_000);
+});
+
+describe("a linked SVG of the document's own is embedded so its links work", () => {
+  const doc = mkdtempSync(join(tmpdir(), "linked-svg-"));
+  mkdirSync(join(doc, "media"));
+  writeFileSync(join(doc, "media/linked.svg"), '<svg><a href="https://x/entry/" target="_top"><title>Entry</title><rect/></a></svg>');
+  writeFileSync(join(doc, "media/plain.svg"), '<svg><a href="#self"><rect/></a></svg>');
+
+  it("linkedSvgBecomesObject", () => {
+    const html = linkedSvgFigures('<p><img src="media/linked.svg" alt="DIIG phases"></p>', doc);
+    expect(html).toBe('<p><object class="fa-live-figure" type="image/svg+xml" data="media/linked.svg" aria-label="DIIG phases"><img src="media/linked.svg" alt="DIIG phases"></object></p>');
+  });
+
+  it("unlinkedMissingOrOutsideStayImg", () => {
+    for (const src of ["media/plain.svg", "media/gone.svg", "media/image.png", "../media/linked.svg", "https://x/linked.svg"]) {
+      const tag = `<img src="${src}" alt="x">`;
+      expect(linkedSvgFigures(tag, doc)).toBe(tag);
+    }
+  });
+
+  it("modelViewFallbackNotWrappedAgain", () => {
+    const html = '<object class="fa-live-figure" type="image/svg+xml" data="../v.svg"><img src="media/linked.svg" alt="x"></object>';
+    expect(linkedSvgFigures(html, doc)).toBe(html);
+  });
 });
