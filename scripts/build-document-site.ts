@@ -89,13 +89,14 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 
 /** The structured-assets page's folder, beside the document page. */
 const ASSETS_DIR = "assets";
-import { liveFigures, withLiveFigures } from "./live-figures.js";
+import { linkedSvgFigures, liveFigures, withLiveFigures } from "./live-figures.js";
 import { glossaryEntries, linkGlossaryTables, linkTerms, termLinks as glossaryTermLinks, type GlossaryEntry, type TermLink } from "./glossary-term-links.ts";
 import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { latestNames } from "./document-export.ts";
+import { numberFigures } from "./figure-numbers.ts";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -321,8 +322,16 @@ export function contentsList(html: string): string {
     const rows: Row[] = [];
     const re = new RegExp(`<strong>(${kind} [^<]+?)\\.?</strong>\\s*(?:<em>([\\s\\S]*?)</em>)?\\s*<a href="#([^"]+)" class="block-anchor"`, "g");
     for (const m of html.matchAll(re)) {
+      // A block whose heading carries no caption (one numbered by
+      // figure-numbers.ts) prints it as the last italic line of its frame.
+      let words: string | undefined = m[2];
+      if (words === undefined) {
+        const end = html.indexOf("</div>", m.index! + m[0].length);
+        const frame = end < 0 ? "" : html.slice(m.index! + m[0].length, end);
+        words = /^([\s\S]*?)<\/em><\/p>\s*$/.exec(frame.split("<p><em>").pop() ?? "")?.[1];
+      }
       // The caption's words; escaped again below, before they reach the page.
-      const caption = (m[2] ?? "").split(/<[^>]*>/).join("").trim();
+      const caption = (words ?? "").split(/<[^>]*>/).join("").trim();
       rows.push({ label: caption ? `${m[1]}. ${caption}` : m[1]!, href: `#${m[3]}` });
     }
     return rows.length ? `<p class="fa-contents-title"><strong>${kind === "Figure" ? "Figures" : "Tables"}</strong></p>\n${list(rows)}\n` : "";
@@ -447,19 +456,24 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
     if (!inFence) {
       const m = line.match(ANCHOR);
       if (m) {
-        close();
         // A figure, table or diagram opens its frame (render-markdown.ts,
         // `.fa-numbered`) before its anchor and closes it after its text. Left
         // in the shell, the opener had no closer there, so every later block
         // of the page sat inside that frame: its 66% caption width put the
         // block icons mid-page (smart-ra, 2026-11-02). The opener goes with
         // its block, so the shell and each block stay balanced.
+        // The opener follows the previous block's text when a block precedes
+        // the figure in its section, so it is looked for there too: left at
+        // the end of that block, the figure's chunk closed a frame it never
+        // opened (dth-hrh, 2026-11-17).
         let opener: string[] = [];
         if (labels.has(m[1]!)) {
-          let k = shell.length - 1;
-          while (k >= 0 && shell[k]!.trim() === "") k--;
-          if (k >= 0 && FRAME.test(shell[k]!)) opener = shell.splice(k);
+          const before = cur ? cur.lines : shell;
+          let k = before.length - 1;
+          while (k >= 0 && before[k]!.trim() === "") k--;
+          if (k >= 0 && FRAME.test(before[k]!)) opener = before.splice(k);
         }
+        close();
         shell.push(line);
         if (labels.has(m[1]!)) {
           shell.push("", `<div class="fa-blk" data-blk="${esc(m[1]!)}"></div>`, "");
@@ -1072,6 +1086,9 @@ export async function buildDocumentSite(
   let library: LibraryLink[] | undefined;
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
+    // Every figure, diagram and table shows a number and links its anchor,
+    // in the whole page, the lazy chunks and the figures list (figure-numbers.ts).
+    built.markdown = numberFigures(built.markdown);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
     const manifest = (await import(d.path)).default as Paper;
     // A document with a status ("Working Draft") carries it in its title
@@ -1106,7 +1123,7 @@ export async function buildDocumentSite(
     const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
     const render = async (md: string) => {
       const h = withExternalGlossaries(
-        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report }), live),
+        linkedSvgFigures(withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report }), live), dirname(d.path)),
         firstEntry,
         extGlossaries,
       );

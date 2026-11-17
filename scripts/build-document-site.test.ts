@@ -9,7 +9,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { LAZY_OPEN, afterTitle, buildDocumentSite, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
+import { LAZY_OPEN, afterTitle, buildDocumentSite, contentsList, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 
@@ -312,6 +312,29 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.blocks[0]!.markdown.startsWith('<div class="fa-numbered fa-numbered-table" markdown="1">')).toBe(true);
     expect(s.blocks[0]!.markdown).toContain("</div>");
     for (const b of s.blocks) expect(b.markdown.split("<div").length).toBe(b.markdown.split("</div>").length);
+  });
+
+  test("splitBlocksMovesFrameOpenerFromPreviousBlock", () => {
+    // A figure right after a prose block: the opener ended that block's chunk
+    // and the figure's chunk closed a frame it never opened (dth-hrh, 2026-11-17).
+    const md = [
+      "## Section", "", '<a id="prose:a"></a>', "Before.", "", '<div class="fa-numbered fa-numbered-figure" markdown="1">', "",
+      '<a id="fig:b"></a>', "**Figure 1.**", "", "![x](media/x.svg)", "", "</div>", "",
+    ].join("\n");
+    const s = splitBlocks(md, new Set(["prose:a", "fig:b"]));
+    expect(s.blocks[0]!.markdown).not.toContain("fa-numbered");
+    expect(s.blocks[1]!.markdown.startsWith('<div class="fa-numbered fa-numbered-figure" markdown="1">')).toBe(true);
+    for (const b of s.blocks) expect(b.markdown.split("<div").length).toBe(b.markdown.split("</div>").length);
+  });
+
+  test("contentsListsNumberedFigureCaptionBelow", () => {
+    const html = [
+      '<p><a id="c1"></a></p><h2>One</h2>', '<p><a id="c2"></a></p><h2>Two</h2>',
+      '<div class="fa-numbered fa-numbered-figure" markdown="1">',
+      '<p><strong>Figure 1.</strong> <a href="#fig:a" class="block-anchor" aria-label="Link to Figure 1" title="Link to Figure 1"><svg></svg></a></p>',
+      '<p><img src="media/a.svg" alt="a"></p>', "<p><em>Source: somewhere.</em></p>", "<p><em>Phases and steps</em></p>", "</div>",
+    ].join("\n");
+    expect(contentsList(html)).toContain('<a href="#fig:a">Figure 1. Phases and steps</a>');
   });
 
   test("lazyAlwaysShellChunksHydrated", async () => {

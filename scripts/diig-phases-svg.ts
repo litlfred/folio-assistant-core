@@ -21,7 +21,13 @@
  *    "tiles": [ ...layout tiles to add... ],
  *    "thisDocument": { "resource": "...", "style": "dashed", ... }}
  *
- *   bun run folio-assistant-core/scripts/diig-phases-svg.ts <data.json> [--out file.svg]
+ *   bun run folio-assistant-core/scripts/diig-phases-svg.ts <data.json> [--out file.svg] [--library-base <url>]
+ *
+ * Each tile whose resource names a link (`link.url`, `link.glossary` or
+ * `link.library`, a who-iris entry) is an SVG `<a>` titled with the tile's
+ * name; a tile whose data names no link is drawn without one. Links work
+ * where the SVG is embedded as an `<object>` or inline, not as an `<img>`
+ * (the document build embeds a linked SVG as an object: live-figures.ts).
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -93,7 +99,17 @@ function icon(kind: string, x: number, y: number, color: string): string {
     `<path d="M${x + 2} ${y + 10}h4M${x + 4} ${y + 8}v2" stroke="${color}" stroke-width="1"/>`;
 }
 
-/** Where a tile's resource links: a library entry page, a glossary IRI, or a URL. */
+/**
+ * Where a who-iris library entry's page is published. who-iris moved from
+ * litlfred to WorldHealthOrganization, and GitHub Pages does not follow a
+ * transfer: every `https://litlfred.github.io/who-iris/library/<entry>/`
+ * link the chart drew answered 404. The entry pages are routed under the
+ * locale and the harness's library route (`en/cat-harness/library/who-iris/`),
+ * as who-iris's own landing page links them.
+ */
+export const WHO_IRIS_LIBRARY = "https://worldhealthorganization.github.io/who-iris/en/cat-harness/library/who-iris/";
+
+/** Where a tile's resource links: a URL, a glossary IRI or a library entry page; undefined when the data names none. */
 export function resourceHref(r: Resource, libraryBase: string): string | undefined {
   if (r.link?.url) return r.link.url;
   if (r.link?.glossary) return r.link.glossary;
@@ -132,11 +148,20 @@ function tileSvg(t: Tile, r: Resource, color: string, self: ThisDocument | undef
   }
   const href = resourceHref(r, libraryBase);
   const body = `<g id="tile-${esc(r.id)}">${out.join("")}</g>`;
-  return href ? `<a href="${esc(href)}" target="_top">${body}</a>` : body;
+  if (!href) return body;
+  // A link says where it goes: the tile's name, as a tooltip (<title>) and as
+  // the accessible name a screen reader announces for the link.
+  const name = resourceName(r);
+  return `<a href="${esc(href)}" target="_top" aria-label="${esc(name)}"><title>${esc(name)}</title>${body}</a>`;
+}
+
+/** A tile's name as one line: its label lines joined, with a word hyphenated across lines rejoined ("implemen-" "tation"). */
+export function resourceName(r: Resource): string {
+  return r.label.join(" ").replace(/(\p{L})- (\p{Ll})/gu, "$1$2").replace(/\s+/g, " ").trim();
 }
 
 export function renderSvg(fig: DiigFigure, opts: { title?: string; libraryBase?: string } = {}): string {
-  const libraryBase = opts.libraryBase ?? "https://litlfred.github.io/who-iris/library/";
+  const libraryBase = opts.libraryBase ?? WHO_IRIS_LIBRARY;
   const resources = new Map(fig.resources.map((r) => [r.id, r]));
   const phaseColor = new Map(fig.phases.map((p) => [p.id, p.color]));
   const width = colX(fig.layout.columns) + 4;
@@ -187,11 +212,12 @@ export function renderSvg(fig: DiigFigure, opts: { title?: string; libraryBase?:
 
 if (import.meta.main) {
   const args = process.argv.slice(2);
-  const file = args.find((a) => !a.startsWith("--"));
-  if (!file) { console.error("usage: diig-phases-svg.ts <figure-or-adaptation.json> [--out file.svg]"); process.exit(2); }
+  const file = args.find((a, i) => !a.startsWith("--") && !["--out", "--library-base"].includes(args[i - 1] ?? ""));
+  if (!file) { console.error("usage: diig-phases-svg.ts <figure-or-adaptation.json> [--out file.svg] [--library-base url]"); process.exit(2); }
   const outIdx = args.indexOf("--out");
+  const baseIdx = args.indexOf("--library-base");
   const fig = loadFigure(file);
   const adaptation = JSON.parse(readFileSync(file, "utf8"));
-  const svg = renderSvg(fig, { title: adaptation.title });
+  const svg = renderSvg(fig, { title: adaptation.title, libraryBase: baseIdx >= 0 ? args[baseIdx + 1] : undefined });
   if (outIdx >= 0) writeFileSync(args[outIdx + 1], svg); else process.stdout.write(svg);
 }

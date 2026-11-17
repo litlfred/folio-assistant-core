@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type DiigFigure, loadFigure, renderSvg, resourceHref } from "./diig-phases-svg.ts";
+import { type DiigFigure, WHO_IRIS_LIBRARY, loadFigure, renderSvg, resourceHref, resourceName } from "./diig-phases-svg.ts";
 
 const fig: DiigFigure = {
   $schema: "diig-phases-figure/v1",
@@ -34,6 +34,23 @@ describe("diig-phases-svg", () => {
   test("tileLinksLibraryEntry", () => {
     expect(resourceHref(fig.resources[0], "https://x/library/")).toBe("https://x/library/lib-a/");
     expect(renderSvg(fig, { libraryBase: "https://x/library/" })).toContain('href="https://x/library/lib-a/"');
+  });
+
+  test("defaultLinksWhoIrisSite", () => {
+    // litlfred.github.io/who-iris/library/ answers 404 since the transfer.
+    expect(WHO_IRIS_LIBRARY).toBe("https://worldhealthorganization.github.io/who-iris/en/cat-harness/library/who-iris/");
+    const svg = renderSvg(fig);
+    expect(svg).toContain(`href="${WHO_IRIS_LIBRARY}lib-a/"`);
+    expect(svg).not.toContain("litlfred.github.io/who-iris");
+  });
+
+  test("linkTitledNoLinkWithoutData", () => {
+    const svg = renderSvg(fig);
+    expect(svg).toContain('aria-label="A guide"><title>A guide</title><g id="tile-guide">');
+    // The kit names no link: drawn, not linked.
+    expect(svg).toMatch(/<\/a>\n<g id="tile-kit">|[^>]\n?<g id="tile-kit">/);
+    expect(svg.match(/<a /g)?.length).toBe(1);
+    expect(resourceName({ id: "x", label: ["Digital", "implemen-", "tation", "guide"], icons: [] })).toBe("Digital implementation guide");
   });
 
   test("unknownResourceOrPhaseFails", () => {
