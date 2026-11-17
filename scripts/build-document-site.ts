@@ -96,7 +96,7 @@ import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "
 import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { latestNames } from "./document-export.ts";
-import { numberFigures } from "./figure-numbers.ts";
+import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -150,6 +150,14 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
   .fa-downloads { font-size: .9rem; color: var(--muted); }
+  /* A figure's drawing centred, its title under it centred at no more than
+     67% of the column (owner, 2026-11-17; figure-numbers.ts moves the title). */
+  .fa-numbered { margin: .75em 0; }
+  .fa-numbered > p { max-width: 67%; margin: .2em auto; text-align: center; }
+  .fa-numbered > p:has(> img), .fa-numbered > p:has(> svg), .fa-numbered > p:has(> object) { max-width: none; }
+  .fa-numbered > p img, .fa-numbered > p object { margin-inline: auto; }
+  .fa-numbered-table > p { max-width: none; margin-inline: 0; text-align: start; }
+  @media (max-width: 49.99rem) { .fa-numbered > p { max-width: none; } }
   .fa-live-figure, .fa-live-figure img { display: block; max-width: 100%; height: auto; }
   .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
@@ -1088,7 +1096,7 @@ export async function buildDocumentSite(
     const built = await buildDocumentMarkdown(d.path);
     // Every figure, diagram and table shows a number and links its anchor,
     // in the whole page, the lazy chunks and the figures list (figure-numbers.ts).
-    built.markdown = numberFigures(built.markdown);
+    built.markdown = figureTitlesBelow(numberFigures(built.markdown));
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
     const manifest = (await import(d.path)).default as Paper;
     // A document with a status ("Working Draft") carries it in its title

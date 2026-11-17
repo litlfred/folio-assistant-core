@@ -62,3 +62,47 @@ export function numberFigures(markdown: string): string {
   }
   return lines.join("\n");
 }
+
+/** Kinds whose title goes under the drawing. A table keeps its title above it, where a reader starts a table. */
+const TITLE_BELOW = new Set(["figure", "diagram"]);
+const ITALIC_LINE = /^\*(?!\*)([\s\S]*[^*\s])\*$/;
+
+/**
+ * The Markdown with each figure's and diagram's title line ("**Figure 1.**
+ * *caption*" and its permalink) moved under the drawing (owner, 2026-11-17:
+ * "figure titles below figure with centering and max width 67%"). The
+ * block's anchor stays above, so a link to the figure still lands on its top.
+ * A title line with no caption of its own takes the caption printed as the
+ * frame's last italic line, so the figure has one line under it, not two.
+ * Centring and width are the stylesheet's (`.fa-numbered > p`).
+ */
+export function figureTitlesBelow(markdown: string): string {
+  const lines = markdown.split("\n");
+  const out: string[] = [];
+  let inFence = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    if (FENCE.test(line)) inFence = !inFence;
+    const f = inFence ? null : FRAME.exec(line);
+    if (!f || !TITLE_BELOW.has(f[1]!)) { out.push(line); continue; }
+    const end = lines.findIndex((l, k) => k > i && l.trim() === "</div>");
+    if (end < 0) { out.push(line); continue; }
+    const frame = lines.slice(i + 1, end);
+    const h = frame.findIndex((l) => HEADING.test(l));
+    if (h < 0 || frame.slice(0, h).some((l) => FENCE.test(l))) { out.push(line); continue; }
+    let title = frame[h]!;
+    const body = [...frame.slice(0, h), ...frame.slice(h + 1)];
+    while (body.length && body[body.length - 1]!.trim() === "") body.pop();
+    const named = HEADING.exec(title)!;
+    const rest = title.slice(named[0].length);
+    const last = body[body.length - 1];
+    const cap = last === undefined ? null : ITALIC_LINE.exec(last.trim());
+    if (cap && !/^\s*\*(?!\*)/.test(rest)) {
+      body.pop();
+      title = `${named[0]} *${cap[1]}*${rest}`;
+    }
+    out.push(line, ...body, "", title, "", "</div>");
+    i = end;
+  }
+  return out.join("\n");
+}

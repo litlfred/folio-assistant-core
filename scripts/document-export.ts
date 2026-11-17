@@ -56,7 +56,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
-import { numberFigures } from "./figure-numbers.ts";
+import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
 
 const HERE = import.meta.dir;
 export const LUA_FILTER = join(HERE, "document-export.lua");
@@ -305,7 +305,7 @@ export async function exportDocument(o: ExportOptions): Promise<ExportManifest> 
   const { buildDocumentMarkdown } = await import("@litlfred/cat-harness-tools/pipeline/render-markdown.js");
   const assembled = await buildDocumentMarkdown(manifestPath);
   // The Word and PDF copies number their figures as the site does (figure-numbers.ts).
-  assembled.markdown = numberFigures(assembled.markdown);
+  assembled.markdown = figureTitlesBelow(numberFigures(assembled.markdown));
   const errors = assembled.issues.filter((i: { level: string }) => i.level === "error");
   if (errors.length) throw new Error(`assembly failed:\n${errors.map((e: { message: string }) => `  ${e.message}`).join("\n")}`);
   const title = /^#\s+(.+)$/m.exec(assembled.markdown)?.[1]?.trim() ?? o.document;
