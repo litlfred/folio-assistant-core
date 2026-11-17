@@ -70,6 +70,21 @@ describe("bracketed citations", () => {
     expect(out).toContain("Steps: (1) plan; (2) build.");
   });
 
+  test("inlineEnumerationLeftAlone", () => {
+    const out = one(doc("Tiers are raised; and (2) the registry is added. It is typed. (3) Names are coded.", "A.", "B.", "C."));
+    expect(out).toContain("; and (2) the registry");
+    expect(out).toContain("typed. (3) Names");
+    expect(one(doc("Reports; and (2) <strong>Phase 2</strong>.", "A.", "B."))).toContain("; and (2) <strong>");
+    expect(one(doc("Both A and (2).", "A.", "B."))).toContain('and <span class="fa-cite" id="cite-1">');
+    expect(out).not.toContain("fa-cite-back");
+  });
+
+  test("noSpaceIsACode", () => {
+    const out = one(doc("doi.org/10.1016/S2589-7500(2)00038-8 and more (1).", "A.", "B."));
+    expect(out).toContain("S2589-7500(2)00038-8");
+    expect(out).toContain('more <span class="fa-cite" id="cite-1">(<a href="#ref-1">1</a>)</span>.');
+  });
+
   test("notInsideLinksOrCode", () => {
     const out = one(doc('See <a href="x">item (1)</a> and <code>f(2)</code>.', "A.", "B."));
     expect(out).toContain('<a href="x">item (1)</a> and <code>f(2)</code>');
