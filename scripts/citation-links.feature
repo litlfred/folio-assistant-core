@@ -61,3 +61,13 @@ Feature: numbered citations and the reference list, linked both ways
   Scenario: a bracketed number inside a link or code is not a citation
     When "(1)" is in a link's text and "(2)" in code
     Then neither is linked
+
+  @test:scripts/citation-links.test.ts::bracketed_citations::inlineEnumerationLeftAlone
+  Scenario: an enumeration inside a sentence is not read as citations
+    When "(2)" follows "; and" with words after it, and "(3)" follows a full stop
+    Then neither is linked
+
+  @test:scripts/citation-links.test.ts::bracketed_citations::noSpaceIsACode
+  Scenario: a bracketed number with no space before it is part of a code
+    When a DOI holds "7500(2)00038" and a sentence ends "more (1)."
+    Then the DOI is left as written and only "(1)" is linked

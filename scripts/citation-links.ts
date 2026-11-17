@@ -241,12 +241,18 @@ export function linkCitations(parts: readonly CitationPart[], opts: { refBlock?:
         continue;
       }
       if (skip === 0) {
-        toks[i] = t.replace(PAREN, (whole: string, inner: string, at: number) => {
-          // After a word or closing punctuation, as "… use cases (29)."; not
-          // opening a paragraph or item, nor after a colon or semicolon,
-          // where "(1) … (2) …" is an enumeration.
+        toks[i] = t.replace(PAREN, (whole: string, inner: string, at: number, all: string) => {
+          // A citation follows a word, a comma or a closing bracket, after a
+          // space: "… use cases (29).", "WHO (29), the DAK". An enumeration
+          // opens a paragraph or item, or follows a full stop, colon or
+          // semicolon ("… comparability. (3) Health …"), or "and", "or" or
+          // "in" unless punctuation closes it ("…; and (5) Common Geo-Registry …").
+          // No space before the bracket is part of a code, as in a DOI's
+          // "S2589-7500(21)00038-8" (smart-ra and dth-phc, 2026-11-17).
           const lead = t.slice(0, at) || prev;
-          if (!/[\p{L}\p{N}.,'"’”)\]]\s?$/u.test(lead)) return whole;
+          if (!/[\p{L}\p{N},'"’”)\]]\s$/u.test(lead)) return whole;
+          const rest = all.slice(at + whole.length);
+          if (/\b(and|or|in)\s$/i.test(lead) && !/^\s*[.,;:!?)\]]/.test(rest)) return whole;
           return link(inner, false) ?? whole;
         });
       }
