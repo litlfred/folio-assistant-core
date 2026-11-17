@@ -324,9 +324,9 @@ is <code class="language-plaintext highlighter-rouge">satisfies</code>, and it r
 to do that</em>, never <em>this skill is a tool</em>.</p>
 
 <div class="tg-grid">
-<a class="tg-stat" href="#every-tool"><b>215</b><span>Tool nodes</span></a>
+<a class="tg-stat" href="#every-tool"><b>216</b><span>Tool nodes</span></a>
 <a class="tg-stat" href="#does-every-satisfies-name-a-skill-that-exists"><b>98</b><span>skills satisfied</span></a>
-<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>184</b><span>invoked as a shell command</span></a>
+<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>185</b><span>invoked as a shell command</span></a>
 <a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>30</b><span>reachable over MCP</span></a>
 </div>
 
@@ -351,7 +351,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><a href="folio-assistant-core/">folio-assistant-core</a></td>
-      <td>30</td>
+      <td>31</td>
     </tr>
     <tr>
       <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/tools/cat-harness/">cat-harness</a></td>
@@ -384,7 +384,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
-      <td>184</td>
+      <td>185</td>
     </tr>
     <tr>
       <td><span class="tg-tag tg-inproc" data-surface="inProcess">inProcess</span></td>
@@ -411,7 +411,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">none</code></td>
-      <td>190</td>
+      <td>191</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">cli</code></td>
@@ -432,7 +432,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
 </h2>
     
 
-<p>Yes — all <strong>98</strong> skills named across <strong>215</strong> tools resolve to a
+<p>Yes — all <strong>98</strong> skills named across <strong>216</strong> tools resolve to a
 skill document in this checkout. A <code class="language-plaintext highlighter-rouge">satisfies</code> pointing at nothing would be a
 tool advertising a capability the graph cannot locate.</p>
 <h2 id="every-tool">
@@ -444,7 +444,7 @@ tool advertising a capability the graph cannot locate.</p>
 </h2>
     
 
-<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (7)</button><button type="button" aria-pressed="false" data-surface="inProcess">inProcess (35)</button><button type="button" aria-pressed="false" data-surface="manual">manual (9)</button><button type="button" aria-pressed="false" data-surface="mcp">mcp (30)</button><button type="button" aria-pressed="false" data-surface="shell">cli (184)</button><span><span id="tg-shown">215</span> of 215 shown</span></div>
+<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (7)</button><button type="button" aria-pressed="false" data-surface="inProcess">inProcess (35)</button><button type="button" aria-pressed="false" data-surface="manual">manual (9)</button><button type="button" aria-pressed="false" data-surface="mcp">mcp (30)</button><button type="button" aria-pressed="false" data-surface="shell">cli (185)</button><span><span id="tg-shown">216</span> of 216 shown</span></div>
 
 <div class="table-wrapper"><table>
   <thead>
@@ -527,6 +527,14 @@ tool advertising a capability the graph cannot locate.</p>
       <td>Write a JSON-LD node and a thin page for each model a layer’s <code class="language-plaintext highlighter-rouge">cat-archimate.config.json</code> names and for every view, element and relationship in it — keyed by Archi’s own ids — plus the normalised model the pages’ one loader draws from, and every view drawn as SVG from the model’s own bounds and bendpoints in ArchiMate’s notation, each box a link to its element. <code class="language-plaintext highlighter-rouge">--out</code> writes into a site being built — the data at the graph’s path, the pages at the route of the visualiser the layer declares for this Tool, <code class="language-plaintext highlighter-rouge">&lt;locale&gt;/&lt;harness&gt;/&lt;id&gt;/</code>; without it the files go into the graph and <code class="language-plaintext highlighter-rouge">--check</code> gates them.</td>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
       <td><code class="language-plaintext highlighter-rouge">archimate-models</code></td>
+      <td>3 in / 1 out</td>
+      <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
+    </tr>
+    <tr>
+      <td><a id="as-drawn-svg"></a><a href="folio-assistant-core/as-drawn-svg/"><code class="language-plaintext highlighter-rouge">as-drawn-svg</code></a> · <a href="https://litlfred.github.io/folio-assistant/folio-assistant-core/tools/as-drawn-svg.jsonld">JSON-LD</a><br />Figure redrawn as drawn, from its PDF vector layer</td>
+      <td>Draw a figure as SVG from <code class="language-plaintext highlighter-rouge">as-drawn-figure/v1</code> data: the drawing <code class="language-plaintext highlighter-rouge">scripts/pdf-as-drawn.py</code> transcribes from the source PDF’s vector layer (every path, clip, text run and image in the L1 figure region, at its printed position, colour and size). The SVG keeps the original’s layout and style; labels are SVG text held to their printed width, and labels that name a glossary concept link to it.</td>
+      <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
+      <td><code class="language-plaintext highlighter-rouge">figure-rebuild</code></td>
       <td>3 in / 1 out</td>
       <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
     </tr>

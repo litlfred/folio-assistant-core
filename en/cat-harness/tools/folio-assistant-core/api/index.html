@@ -163,7 +163,7 @@
 
 <link rel="stylesheet" href="../../../../../assets/css/navbar.css"><script src="../../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../../assets/page-layout.js" defer data-fa-page-layout></script><meta name="fa-pinned-data" content="../../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/folio-assistant-core/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-30","label":"Operations (30)"},{"href":"#mcp-tools-0","label":"MCP tools (0)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/folio-assistant-core/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-31","label":"Operations (31)"},{"href":"#mcp-tools-0","label":"MCP tools (0)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -265,10 +265,10 @@
   <li><a href="../openapi.json"><code class="language-plaintext highlighter-rouge">openapi.json</code></a> — OpenAPI 3.1.0, one operation per Tool. Open it in Swagger UI or Redoc, or generate a client from it. The paths are the Tools’ call contracts, not HTTP endpoints: each operation’s <code class="language-plaintext highlighter-rouge">x-invoke</code> says how the Tool is really reached.</li>
   <li><a href="../mcp-tools.json"><code class="language-plaintext highlighter-rouge">mcp-tools.json</code></a> — the answer an MCP server gives to <code class="language-plaintext highlighter-rouge">tools/list</code>: each tool’s name, description and input schema, read from the registrar that serves it.</li>
 </ul>
-<h2 id="operations-30">
+<h2 id="operations-31">
   
   
-    <a href="#operations-30" class="anchor-heading" aria-labelledby="operations-30"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (30)
+    <a href="#operations-31" class="anchor-heading" aria-labelledby="operations-31"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (31)
   
   
 </h2>
@@ -290,6 +290,13 @@
       <td>ArchiMate model from the glossary</td>
       <td><code class="language-plaintext highlighter-rouge">instance</code>: RepoPath, <code class="language-plaintext highlighter-rouge">model</code>?: ArchimateModelId, <code class="language-plaintext highlighter-rouge">write</code>?: Flag, <code class="language-plaintext highlighter-rouge">prune</code>?: Flag, <code class="language-plaintext highlighter-rouge">seed</code>?: Flag, <code class="language-plaintext highlighter-rouge">from</code>?: RepoPath, <code class="language-plaintext highlighter-rouge">check</code>?: Flag</td>
       <td><code class="language-plaintext highlighter-rouge">model</code>?: RepoPath</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="as-drawn-svg"></a><a href="../as-drawn-svg/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/as-drawn-svg</code></a></td>
+      <td>Figure redrawn as drawn, from its PDF vector layer</td>
+      <td><code class="language-plaintext highlighter-rouge">data</code>: RepoPath, <code class="language-plaintext highlighter-rouge">out-dir</code>: RepoPath, <code class="language-plaintext highlighter-rouge">check</code>?: Flag</td>
+      <td><code class="language-plaintext highlighter-rouge">svg</code>?: RepoPath</td>
       <td>shell</td>
     </tr>
     <tr>

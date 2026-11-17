@@ -326,9 +326,9 @@ is <code class="language-plaintext highlighter-rouge">satisfies</code>, and it r
 to do that</em>, never <em>this skill is a tool</em>.</p>
 
 <div class="tg-grid">
-<a class="tg-stat" href="#every-tool"><b>30</b><span>Tool nodes</span></a>
+<a class="tg-stat" href="#every-tool"><b>31</b><span>Tool nodes</span></a>
 <a class="tg-stat" href="#does-every-satisfies-name-a-skill-that-exists"><b>22</b><span>skills satisfied</span></a>
-<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>30</b><span>invoked as a shell command</span></a>
+<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>31</b><span>invoked as a shell command</span></a>
 <a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>0</b><span>reachable over MCP</span></a>
 </div>
 
@@ -353,7 +353,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
-      <td>30</td>
+      <td>31</td>
     </tr>
   </tbody>
 </table></div>
@@ -368,7 +368,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">none</code></td>
-      <td>29</td>
+      <td>30</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">service</code></td>
@@ -385,7 +385,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
 </h2>
     
 
-<p>Yes — all <strong>22</strong> skills named across <strong>30</strong> tools resolve to a
+<p>Yes — all <strong>22</strong> skills named across <strong>31</strong> tools resolve to a
 skill document in this checkout. A <code class="language-plaintext highlighter-rouge">satisfies</code> pointing at nothing would be a
 tool advertising a capability the graph cannot locate.</p>
 <h2 id="every-tool">
@@ -397,7 +397,7 @@ tool advertising a capability the graph cannot locate.</p>
 </h2>
     
 
-<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (1)</button><button type="button" aria-pressed="false" data-surface="shell">cli (30)</button><span><span id="tg-shown">30</span> of 30 shown</span></div>
+<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (1)</button><button type="button" aria-pressed="false" data-surface="shell">cli (31)</button><span><span id="tg-shown">31</span> of 31 shown</span></div>
 
 <div class="table-wrapper"><table>
   <thead>
@@ -417,6 +417,14 @@ tool advertising a capability the graph cannot locate.</p>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
       <td><code class="language-plaintext highlighter-rouge">graph-rendering</code></td>
       <td>7 in / 1 out</td>
+      <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
+    </tr>
+    <tr>
+      <td><a id="as-drawn-svg"></a><a href="as-drawn-svg/"><code class="language-plaintext highlighter-rouge">as-drawn-svg</code></a> · <a href="https://litlfred.github.io/folio-assistant/folio-assistant-core/tools/as-drawn-svg.jsonld">JSON-LD</a><br />Figure redrawn as drawn, from its PDF vector layer</td>
+      <td>Draw a figure as SVG from <code class="language-plaintext highlighter-rouge">as-drawn-figure/v1</code> data: the drawing <code class="language-plaintext highlighter-rouge">scripts/pdf-as-drawn.py</code> transcribes from the source PDF’s vector layer (every path, clip, text run and image in the L1 figure region, at its printed position, colour and size). The SVG keeps the original’s layout and style; labels are SVG text held to their printed width, and labels that name a glossary concept link to it.</td>
+      <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
+      <td><code class="language-plaintext highlighter-rouge">figure-rebuild</code></td>
+      <td>3 in / 1 out</td>
       <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
     </tr>
     <tr>
