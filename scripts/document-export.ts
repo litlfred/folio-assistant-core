@@ -56,6 +56,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { crossDocumentIndex, exportCrossDocumentRefs, folioDocuments } from "./cross-document-refs.ts";
 
 const HERE = import.meta.dir;
 export const LUA_FILTER = join(HERE, "document-export.lua");
@@ -316,7 +317,10 @@ export async function exportDocument(o: ExportOptions): Promise<ExportManifest> 
     const images = has("soffice")
       ? rasterizeSvgImages(assembled.markdown, [join(folioDir(repo), o.document), repo], work, env)
       : { markdown: assembled.markdown, converted: 0 };
-    writeFileSync(md, images.markdown, "utf-8");
+    // A ref into another document of the folio cannot be a link in a file:
+    // it is written as "<Document title>, Section N" (issue #841).
+    const crossDocs = await crossDocumentIndex(folioDocuments(folioDir(repo)));
+    writeFileSync(md, exportCrossDocumentRefs(images.markdown, o.document, crossDocs), "utf-8");
     const short = commit.slice(0, 7) + (dirty ? "-dirty" : "");
     const latest = latestNames(o.document);
     const referenceSha = createHash("sha256").update(readFileSync(REFERENCE_DOCX)).digest("hex");
