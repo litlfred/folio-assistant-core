@@ -12,7 +12,10 @@
  * rendered or split into lazy chunks.
  *
  * An unnumbered block takes the number after the last one of its kind above
- * it. A figure numbered from its source keeps that number; the count is per
+ * it, skipping any number a source label holds elsewhere in the document. A
+ * caption that already carries the source's label ("Fig. 3. …") is not
+ * labelled twice: the heading takes that number and the caption drops it
+ * ({@link numberFigures}). A figure numbered from its source keeps that number; the count is per
  * heading word ("Figure", "Table"), and only a whole number moves it ("Figure
  * 2.13" names a chapter's figure and leaves the document's count alone). The
  * block's anchor (its label) and its permalink are the renderer's; the link's
@@ -31,34 +34,130 @@ function parseHeading(text: string): { word: string; number?: string } {
   return m ? { word: m[1]!, number: m[2]! } : { word: text };
 }
 
-/** The Markdown with every unnumbered figure, diagram and table heading numbered in document order. */
+/**
+ * The words a source publication puts before a figure's or a table's own
+ * number, in the languages WHO publishes in ("Fig. 3.", "Figure 2.13:",
+ * "Figura 4", "Tableau 1", "Рис. 2", "图 1", "الشكل 5"). A diagram is
+ * labelled as a figure is.
+ */
+const FIGURE_WORDS = "Figures?|Figs?\\.?|Figuras?|Abbildung|Abb\\.?|Diagrams?|Рисунок|Рис\\.?|图|圖|الشكل|شكل";
+const TABLE_WORDS = "Tables?|Tableaux?|Tablas?|Tabelas?|Tabellen?|Tab\\.?|Tbl\\.?|Таблица|Табл\\.?|表|الجدول|جدول";
+const labelRe = (words: string) => new RegExp(`^\\s*(?:${words})\\s*(\\d+(?:\\.\\d+)*)(?![\\d.]*\\d)\\s*[.:]?\\s*`, "iu");
+const FIGURE_LABEL = labelRe(FIGURE_WORDS);
+const TABLE_LABEL = labelRe(TABLE_WORDS);
+
+/** The label a caption starts with: its number, the caption without it, and whether it is the block's own kind. */
+function captionLabel(kind: string, caption: string): { number: string; rest: string; own: boolean } | null {
+  const ownRe = kind === "table" ? TABLE_LABEL : FIGURE_LABEL;
+  const own = ownRe.exec(caption);
+  if (own) return { number: own[1]!, rest: caption.slice(own[0].length).trim(), own: true };
+  const other = (kind === "table" ? FIGURE_LABEL : TABLE_LABEL).exec(caption);
+  return other ? { number: other[1]!, rest: caption, own: false } : null;
+}
+
+/** A caption printed on the heading line: " *Fig. 1. Title*", before the permalink. */
+const INLINE_CAPTION = /^ \*(?!\*)(.*?[^*\s])\*(?= <a |\s*$)/;
+
+interface Frame {
+  readonly heading: number;
+  readonly old: string;
+  readonly word: string;
+  number?: string;
+  /** Where the caption is: on the heading line, or the frame's last italic line. */
+  readonly caption?: { readonly text: string; readonly line: number; readonly inline?: RegExpExecArray };
+  /** The caption without the source's label, when it had one of its own kind. */
+  rest?: string;
+}
+
+/**
+ * The Markdown with every unnumbered figure, diagram and table heading
+ * numbered in document order, and no label printed twice.
+ *
+ * A caption that starts with the source's own label ("Fig. 3. Primary health
+ * care digital ecosystem", "Table 2: …", "Figura 4.") gives the heading its
+ * number, and the caption drops the label: the page reads "Figure 3. Primary
+ * health care digital ecosystem", never "Figure 3. Fig. 3. …" (dth-phc,
+ * 2026-11-17). The source's number is kept (owner: source numbering stays);
+ * a number is added only to a block whose caption has none. A caption that
+ * starts with another kind's label ("Fig. 8 as a table: …" on a table) names
+ * the figure it comes from, not the table's own number, so the table is
+ * numbered as unnumbered and the caption is left as written. A number a
+ * source label holds anywhere in the document is not given to an unnumbered
+ * block, so no two blocks are cited by the same number.
+ */
 export function numberFigures(markdown: string): string {
-  const last = new Map<string, number>();
   const lines = markdown.split("\n");
+  const frames: Frame[] = [];
   let inFence = false;
-  let framed = false;
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]!;
-    if (FENCE.test(line)) inFence = !inFence;
+    if (FENCE.test(lines[i]!)) inFence = !inFence;
     if (inFence) continue;
-    if (FRAME.test(line)) { framed = true; continue; }
-    if (!framed) continue;
-    const h = HEADING.exec(line);
-    if (!h) {
-      if (line.trim() === "</div>") framed = false;
-      continue;
+    const f = FRAME.exec(lines[i]!);
+    if (!f) continue;
+    let h = -1;
+    let end = -1;
+    let fenced = false;
+    let open = false;
+    for (let k = i + 1; k < lines.length; k++) {
+      const l = lines[k]!;
+      if (FENCE.test(l)) { if (h < 0) break; fenced = true; open = !open; continue; }
+      if (!open && l.trim() === "</div>") { end = k; break; }
+      if (h < 0 && HEADING.test(l)) h = k;
     }
-    framed = false;
-    const { word, number } = parseHeading(h[1]!);
+    if (h < 0) continue;
+    const named = HEADING.exec(lines[h]!)!;
+    const { word, number } = parseHeading(named[1]!);
+    const inline = INLINE_CAPTION.exec(lines[h]!.slice(named[0].length));
+    let caption: Frame["caption"];
+    if (inline) caption = { text: inline[1]!, line: h, inline };
+    else if (end > 0) {
+      let k = end - 1;
+      while (k > h && lines[k]!.trim() === "") k--;
+      const cap = k > h ? ITALIC_LINE.exec(lines[k]!.trim()) : null;
+      if (cap && !fenced) caption = { text: cap[1]!, line: k };
+    }
+    const frame: Frame = { heading: h, old: named[1]!, word, number, caption };
+    const label = caption ? captionLabel(f[1]!, caption.text) : null;
+    if (label?.own) {
+      frame.number = label.number;
+      frame.rest = label.rest;
+    } else if (label && number !== undefined && number.split("–")[0] === label.number) {
+      frame.number = undefined;
+    }
+    frames.push(frame);
+  }
+
+  const held = new Map<string, Set<number>>();
+  for (const fr of frames) {
+    const whole = fr.number === undefined ? null : /^(?:\d+(?:\.\d+)*–)?(\d+)$/.exec(fr.number);
+    if (whole) held.set(fr.word, (held.get(fr.word) ?? new Set()).add(Number(whole[1])));
+  }
+  const last = new Map<string, number>();
+  for (const fr of frames) {
+    let number = fr.number;
     if (number !== undefined) {
-      const whole = /^(?:\d+–)?(\d+)$/.exec(number);
-      if (whole) last.set(word, Number(whole[1]));
-      continue;
+      const whole = /^(?:\d+(?:\.\d+)*–)?(\d+)$/.exec(number);
+      if (whole) last.set(fr.word, Number(whole[1]));
+    } else {
+      const taken = held.get(fr.word) ?? new Set<number>();
+      let n = (last.get(fr.word) ?? 0) + 1;
+      while (taken.has(n)) n++;
+      last.set(fr.word, n);
+      held.set(fr.word, taken.add(n));
+      number = String(n);
     }
-    const n = (last.get(word) ?? 0) + 1;
-    last.set(word, n);
-    const name = `${word} ${n}`;
-    lines[i] = `**${name}.**` + line.slice(h[0].length).replace(`aria-label="Link to ${word}" title="Link to ${word}"`, `aria-label="Link to ${name}" title="Link to ${name}"`);
+    const name = `${fr.word} ${number}`;
+    if (name === fr.old && fr.rest === undefined) continue;
+    const line = lines[fr.heading]!;
+    let tail = line.slice(HEADING.exec(line)![0].length);
+    const cap = fr.caption;
+    if (cap?.inline && fr.rest !== undefined) {
+      tail = (fr.rest ? ` *${fr.rest}*` : "") + tail.slice(cap.inline[0].length);
+    } else if (cap && fr.rest !== undefined) {
+      lines[cap.line] = fr.rest ? `*${fr.rest}*` : "";
+    }
+    const link = (what: string) => `aria-label="Link to ${what}" title="Link to ${what}"`;
+    lines[fr.heading] = `**${name}.**` + tail.replace(link(fr.old), link(name));
   }
   return lines.join("\n");
 }
