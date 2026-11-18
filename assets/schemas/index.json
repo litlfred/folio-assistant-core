@@ -3611,6 +3611,14 @@
       "isTest": false
     },
     {
+      "module": "schemas/glossary-translations.test.ts",
+      "instance": "folio-assistant-core",
+      "name": "glossary-translations.test",
+      "graphNode": "undeclared",
+      "summary": "Glossary translations held in the glossary itself (owner, option C,",
+      "isTest": true
+    },
+    {
       "module": "schemas/glossary.test.ts",
       "instance": "folio-assistant-core",
       "name": "glossary.test",
@@ -128826,6 +128834,18 @@
           "doc": "The licence the terms are published under: an SPDX id or a URL."
         },
         {
+          "name": "sourceLanguage",
+          "type": "z.string().regex(BCP47).optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          },
+          "doc": "The language the scheme is authored in (BCP 47): what a plain-string"
+        },
+        {
           "name": "terms",
           "type": "z.array(TermSchema).default([])",
           "optional": true,
@@ -128864,6 +128884,7 @@
       ],
       "unresolved": [],
       "external": [
+        "BCP47",
         "GLOSSARY_SCHEMA_ID",
         "LOCAL_ID",
         "z"
@@ -129218,6 +129239,18 @@
           "doc": "Per locale, whether this term's translation is signed off. The"
         },
         {
+          "name": "translationSource",
+          "type": "z.record(z.string().regex(BCP47), TranslationSourceSchema).optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "record",
+          "links": {
+            "record": "https://zod.dev/api#records"
+          },
+          "doc": "Per locale, where that locale's text came from ({@link TranslationSourceSchema}):"
+        },
+        {
           "name": "focus",
           "type": "FocusSchema.optional()",
           "optional": true,
@@ -129268,7 +129301,8 @@
         "schemas/glossary.ts#FocusSchema",
         "schemas/glossary.ts#Iri",
         "schemas/glossary.ts#LangTextSchema",
-        "schemas/glossary.ts#SubjectSchema"
+        "schemas/glossary.ts#SubjectSchema",
+        "schemas/glossary.ts#TranslationSourceSchema"
       ],
       "unresolved": [],
       "external": [
@@ -129284,6 +129318,74 @@
     {
       "id": "schemas/glossary.ts#TermStatus",
       "name": "TermStatus",
+      "module": "schemas/glossary.ts",
+      "kind": "type-alias",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
+      "id": "schemas/glossary.ts#TranslationSource",
+      "name": "TranslationSource",
+      "module": "schemas/glossary.ts",
+      "kind": "type-alias",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
+      "id": "schemas/glossary.ts#TranslationSourceSchema",
+      "name": "TranslationSourceSchema",
+      "module": "schemas/glossary.ts",
+      "kind": "zod-object",
+      "doc": "Where one locale's translation of a term came from (owner, option C,",
+      "fields": [
+        {
+          "name": "source",
+          "type": "z.string().min(1)",
+          "optional": false,
+          "array": false,
+          "card": "1..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          }
+        },
+        {
+          "name": "sourceText",
+          "type": "z.string().min(1).optional()",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "utype": "string",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          }
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [
+        "z"
+      ],
+      "source": "zod",
+      "exported": true
+    },
+    {
+      "id": "schemas/glossary.ts#TranslationState",
+      "name": "TranslationState",
       "module": "schemas/glossary.ts",
       "kind": "type-alias",
       "fields": [],
@@ -156195,6 +156297,14 @@
       "from": "schemas/glossary.ts#TermSchema",
       "to": "schemas/glossary.ts#SubjectSchema",
       "via": "subject",
+      "kind": "field",
+      "optional": true,
+      "array": false
+    },
+    {
+      "from": "schemas/glossary.ts#TermSchema",
+      "to": "schemas/glossary.ts#TranslationSourceSchema",
+      "via": "translationSource",
       "kind": "field",
       "optional": true,
       "array": false
