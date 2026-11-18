@@ -15,6 +15,7 @@
   "licence": "Apache-2.0",
   "licenceSource": "the installed package's own package.json (`license`)",
   "usedBy": [
+    "scripts/document-locales.test.ts",
     "scripts/folio-site-chrome-check.ts",
     "scripts/live-figures.test.ts"
   ]
