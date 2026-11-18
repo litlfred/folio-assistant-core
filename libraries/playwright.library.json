@@ -17,6 +17,7 @@
   "usedBy": [
     "scripts/document-locales.test.ts",
     "scripts/folio-site-chrome-check.ts",
+    "scripts/glossary-term-page.test.ts",
     "scripts/live-figures.test.ts"
   ]
 }

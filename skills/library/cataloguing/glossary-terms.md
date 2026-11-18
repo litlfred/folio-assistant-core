@@ -254,8 +254,39 @@ glossary:page` reads every such file (`readGlossaryTranslations`, through
   _(untranslated)_** — never silently English, never dropped — and the page
   states how many terms are fully translated;
 - **language-tagged SKOS**: the published `<instance>--<scheme>.skos.jsonld`
-  carries `skos:prefLabel` and `skos:definition` once per language
-  (`@language`), the source as `en`.
+  carries `skos:prefLabel`, `skos:altLabel` and `skos:definition` once per
+  language (`@language`), the source tagged with the scheme's
+  `sourceLanguage` (`en` when absent). A plain string is in the source
+  language and is tagged as such.
+
+### Translations held in the glossary (option C)
+
+Owner, 2026-11-18: a translation may also live in the glossary itself, as
+the locale's entry of a per-language `prefLabel` or `definition`
+(`{ "en": "Policy", "fr": "Politique" }`). It is shown on the term's page
+(a **Translations** table: each locale's label and definition, with
+`lang`, and its status), leads its row on that locale's page (the source
+follows it, in brackets), and is exported as above. Where the glossary and
+a `.po` both translate a term, the glossary's own text wins. A locale only
+the glossary carries still gets its locale page.
+
+Each locale's text carries one of three statuses, derived by
+`translationStateOf`, never stored:
+
+| status | when |
+|---|---|
+| `official` | `translationStatus` says so for that locale, **or** `translationSource` names an UNTERM record (`unterm:<id>`) whose `sourceText` is **exactly** the term's source-language `prefLabel` — an official candidate the UN already stands behind for this very term |
+| `candidate` | `translationSource` names an UNTERM record whose `sourceText` is absent or differs: the UN's translation of a similar term, offered, not adopted |
+| `unofficial` | everything else (the default) |
+
+In SKOS, each translated label is also a SKOS-XL `skosxl:Label` (W3C's
+vocabulary for a label as a resource) linked by `skosxl:prefLabel`, with
+`skosxl:literalForm`, the record it came from as `dcterms:source`, and its
+status as this layer's own `translationStatus`
+(`https://litlfred.github.io/folio-assistant-core/v0/ns/translationStatus`,
+a literal from the table above). No existing vocabulary records one
+language's sign-off: ADMS's `adms:status` is an asset's lifecycle and TBX's
+`administrativeStatus` a term's admissibility, so the platform mints its own.
 
 `check:glossary` covers both, stale and orphan alike.
 
@@ -276,12 +307,14 @@ one rule, in `schemas/glossary.ts`:
 |---|---|---|
 | `subject` | scheme, optionally a term | the subject area the translations bind in (`dcterms:subject`), a local id: `harness-vocabulary`, `digital-health-trust`, `who-health-guidance`. A term's overrides its scheme's; with neither, the term binds only within its own scheme. |
 | `translationStatus` | term | per locale, `official` or `unofficial`; a locale not listed is `unofficial`. It records sign-off, never the translation. |
-| (none) | the scheme's `.po` | the translation itself. |
+| `translationSource` | term | per locale, `{ source, sourceText? }`: where that locale's text came from (`unterm:<id>`, an IRI). Provenance; `translationStateOf` reads it. |
+| `sourceLanguage` | scheme | the language the scheme is authored in (BCP 47); `en` when absent. |
+| (none) | the scheme's `.po`, or the term's per-language `prefLabel`/`definition` | the translation itself. |
 
 **A fixed translation is derived, never flagged**: an `authored` term whose
 scheme catalogue holds a non-empty, non-fuzzy `msgstr` for its `prefLabel`
 (`isFixedTranslation`). There is no `#, fixed` flag and no label in the JSON,
-so the `.po` stays the one place a translation lives.
+so the translation stays in the `.po` (or, since option C, in the term's own per-language text), never in a flag.
 
 **Precedence applies within a subject area.** Across the layers a layer
 `needs`, the more authoritative (lower) layer fixes a term's translation for

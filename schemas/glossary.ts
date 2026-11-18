@@ -37,6 +37,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 
 import { checkoutRootFor } from "../scripts/lib/checkout-root.ts";
+import { CORE_NAMESPACE } from "./own-namespace.ts";
 
 export const GLOSSARY_SCHEMA_ID = "folio-glossary/v1" as const;
 
@@ -89,6 +90,41 @@ export const LangTextSchema = z.union([
   z.record(z.string().regex(/^[a-z]{2,3}(-[A-Za-z0-9]+)*$/), z.string().min(1)).refine((r) => Object.keys(r).length > 0),
 ]);
 export type LangText = z.infer<typeof LangTextSchema>;
+
+/** The source language when a scheme declares none. */
+export const DEFAULT_SOURCE_LANGUAGE = "en" as const;
+
+/**
+ * Where one locale's translation of a term came from (owner, option C,
+ * 2026-11-18: glossary translations live in the glossary as language-tagged
+ * labels and definitions, marked unofficial). `source` is an IRI or a CURIE;
+ * `unterm:<id>` names a UN Terminology Database (UNTERM) record. `sourceText`
+ * is the SOURCE-language text that record translates, verbatim, so a reader
+ * can tell whether the record is about this term or only a similar one.
+ *
+ * It is provenance, not a sign-off: what it changes is derived by
+ * {@link translationStateOf}, never stored.
+ */
+export const TranslationSourceSchema = z
+  .object({
+    source: z.string().min(1),
+    sourceText: z.string().min(1).optional(),
+  })
+  .strict();
+export type TranslationSource = z.infer<typeof TranslationSourceSchema>;
+
+/**
+ * What a reader is told about one locale's text, derived by
+ * {@link translationStateOf}: `official` (signed off, or an UNTERM record of
+ * exactly this source text), `candidate` (an official source's record of a
+ * DIFFERENT source text: offered, not adopted), `unofficial` (everything else,
+ * the default).
+ */
+export const TRANSLATION_STATES = ["official", "candidate", "unofficial"] as const;
+export type TranslationState = (typeof TRANSLATION_STATES)[number];
+
+/** The prefix of a UNTERM record's CURIE in {@link TranslationSourceSchema.source}. */
+export const UNTERM_PREFIX = "unterm:" as const;
 
 /**
  * What a term's concept is ABOUT, when that is a thing in the world and not
@@ -228,10 +264,18 @@ export const TermSchema = z
     subject: SubjectSchema.optional(),
     /**
      * Per locale, whether this term's translation is signed off. The
-     * translation itself is in the scheme's `.po`, never here: this records
-     * only who stands behind it. A locale not listed is `unofficial`.
+     * translation itself is the locale's entry of `prefLabel`/`definition`
+     * (owner, option C, 2026-11-18) or the scheme's `.po`: this records only
+     * who stands behind it. A locale not listed is `unofficial`, unless
+     * {@link translationStateOf} finds an exact UNTERM record.
      */
     translationStatus: z.record(z.string().regex(BCP47), z.enum(TRANSLATION_STATUSES)).optional(),
+    /**
+     * Per locale, where that locale's text came from ({@link TranslationSourceSchema}):
+     * an UNTERM record, a published glossary, a translator. Read by
+     * {@link translationStateOf}.
+     */
+    translationSource: z.record(z.string().regex(BCP47), TranslationSourceSchema).optional(),
     /** The thing the concept is about, an organization or an architecture element ({@link FocusSchema}): `foaf:focus`. */
     focus: FocusSchema.optional(),
     /** Where the term came from: a repository path (with #anchor) or an IRI. */
@@ -268,6 +312,12 @@ export const GlossarySchema = z
     subject: SubjectSchema.optional(),
     /** The licence the terms are published under: an SPDX id or a URL. */
     license: z.string().min(1).optional(),
+    /**
+     * The language the scheme is authored in (BCP 47): what a plain-string
+     * label or definition is in, and which entry of a per-language one is the
+     * source. Absent means `en`.
+     */
+    sourceLanguage: z.string().regex(BCP47).optional(),
     terms: z.array(TermSchema).default([]),
     /**
      * The terms are in a LOGICAL order, each defined only by terms above it,
@@ -365,6 +415,57 @@ export function translationStatusOf(t: Pick<Term, "translationStatus">, locale: 
   return t.translationStatus?.[locale] ?? "unofficial";
 }
 
+/** The scheme's source language: its `sourceLanguage`, else `en`. */
+export function sourceLanguageOf(g: Pick<Glossary, "sourceLanguage">): string {
+  return g.sourceLanguage ?? DEFAULT_SOURCE_LANGUAGE;
+}
+
+/** The text in `lang`, or undefined. A plain string is in the source language. */
+export function textIn(t: LangText | undefined, lang: string, sourceLang: string = DEFAULT_SOURCE_LANGUAGE): string | undefined {
+  if (t === undefined) return undefined;
+  if (typeof t === "string") return lang === sourceLang ? t : undefined;
+  return t[lang];
+}
+
+/** The source-language text: the `sourceLang` entry, else the first. */
+export function sourceTextOf(t: LangText, sourceLang: string = DEFAULT_SOURCE_LANGUAGE): string {
+  return typeof t === "string" ? t : (t[sourceLang] ?? Object.values(t)[0]!);
+}
+
+/**
+ * The locales a term has its own text in, other than the source: every
+ * language of its `prefLabel` and `definition`, sorted.
+ */
+export function translatedLocales(t: Pick<Term, "prefLabel" | "definition">, sourceLang: string = DEFAULT_SOURCE_LANGUAGE): string[] {
+  const keys = (x: LangText | undefined) => (x === undefined || typeof x === "string" ? [] : Object.keys(x));
+  return [...new Set([...keys(t.prefLabel), ...keys(t.definition)])].filter((l) => l !== sourceLang).sort();
+}
+
+/**
+ * What a reader is told about a term's text in `locale` ({@link TRANSLATION_STATES}).
+ *
+ * - `official` when a person signed it off (`translationStatus`), or when it
+ *   is an UNTERM record (`translationSource` `unterm:<id>`) whose `sourceText`
+ *   is EXACTLY this term's source-language `prefLabel`: an official
+ *   candidate the UN already stands behind for this very term.
+ * - `candidate` when it comes from UNTERM but the record's `sourceText` is
+ *   absent or differs: the UN's translation of a similar term, offered for a
+ *   person to adopt, not yet this term's.
+ * - `unofficial` otherwise.
+ */
+export function translationStateOf(
+  t: Pick<Term, "prefLabel" | "translationStatus" | "translationSource">,
+  locale: string,
+  sourceLang: string = DEFAULT_SOURCE_LANGUAGE,
+): TranslationState {
+  if (translationStatusOf(t, locale) === "official") return "official";
+  const src = t.translationSource?.[locale];
+  if (src?.source.startsWith(UNTERM_PREFIX)) {
+    return src.sourceText !== undefined && src.sourceText === sourceTextOf(t.prefLabel, sourceLang) ? "official" : "candidate";
+  }
+  return "unofficial";
+}
+
 /** The IRI of a scheme, and of a term in it: `<ns>glossary/<scheme>` and `…/<term>`. */
 export function schemeIri(ns: string, g: Pick<Glossary, "id">): string {
   return `${ns}glossary/${g.id}`;
@@ -383,11 +484,31 @@ export const ORG_NS = "http://www.w3.org/ns/org#" as const;
 export const ARCHIMATE_NS = "http://www.opengroup.org/xsd/archimate/3.1/" as const;
 export const OWL_NS = "http://www.w3.org/2002/07/owl#" as const;
 
-function langValues(t: LangText): Array<{ "@value": string; "@language"?: string }> {
+/**
+ * Language-tagged literals. A plain string is in the scheme's source language
+ * and is tagged with it: `"Policy"` and `"Policy"@en` are different literals,
+ * and only the tagged one says which language a SKOS reader is looking at.
+ */
+function langValues(t: LangText, sourceLang: string): Array<{ "@value": string; "@language": string }> {
   return typeof t === "string"
-    ? [{ "@value": t }]
+    ? [{ "@value": t, "@language": sourceLang }]
     : Object.entries(t).map(([lang, v]) => ({ "@value": v, "@language": lang }));
 }
+
+/**
+ * The namespace of the platform's own glossary-translation terms. No existing
+ * vocabulary records whether ONE LANGUAGE'S label is signed off: ADMS's
+ * `adms:status` is an asset's lifecycle, TBX's `administrativeStatus` is a
+ * term's admissibility, and SKOS has no label resource at all. So the label
+ * is a SKOS-XL `skosxl:Label` (W3C, the existing vocabulary for a label as a
+ * resource), and its status is this layer's own `translationStatus`, a plain
+ * literal from {@link TRANSLATION_STATES}, with the record it came from as
+ * `dcterms:source`.
+ */
+export function translationStatusIri(coreNs: string): string {
+  return `${coreNs}translationStatus`;
+}
+export const SKOSXL_NS = "http://www.w3.org/2008/05/skos-xl#" as const;
 
 /**
  * One candidate's AUTOMATED matches, as `check:term-mapping` found them:
@@ -526,8 +647,12 @@ export function toSkos(
   g: Glossary,
   ns: string,
   automated?: { matches: readonly AutomatedMatch[]; agent: string | undefined },
+  /** The platform's namespace, where `translationStatus` is minted; defaults to this layer's own. */
+  coreNs: string = CORE_NAMESPACE,
 ): Record<string, unknown> {
   const scheme = schemeIri(ns, g);
+  const srcLang = sourceLanguageOf(g);
+  let hasXl = false;
   // A term that names its own concept IRI is referred to by it, everywhere.
   const own = new Map(g.terms.filter((t) => t.iri).map((t) => [t.id, t.iri!]));
   const idOf = (termId: string) => own.get(termId) ?? termIri(ns, g, termId);
@@ -553,14 +678,34 @@ export function toSkos(
       "@id": idOf(t.id),
       "@type": "skos:Concept",
       "skos:inScheme": { "@id": scheme },
-      "skos:prefLabel": langValues(t.prefLabel),
+      "skos:prefLabel": langValues(t.prefLabel, srcLang),
     };
-    if (t.altLabel?.length) node["skos:altLabel"] = t.altLabel;
-    if (t.definition) node["skos:definition"] = langValues(t.definition);
+    if (t.altLabel?.length) node["skos:altLabel"] = t.altLabel.map((a) => ({ "@value": a, "@language": srcLang }));
+    if (t.definition) node["skos:definition"] = langValues(t.definition, srcLang);
+    // Each translated label as a SKOS-XL label resource, carrying what a
+    // reader is told about it (unofficial unless signed off or an exact UNTERM
+    // record) and where it came from. The plain `skos:prefLabel` above stays,
+    // so a reader that knows only SKOS still finds every language.
+    const xl = translatedLocales(t, srcLang)
+      .filter((loc) => textIn(t.prefLabel, loc, srcLang) !== undefined)
+      .map((loc) => {
+        const src = t.translationSource?.[loc]?.source;
+        return {
+          "@id": `${idOf(t.id)}#label-${loc}`,
+          "@type": "skosxl:Label",
+          "skosxl:literalForm": { "@value": textIn(t.prefLabel, loc, srcLang)!, "@language": loc },
+          "fa:translationStatus": translationStateOf(t, loc, srcLang),
+          ...(src ? { "dcterms:source": /^[a-z][a-z0-9+.-]*:\/\//i.test(src) ? { "@id": src } : src } : {}),
+        };
+      });
+    if (xl.length) {
+      hasXl = true;
+      node["skosxl:prefLabel"] = xl.map((l) => ({ "@id": l["@id"] }));
+    }
     if (t.notation) node["skos:notation"] = t.notation;
     if (t.scopeNote) node["skos:scopeNote"] = t.scopeNote;
     if (t.editorialNote) node["skos:editorialNote"] = t.editorialNote;
-    if (t.example) node["skos:example"] = langValues(t.example);
+    if (t.example) node["skos:example"] = langValues(t.example, srcLang);
     if (t.broader?.length) node["skos:broader"] = t.broader.map(ref);
     if (t.related?.length) node["skos:related"] = t.related.map(ref);
     for (const m of ["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const) {
@@ -573,6 +718,7 @@ export function toSkos(
     if (t.subject) node["dcterms:subject"] = t.subject;
     if (t.status !== "authored") node["skos:note"] = t.reason ? `${t.status}: ${t.reason}` : t.status;
     graph.push(node);
+    graph.push(...xl);
     if (isArchimateFocus(t.focus)) {
       const f = t.focus;
       const fIri = focusIri(idOf(t.id), f);
@@ -586,7 +732,7 @@ export function toSkos(
       // as RDF properties are: `archimate:serving`, `archimate:realization`.
       const rels: Record<string, { "@id": string }[]> = {};
       for (const r of f.relationships ?? []) (rels[`archimate:${r.type[0]!.toLowerCase()}${r.type.slice(1)}`] ??= []).push(elRef(r.target));
-      graph.push({ "@id": fIri, "@type": `archimate:${f.archimate}`, "rdfs:label": langValues(t.prefLabel), ...rels });
+      graph.push({ "@id": fIri, "@type": `archimate:${f.archimate}`, "rdfs:label": langValues(t.prefLabel, srcLang), ...rels });
     } else if (isOrgFocus(t.focus)) {
       const f = t.focus;
       const fIri = focusIri(idOf(t.id), f);
@@ -599,7 +745,7 @@ export function toSkos(
       graph.push({
         "@id": fIri,
         "@type": `org:${f.type}`,
-        "rdfs:label": langValues(t.prefLabel),
+        "rdfs:label": langValues(t.prefLabel, srcLang),
         ...(f.homepage ? { "foaf:homepage": { "@id": f.homepage } } : {}),
         ...(f.subOrganizationOf?.length ? { "org:subOrganizationOf": f.subOrganizationOf.map(orgRef) } : {}),
         ...(f.sameAs?.length ? { "owl:sameAs": f.sameAs.map((x) => ({ "@id": x })) } : {}),
@@ -634,6 +780,7 @@ export function toSkos(
     ...(hasFocus || hasElement ? { foaf: FOAF_NS } : {}),
     ...(hasFocus ? { org: ORG_NS, owl: OWL_NS } : {}),
     ...(hasElement ? { archimate: ARCHIMATE_NS } : {}),
+    ...(hasXl ? { skosxl: SKOSXL_NS, fa: coreNs } : {}),
   };
   const prov = automated ? automatedNodes(automatedGraphIri(ns, g), idOf, automated.matches, automated.agent) : [];
   if (!prov.length) return { "@context": context, "@graph": graph };
