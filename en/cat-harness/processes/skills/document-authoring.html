@@ -163,7 +163,7 @@
 
 <link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><meta name="fa-pinned-data" content="../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/document-authoring.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#what-a-document-folio-is","label":"What a document folio is"},{"href":"#the-kinds-you-may-use","label":"The kinds you may use"},{"href":"#adding-a-block","label":"Adding a block"},{"href":"#uses-is-editorial-and-it-is-yours-to-maintain","label":"uses[] is editorial, and it is yours to maintain"},{"href":"#rendering","label":"Rendering"},{"href":"#what-belongs-in-the-folio-and-what-belongs-here","label":"What belongs in the folio, and what belongs here"},{"href":"#input-and-output-contracts","label":"Input and output contracts"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/document-authoring.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#what-a-document-folio-is","label":"What a document folio is"},{"href":"#the-kinds-you-may-use","label":"The kinds you may use"},{"href":"#adding-a-block","label":"Adding a block"},{"href":"#uses-is-editorial-and-it-is-yours-to-maintain","label":"uses[] is editorial, and it is yours to maintain"},{"href":"#rendering","label":"Rendering"},{"href":"#translations-of-a-block","label":"Translations of a block"},{"href":"#what-belongs-in-the-folio-and-what-belongs-here","label":"What belongs in the folio, and what belongs here"},{"href":"#input-and-output-contracts","label":"Input and output contracts"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -384,6 +384,36 @@ to inspect ordering before you render anything else. <code class="language-plain
 and <code class="language-plaintext highlighter-rouge">document_render_pdf</code> go through pandoc; the PDF path uses an HTML engine
 (weasyprint, prince, wkhtmltopdf) and <strong>never</strong> falls back to LaTeX. If no
 engine is installed it says so.</p>
+<h2 id="translations-of-a-block">
+  
+  
+    <a href="#translations-of-a-block" class="anchor-heading" aria-labelledby="translations-of-a-block"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Translations of a block
+  
+  
+</h2>
+    
+
+<p>Changing a block’s prose changes the source strings its translations are made
+from. The harness’s translation processes take it from there; nothing in the
+block’s own files records a translation:</p>
+
+<ol>
+  <li><strong>Refresh</strong>: the catalogues are re-extracted, and a changed string’s
+translation is no longer current (<code class="language-plaintext highlighter-rouge">translation-refresh</code> skill,
+<code class="language-plaintext highlighter-rouge">translation-refresh.bpmn</code>).</li>
+  <li><strong>Candidates</strong>: engines and people add candidate translations beside the
+catalogue (<code class="language-plaintext highlighter-rouge">translation-candidate-source</code>); an empty string takes one as a
+fuzzy default, so a translated page is never left blank.</li>
+  <li><strong>Adjudication</strong>: a reviewer judges the translation from the block’s 🌐
+pane or the translation status page, and the verdict reaches the record
+only as a GitHub issue that a workflow turns into a pull request
+(<code class="language-plaintext highlighter-rouge">translation-adjudication</code> skill,
+<a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/processes/translation-review-adjudication.bpmn"><code class="language-plaintext highlighter-rouge">translation-review-adjudication.bpmn</code></a>).
+See <a href="block-actions.html"><code class="language-plaintext highlighter-rouge">block-actions</code></a> for the pane.</li>
+</ol>
+
+<p>An author does not edit <code class="language-plaintext highlighter-rouge">translations/</code> by hand to “fix” a string. Use the
+pane, so the change carries a reviewer and the hash of what they saw.</p>
 <h2 id="what-belongs-in-the-folio-and-what-belongs-here">
   
   
