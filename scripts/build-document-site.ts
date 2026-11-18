@@ -76,7 +76,8 @@ import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness-
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
-import { atInstanceContext, awaitingRebase } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
+import * as instanceDocumentContext from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
+import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
 import { libraryNodes, nodeIriFiles, type PublishedNode } from "./lib/node-iri-files.ts";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
@@ -386,6 +387,16 @@ export function contentsList(html: string): string {
 // that is missing, or that differs from what the generator would write now,
 // fails the build: a site whose graph is silently absent or out of date is
 // the failure this replaces.
+
+/**
+ * Whether a committed node differs from `current` ONLY by the old shared
+ * `@base` (cat-harness-tools#2454's `awaitingRebase`). Read off the module
+ * rather than imported by name, so a checkout pinned before #2454 still
+ * builds: there the write boundary moves no base, a committed node never
+ * differs that way, and the answer is `false`.
+ */
+const awaitingRebase: (committed: string | undefined, regenerated: string) => boolean =
+  (instanceDocumentContext as { awaitingRebase?: (c: string | undefined, r: string) => boolean }).awaitingRebase ?? (() => false);
 
 /** A document's block nodes, as committed, and what is wrong with them. */
 export async function documentGraph(
