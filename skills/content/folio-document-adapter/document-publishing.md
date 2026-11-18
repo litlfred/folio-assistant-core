@@ -151,6 +151,30 @@ Two rules for anything that reads the document page:
 
 Searching the document's comments is the dashboard's job, not the page's.
 
+## A site per declared locale
+
+A folio that declares `translation` in its harness config (`supportedLocales`,
+`defaultLocale`) gets one document page per declared locale that translates at
+least one block: `<locale>/<slug>/index.html`, built by `buildDocumentMarkdown`
+with that locale from the merged `.po` catalogues (block, chapter, `global.po`).
+The source's pages stay under `en/` (owner, option A, 2026-11-18).
+
+- A block no catalogue translates is the **source text, marked**: wrapped in
+  `.fa-untranslated` with `lang` set to the source and a visible
+  "(untranslated)" mark, never silently English and never dropped. A line at
+  the top says the translation is unofficial and how many blocks it covers.
+- A declared locale that translates nothing gets **no** page: an all-English
+  `/de/` page would claim a translation that does not exist.
+- Every version carries a **language switcher** (each version named in its own
+  language, `hreflang`, `aria-current` on the one in view) and
+  `<link rel="alternate" hreflang>` for each version plus `x-default` for the
+  source. The landing links each translation beside its document.
+- A translated page has its own `lang` (and `dir="rtl"` for Arabic, Hebrew,
+  Persian, Urdu…), is one page (not lazy-loaded), and has no [edit]/[feedback]:
+  those open the source block.
+
+The helpers are in `scripts/document-locales.ts`.
+
 ## What is not implemented
 
 The pandoc tools (`document_render_*`) have no citations, no bibliography, no
