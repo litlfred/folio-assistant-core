@@ -3603,6 +3603,23 @@
       "isTest": true
     },
     {
+      "module": "schemas/glossary-namespace.test.ts",
+      "instance": "folio-assistant-core",
+      "name": "glossary-namespace.test",
+      "graphNode": "undeclared",
+      "summary": "The namespace document carries every glossary concept a layer mints",
+      "isTest": true
+    },
+    {
+      "module": "schemas/glossary-namespace.ts",
+      "instance": "folio-assistant-core",
+      "name": "glossary-namespace",
+      "graphNode": "none",
+      "reason": "a rendering of the glossary graph, not a schema of it",
+      "summary": "A layer's namespace document, with its glossary concepts in it.",
+      "isTest": false
+    },
+    {
       "module": "schemas/glossary-tables.ts",
       "instance": "folio-assistant-core",
       "name": "glossary-tables",
@@ -128436,6 +128453,64 @@
       "exported": false
     },
     {
+      "id": "schemas/glossary-namespace.ts#NamespaceScheme",
+      "name": "NamespaceScheme",
+      "module": "schemas/glossary-namespace.ts",
+      "kind": "interface",
+      "doc": "One scheme as the namespace document needs it.",
+      "fields": [
+        {
+          "name": "glossary",
+          "type": "Pick<Glossary, \"id\" | \"title\" | \"description\" | \"terms\">",
+          "optional": false,
+          "array": false,
+          "card": "1..1"
+        },
+        {
+          "name": "skos",
+          "type": "string",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "links": {
+            "string": "https://zod.dev/api#strings"
+          },
+          "doc": "Where the scheme's full SKOS is published, relative to the namespace document's directory."
+        },
+        {
+          "name": "pageOf",
+          "type": "(termId: string) => string | undefined",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "doc": "A term's own page, relative to the namespace document's directory, when it has one."
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [
+        "schemas/glossary.ts#Glossary"
+      ],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
+      "id": "schemas/glossary-namespace.ts#Node",
+      "name": "Node",
+      "module": "schemas/glossary-namespace.ts",
+      "kind": "type-alias",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": false
+    },
+    {
       "id": "schemas/glossary-tables.ts#GlossaryTables",
       "name": "GlossaryTables",
       "module": "schemas/glossary-tables.ts",
@@ -156137,6 +156212,14 @@
       "from": "schemas/figure-data.ts#Tile",
       "to": "schemas/figure-data.ts#Span",
       "via": "rows",
+      "kind": "field",
+      "optional": false,
+      "array": false
+    },
+    {
+      "from": "schemas/glossary-namespace.ts#NamespaceScheme",
+      "to": "schemas/glossary.ts#Glossary",
+      "via": "glossary",
       "kind": "field",
       "optional": false,
       "array": false
