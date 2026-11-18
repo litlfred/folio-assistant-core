@@ -68,7 +68,7 @@ import remarkHtml from "remark-html";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
-import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { findDeclarationFile, folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness-tools/schemas/kg/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
@@ -76,7 +76,8 @@ import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness-
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
-import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
+import { atInstanceContext, awaitingRebase } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
+import { libraryNodes, nodeIriFiles, type PublishedNode } from "./lib/node-iri-files.ts";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness-tools/schemas/content/contributions.js";
@@ -391,12 +392,12 @@ export async function documentGraph(
   docDir: string,
   slug: string,
   contributions?: ContributionRegistry,
-): Promise<{ nodes: Array<{ rel: string; text: string }>; errors: string[] }> {
+): Promise<{ nodes: Array<{ rel: string; text: string; label: string; source: string; current: string }>; errors: string[] }> {
   // A dependency's kinds (a DAK layer's personas, scenarios, requirements) are blocks too.
   const kinds = new Set(contributions?.contributedBuilders().values() ?? []);
   const { blocks, failures } = await loadBlocksUnder(docDir, kinds);
   const errors = failures.map((f) => `${relative(docDir, f.file)} did not load: ${f.error}`);
-  const nodes: Array<{ rel: string; text: string }> = [];
+  const nodes: Array<{ rel: string; text: string; label: string; source: string; current: string }> = [];
   for (const b of [...blocks.values()].sort((x, y) => x.file.localeCompare(y.file))) {
     const path = b.file.replace(/\.ts$/, ".jsonld");
     const rel = relative(docDir, path);
@@ -407,10 +408,36 @@ export async function documentGraph(
     const text = readFileSync(path, "utf-8");
     // The generator names the context of the layer the file sits in
     // (`atInstanceContext`, bean folio-assistant-63q4), so compare with that.
-    if (text !== serialiseNode(atInstanceContext(blockToJsonLd(b, slug, [], [], contributions), path))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
-    nodes.push({ rel, text });
+    // A node that differs ONLY by still carrying the old shared `@base` awaits
+    // regeneration under its layer's release (IRI fix 1A, cat-harness-tools#2454)
+    // and is not stale: the content layers regenerate when they re-pin.
+    const current = serialiseNode(atInstanceContext(blockToJsonLd(b, slug, [], [], contributions), path));
+    if (text !== current && !awaitingRebase(text, current)) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
+    nodes.push({ rel, text, label: b.label, source: path, current });
   }
   return { nodes, errors };
+}
+
+/**
+ * Each node served at its IRI, `<iriBase>v<major>/<@id>` (IRI fix 1A, a;
+ * owner 2026-11-18): `<@id>.jsonld` and `<@id>.html` under the site, which is
+ * published at the `iriBase` the folio declares (`scripts/lib/node-iri-files.ts`).
+ * The block nodes above sit at `<doc>/kg/…`, a path no IRI names, and the
+ * library's nodes were published nowhere. A folio that declares no
+ * `iriBase` mints no IRI a site serves, and nothing is written. Returns the
+ * errors: two sources publishing different nodes at one IRI.
+ */
+export function writeNodeIris(repoRoot: string, outDir: string, nodes: readonly PublishedNode[]): string[] {
+  const declFile = findDeclarationFile(repoRoot);
+  const iriBase = declFile === undefined ? undefined : (JSON.parse(readFileSync(join(repoRoot, declFile), "utf-8")) as { iriBase?: unknown }).iriBase;
+  if (typeof iriBase !== "string" || iriBase === "") return [];
+  const { files, collisions } = nodeIriFiles(nodes, iriBase);
+  for (const [rel, content] of files) {
+    const at = join(outDir, ...rel.split("/"));
+    mkdirSync(dirname(at), { recursive: true });
+    writeFileSync(at, content);
+  }
+  return collisions;
 }
 
 /** Errors past this many are counted, not listed: one cause usually explains them all. */
@@ -1099,6 +1126,8 @@ export async function buildDocumentSite(
   const contentType = readHarnessConfig(repoRoot)?.contentType;
   const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(outDir, ...SUGGEST_DIR.split("/")), "") : [];
   let library: LibraryLink[] | undefined;
+  /** Every node this site serves at its IRI ({@link writeNodeIris}). */
+  const iriNodes: PublishedNode[] = [];
   // A block of one document may link into another of the same folio,
   // `<slug>:<label>` (issue #841): the link goes to that document's page.
   const crossDocs = await crossDocumentIndex(docs);
@@ -1254,6 +1283,8 @@ export async function buildDocumentSite(
       mkdirSync(dirname(join(data, "kg", n.rel)), { recursive: true });
       writeFileSync(join(data, "kg", n.rel), n.text);
     }
+    // Each node at its IRI too (below): as written now, read on this page at its block's anchor.
+    for (const n of graph.nodes) iriNodes.push({ text: n.current, source: n.source, page: `${documentPageDir(d.slug)}/#${n.label}` });
     mkdirSync(data, { recursive: true });
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
@@ -1308,6 +1339,7 @@ export async function buildDocumentSite(
     outline.documents.push(lz ? { ...o, lazy: lz } : o);
   }
   writeFileSync(join(outDir, "outline.json"), JSON.stringify(outline) + "\n");
+  result.errors.push(...writeNodeIris(repoRoot, outDir, [...iriNodes, ...libraryNodes(repoRoot)]));
   // The values the text refers to, as KG nodes, beside the outline: what the
   // ✍ suggest editor shows a variable's current value from (gen-values-jsonld).
   writeValuesJsonLd(repoRoot, outDir);
