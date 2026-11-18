@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "f027203d3b1bb0b6cd152a7a317a453f6517ac5c",
+          "ref": "fdc15055abfe8e64eff8d63e31ef8a7f349c0d1a",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -64,9 +64,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-16",
-              "ref": "f027203d3b1bb0b6cd152a7a317a453f6517ac5c",
-              "evidence": "litlfred 2026-11-16: merge-and-repin window to 19:01Z (owner card 06:36Z); the re-pin cascade after cat-harness-tools#2353 and #2354 merged (f027203d)"
+              "on": "2026-11-18",
+              "ref": "fdc15055abfe8e64eff8d63e31ef8a7f349c0d1a",
+              "evidence": "owner card answered 2026-11-18 in this session: 'Yes, re-pin in #846' — re-pin cat-harness-tools to fdc15055 (cat-harness-tools#2447, LangText glossary readers) inside folio-assistant-core#846"
             }
           }
         }
