@@ -81,6 +81,7 @@
     "bibliography:page": "bun run folio-assistant-core/scripts/bibliography-page.ts",
     "glossary:links": "bun run folio-assistant-core/scripts/glossary-links.ts",
     "glossary:page": "bun run folio-assistant-core/scripts/glossary-page.ts",
+    "ns:document": "bun run folio-assistant-core/scripts/glossary-page.ts",
     "glossary:from-source": "bun run folio-assistant-core/scripts/glossary-from-source.ts",
     "glossary:table": "bun run folio-assistant-core/scripts/glossary-table.ts",
     "references:render": "bun run folio-assistant-core/scripts/references-render.ts",
