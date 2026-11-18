@@ -29,6 +29,53 @@ already discuss the block.
 | **✎ edit** | the block's source (`folio/<doc>/<chapter>/<root>.md`, or its `.ts` if it has no `.md`) in GitHub's editor, on `main` | edits and proposes the change; GitHub makes the branch and the pull request, which is reviewed like any content change (`content-change-review.bpmn`) |
 | **📣 feedback** | a new issue about the block | describes the problem; the issue is intake, and a public-comment folio triages it like any other comment (`public-comment` skill) |
 | **discussed in #n** | the issue of each change-set the block's comments are in | joins the existing discussion instead of opening a duplicate |
+| **🌐 translation** | the block's translation pane, inside its 📣 panel | judges the translation (✓ OK, or ✎ fix with a candidate or their own text); the verdict is filed as a `translation-adjudication/v1` issue (see *Translation feedback* below) |
+
+## Translation feedback: the 🌐 pane
+
+The 📣 panel of a block carries a 🌐 pane for its translation, drawn by the
+harness (`cat-harness/site-chrome/assets/js/translation-review.js`) from the
+site's `assets/translation-status/review.json`. It is the block-level entry to
+the harness's translation adjudication process, not a process of its own:
+
+- **Process:** [`translation-review-adjudication.bpmn`](../../../../cat-harness/library/processes/translation-review-adjudication.bpmn)
+- **Skill:** [`translation-adjudication`](../../../../cat-harness/library/skills/library-core/translation-adjudication.md),
+  with [`translation-manager`](../../../../cat-harness/library/skills/library-core/translation-manager.md)
+  for the terms (catalogue, `msgstr`, fuzzy, official) and
+  [`translation-candidate-source`](../../../../cat-harness/library/skills/library-core/translation-candidate-source.md)
+  for where candidates come from.
+
+A block maps to its strings by the catalogue's `#:` references: the strings
+whose reference names the block's source file are the block's. The pane shows
+each catalogue's state (machine, flagged, reviewed, stale, official), and its
+two controls file one issue in the reviewer's own name:
+
+| control | records |
+|---|---|
+| **✓ Translation OK** | an `acceptable` verdict for the catalogue and locale, pinned to the hash of the catalogue the reviewer saw |
+| **✎ Fix translation** | a `mistranslation` with one suggestion per string the reviewer changed: a candidate from the `<catalogue>.candidates.json` sidecar (`translation-candidates/v1`, any number per string, each with its source) or their own text |
+
+No token is in the browser: the issue is a prefilled GitHub URL (copy-then-open
+past GitHub's URL limit), and the reusable `layer-translation-adjudication.yml`
+workflow turns it into a pull request a maintainer merges (a layer opts in
+with a caller like this repository's `.github/workflows/translation-adjudication.yml`). Only an owner,
+member or collaborator's verdict is recorded.
+
+Today the pane mounts on **translated** pages, and a site that publishes no
+`review.json` says so in the pane. The owner's rulings of 2026-11-18 extend
+it, in the harness:
+
+- the pane shows on every page, source-language pages included, with every
+  locale's current translation and status;
+- a proposal from **any** author is kept as a human candidate in the sidecar,
+  so several proposals per string sit side by side;
+- with no person's choice, the default is ranked by source (official >
+  adjudicated > human > platform import > agent > machine translation), and a
+  candidate failing QA ranks below every passing one;
+- a collaborator's choice writes the translation and records who chose it and
+  why.
+
+Until that lands, this section describes the pane as it is above.
 
 ## Every issue is coded with its content
 
