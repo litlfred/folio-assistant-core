@@ -73,12 +73,26 @@ import {
 import { scopeLabel, siteScopeArg } from "./lib/site-scope.ts";
 import { withInlineCode } from "@litlfred/cat-harness-tools/schemas/content/inline-code.ts";
 import { instanceNamespace } from "@litlfred/cat-harness-tools/schemas/kg/instance-repositories.ts";
-import { GlossarySchema, schemeIri, toSkos, termIri, type AutomatedMatch, type Glossary, type LangText } from "../schemas/glossary.ts";
+import {
+  GlossarySchema,
+  schemeIri,
+  sourceLanguageOf,
+  sourceTextOf,
+  textIn,
+  toSkos,
+  termIri,
+  translatedLocales,
+  translationStateOf,
+  type AutomatedMatch,
+  type Glossary,
+  type LangText,
+  type TranslationState,
+} from "../schemas/glossary.ts";
 import { addressBook } from "@litlfred/cat-harness-tools/schemas/kg/prov-jsonld.ts";
 import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, type AssetType } from "./glossary-extract.ts";
 import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
 import { MAPPING_TARGETS } from "@litlfred/cat-harness-tools/schemas/content/term-mapping.ts";
-import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
+import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, templateName } from "./glossary-pot.ts";
 import { archimateDepictions, type Depiction } from "./glossary-archimate.ts";
 import type { Passage } from "./term-passages.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
@@ -1634,15 +1648,16 @@ export function renderTermPage(c: ReturnType<typeof collect>, s: GlossarySource,
     "@context": { skos: "http://www.w3.org/2004/02/skos/core#", dcterms: "http://purl.org/dc/terms/", prov: "http://www.w3.org/ns/prov#" },
     "@id": iri,
     "@type": "skos:Concept",
-    "skos:prefLabel": label,
+    "skos:prefLabel": tagged(t.prefLabel, sourceLanguageOf(s.glossary)),
     ...(t.notation ? { "skos:notation": t.notation } : {}),
-    ...(t.definition ? { "skos:definition": first(t.definition) } : {}),
+    ...(t.definition ? { "skos:definition": tagged(t.definition, sourceLanguageOf(s.glossary)) } : {}),
     "skos:inScheme": { "@id": schemeIri(s.ns, s.glossary) },
     ...(rowHref ? { "dcterms:source": { "@id": abs(rowHref) } } : t.source ? { "dcterms:source": t.source } : {}),
     ...(explains.length ? { "prov:wasDerivedFrom": explains.map((p) => ({ "@id": abs(p.href) })) } : {}),
     ...(mentions.length ? { "dcterms:isReferencedBy": mentions.map((p) => ({ "@id": abs(p.href) })) } : {}),
   };
   const status = t.status === "authored" ? "" : ` <span class="fa-gloss-status">${esc(t.status)}</span>`;
+  const translations = translationsBlock(s, t);
   return `---
 layout: default
 ${GENERATED_FM}
@@ -1657,6 +1672,7 @@ ${GENERATED}
 ${t.definition ? `<p>${withInlineCode(first(t.definition), esc)}</p>` : "<p><em>No definition yet.</em></p>"}
 ${t.altLabel?.length ? `<p class="fa-gloss-meta">Also called: ${t.altLabel.map((a) => esc(a)).join(", ")}</p>` : ""}
 ${t.scopeNote ? `<p class="fa-gloss-note">${noteHtml(t.scopeNote)}</p>` : ""}
+${translations}
 
 <h2>Defined in</h2>
 <ul>
@@ -1679,6 +1695,40 @@ ${passages.length ? "" : "<p><em>No passage of a document in this folio names th
 ${JSON.stringify(ld, null, 1)}
 </script>
 `;
+}
+
+/** A label or definition as JSON-LD literals, each tagged with its language (a plain string is in the source language). */
+function tagged(t: LangText, sourceLang: string): Array<{ "@value": string; "@language": string }> {
+  return typeof t === "string" ? [{ "@value": t, "@language": sourceLang }] : Object.entries(t).map(([l, v]) => ({ "@value": v, "@language": l }));
+}
+
+/** What a reader is told about one locale's text: a word, never a colour alone. */
+export function translationBadge(state: TranslationState): string {
+  return `<span class="fa-gloss-tstatus fa-gloss-tstatus-${state}">${state}</span>`;
+}
+
+/**
+ * A term's own translations (owner, option C, 2026-11-18): each locale's
+ * label and definition from the glossary itself, with what a reader is told
+ * about it — `official`, `candidate` or `unofficial` ({@link translationStateOf}).
+ * Each cell carries its `lang`, so a screen reader speaks it in its language.
+ * Empty when the term has none.
+ */
+export function translationsBlock(s: Pick<GlossarySource, "glossary">, t: Glossary["terms"][number]): string {
+  const src = sourceLanguageOf(s.glossary);
+  const locales = translatedLocales(t, src);
+  if (!locales.length) return "";
+  const rows = locales.map((loc) => {
+    const label = textIn(t.prefLabel, loc, src);
+    const def = textIn(t.definition, loc, src);
+    const cell = (x: string | undefined) => (x === undefined ? `<td><em>untranslated</em></td>` : `<td lang="${esc(loc)}" dir="auto">${esc(x)}</td>`);
+    return `<tr data-locale="${esc(loc)}"><th scope="row">${esc(loc)}</th>${cell(label)}${cell(def)}<td>${translationBadge(translationStateOf(t, loc, src))}</td></tr>`;
+  });
+  return [
+    `<h2>Translations</h2>`,
+    `<table class="fa-gloss-translations"><thead><tr><th scope="col">Language</th><th scope="col">Label</th><th scope="col">Definition</th><th scope="col">Status</th></tr></thead><tbody>${rows.join("")}</tbody></table>`,
+    `<p class="fa-gloss-meta">Unofficial unless marked official: an official translation is signed off by a person, or is the UN Terminology Database's (UNTERM) for exactly this term; a candidate is UNTERM's for a similar term, not yet adopted.</p>`,
+  ].join("\n");
 }
 
 /** Every authored term's page, path → content. */
@@ -1954,13 +2004,25 @@ export function renderLocalePage(
   const table = (s: GlossarySource): string[] => {
     const t = byScheme.get(templateName(s));
     const out = [`| ${mark(u("term"))} | ${mark(u("altLabels"))} | ${mark(u("definition"))} |`, "|---|---|---|"];
+    const src = sourceLanguageOf(s.glossary);
+    // The glossary's own text in this locale first (option C, 2026-11-18),
+    // then a `.po`'s, then the source marked untranslated.
+    const own = (x: LangText, o: { text: string; translated: boolean }) => {
+      const v = textIn(x, locale, src);
+      return v !== undefined ? { text: v, translated: true } : o;
+    };
     for (const term of s.glossary.terms.filter((x) => x.status === "authored")) {
-      const label = inLocale(sourceText(term.prefLabel), t);
+      const label = own(term.prefLabel, inLocale(sourceTextOf(term.prefLabel, src), t));
       const alts = (term.altLabel ?? []).map((x) => inLocale(x, t));
-      const def = term.definition ? inLocale(sourceText(term.definition), t) : undefined;
+      const def = term.definition ? own(term.definition, inLocale(sourceTextOf(term.definition, src), t)) : undefined;
       terms++;
       if (label.translated && (!def || def.translated) && alts.every((x) => x.translated)) translated++;
-      out.push(`| **${mark(label)}** | ${alts.map(mark).join("; ") || "—"} | ${def ? mark(def) : "—"} |`);
+      // The locale's text leads; the source follows it, so a reader can check
+      // one against the other. A term's own translation says its status.
+      const srcLabel = sourceTextOf(term.prefLabel, src);
+      const after = label.translated && label.text !== srcLabel ? ` <span lang="${src}">(${esc(srcLabel)})</span>` : "";
+      const state = textIn(term.prefLabel, locale, src) !== undefined ? ` ${translationBadge(translationStateOf(term, locale, src))}` : "";
+      out.push(`| <span lang="${locale}">**${mark(label)}**</span>${after}${state} | ${alts.map(mark).join("; ") || "—"} | ${def ? mark(def) : "—"} |`);
     }
     return out;
   };
@@ -2061,10 +2123,12 @@ export function withTranslations(
   const name = templateName(s);
   const per = [...translations].map(([loc, m]) => [loc, m.get(name)] as const).filter(([, m]) => m !== undefined) as [string, SchemeTranslations][];
   if (per.length === 0) return s.glossary;
+  const srcLang = sourceLanguageOf(s.glossary);
   const lang = (t: LangText): LangText => {
-    const src = sourceText(t);
+    const src = sourceTextOf(t, srcLang);
     const extra = Object.fromEntries(per.map(([loc, m]) => [loc, m.get(src)]).filter(([, v]) => v));
-    return Object.keys(extra).length ? { en: src, ...extra } : t;
+    // The glossary's own per-language text wins over a `.po`'s (option C).
+    return Object.keys(extra).length ? { [srcLang]: src, ...extra, ...(typeof t === "string" ? {} : t) } : t;
   };
   return {
     ...s.glossary,
@@ -2072,6 +2136,26 @@ export function withTranslations(
       t.status !== "authored" ? t : { ...t, prefLabel: lang(t.prefLabel), ...(t.definition ? { definition: lang(t.definition) } : {}) },
     ),
   };
+}
+
+/**
+ * The `.po` translations, plus every locale an authored term carries its own
+ * text in (option C, 2026-11-18), so a translation held only in the glossary
+ * still gets its locale's page.
+ */
+export function withGlossaryLocales(
+  c: Pick<ReturnType<typeof collect>, "glossaries">,
+  translations: ReadonlyMap<string, ReadonlyMap<string, SchemeTranslations>>,
+): Map<string, ReadonlyMap<string, SchemeTranslations>> {
+  const out = new Map(translations);
+  for (const s of c.glossaries) {
+    if (s.extracted) continue;
+    for (const t of s.glossary.terms) {
+      if (t.status !== "authored") continue;
+      for (const loc of translatedLocales(t, sourceLanguageOf(s.glossary))) if (!out.has(loc)) out.set(loc, new Map());
+    }
+  }
+  return new Map([...out].sort(([a], [b]) => a.localeCompare(b)));
 }
 
 /** Every file this generator owns, path → content. */
@@ -2092,8 +2176,9 @@ export function outputs(
   unresolved.push(...auto.unresolved);
   const agent = auto.bySource.size ? mapping.agent() : undefined;
   // One page per locale that has a translation (bean c592).
-  const locales = [...translations.keys()];
-  for (const [locale, byScheme] of translations) out.set(localePagePath(locale), renderLocalePage(c, locale, byScheme, locales));
+  const all = withGlossaryLocales(c, translations);
+  const locales = [...all.keys()];
+  for (const [locale, byScheme] of all) out.set(localePagePath(locale), renderLocalePage(c, locale, byScheme, locales));
   // Each route this viewer writes on the host site marks itself as built at
   // publish (bean folio-assistant-uldr, owner option A, 2026-11-06): the host
   // names no route of a layer above it, and git, publish-check and the
