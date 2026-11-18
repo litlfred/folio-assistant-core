@@ -26,6 +26,7 @@ core-layer bindings and refinements alongside them.
 Processes:
 - `collab/processes/content/content-lifecycle.bpmn` (opt-in `folio-assistant-core.collab`)
 - `collab/processes/content/evidence-retrieval.bpmn` (opt-in `folio-assistant-core.collab`)
+- `cat-harness/library/processes/translation-review-adjudication.bpmn` (the harness's; translation verdicts)
 
 ## 1. Validation, quality control, and review gates
 
@@ -40,6 +41,15 @@ Processes:
   [`review-comments`](../content-lifecycle-ext/review-comments.md) and commit
   accepted edits under
   [`corpus-commit-contract`](../content-lifecycle-ext/corpus-commit-contract.md).
+- **Translation review (`translation-adjudication`):** a published block's
+  translations are judged per block from its 🌐 pane (see
+  [`block-actions`](block-actions.md)) or the site's translation status page,
+  and recorded through the harness's
+  [`translation-review-adjudication.bpmn`](../../../../cat-harness/library/processes/translation-review-adjudication.bpmn):
+  a GitHub issue filed in the reviewer's name, turned into a pull request by a
+  workflow, merged by a maintainer. A content change that moves a source string
+  makes that string's translation stale, and it is reviewed again by the same
+  process. Locale sign-off (official) is a separate act.
 - **Publication (`content-publish`):** document folios publish via
   [`document-publishing`](document-publishing.md);
   higher layers add their own target artifacts (such as PDF/arXiv in the sci

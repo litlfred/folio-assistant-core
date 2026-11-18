@@ -83,6 +83,28 @@ and `document_render_pdf` go through pandoc; the PDF path uses an HTML engine
 (weasyprint, prince, wkhtmltopdf) and **never** falls back to LaTeX. If no
 engine is installed it says so.
 
+## Translations of a block
+
+Changing a block's prose changes the source strings its translations are made
+from. The harness's translation processes take it from there; nothing in the
+block's own files records a translation:
+
+1. **Refresh**: the catalogues are re-extracted, and a changed string's
+   translation is no longer current (`translation-refresh` skill,
+   `translation-refresh.bpmn`).
+2. **Candidates**: engines and people add candidate translations beside the
+   catalogue (`translation-candidate-source`); an empty string takes one as a
+   fuzzy default, so a translated page is never left blank.
+3. **Adjudication**: a reviewer judges the translation from the block's 🌐
+   pane or the translation status page, and the verdict reaches the record
+   only as a GitHub issue that a workflow turns into a pull request
+   (`translation-adjudication` skill,
+   [`translation-review-adjudication.bpmn`](../../../../cat-harness/library/processes/translation-review-adjudication.bpmn)).
+   See [`block-actions`](block-actions.md) for the pane.
+
+An author does not edit `translations/` by hand to "fix" a string. Use the
+pane, so the change carries a reviewer and the hash of what they saw.
+
 ## What belongs in the folio, and what belongs here
 
 Subject matter — the actual recommendations, the vocabulary, the chapters —
