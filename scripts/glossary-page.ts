@@ -69,6 +69,7 @@ import {
   readDeclaration,
   resolveDirectories,
   forgeLocation,
+  findDeclarationFile,
 } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
 import { scopeLabel, siteScopeArg } from "./lib/site-scope.ts";
 import { withInlineCode } from "@litlfred/cat-harness-tools/schemas/content/inline-code.ts";
@@ -96,6 +97,8 @@ import {
 } from "@litlfred/cat-harness-tools/scripts/lib/scheme-owner.ts";
 
 import { checkoutRootFor } from "./lib/checkout-root.ts";
+import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, type NamespaceScheme } from "../schemas/glossary-namespace.ts";
+import { buildVocabularyOne } from "@litlfred/cat-harness-tools/scripts/publish-instance-context.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = checkoutRootFor(CORE);
@@ -2125,6 +2128,66 @@ export function outputs(
   return out;
 }
 
+/**
+ * Each layer's namespace document, with its glossary concepts in it
+ * (`schemas/glossary-namespace.ts`; owner, 2026-11-18, option 1A: every
+ * concept IRI was a 404 because no instance served `<iriBase>v0/ns`).
+ * Written only into a site being built, for each in-scope layer whose
+ * namespace lies under the site's own `siteBase`; a layer whose namespace
+ * is another site's is that site's to serve. `pages` is what this run
+ * writes, so a concept links its term page only when the page is there.
+ * `vocabularyOf` is the layer's vocabulary as the tools build it, which the
+ * concepts are added to; undefined, the document holds the concepts alone.
+ */
+export function namespaceFiles(
+  c: Pick<ReturnType<typeof collect>, "glossaries">,
+  at: { site: string; siteBase: string; only?: string },
+  pages: ReadonlySet<string>,
+  vocabularyOf: (instance: string, ns: string) => Record<string, unknown> | undefined = () => undefined,
+): Map<string, string> {
+  const byInstance = new Map<string, GlossarySource[]>();
+  for (const s of c.glossaries) {
+    if (at.only !== undefined && s.instance !== at.only) continue;
+    byInstance.set(s.instance, [...(byInstance.get(s.instance) ?? []), s]);
+  }
+  const out = new Map<string, string>();
+  for (const [instance, sources] of byInstance) {
+    const ns = sources[0]!.ns;
+    const paths = namespacePaths(ns, at.siteBase);
+    if (paths === undefined) continue;
+    const up = "../".repeat(paths.html.split("/").length - 1);
+    const schemes: NamespaceScheme[] = sources.map((s) => ({
+      glossary: s.glossary,
+      skos: `${up}${skosAsset(s)}`,
+      pageOf: (id: string) => (pages.has(termPagePath(s, id)) ? `${up}${termPermalink(s, id).replace(/^\//, "")}` : undefined),
+    }));
+    const doc = namespaceDocument(instance, ns, glossaryConceptNodes(ns, schemes), vocabularyOf(instance, ns));
+    const json = `${JSON.stringify(doc, null, 2)}\n`;
+    out.set(join(at.site, paths.html), namespaceHtml(instance, ns, doc));
+    out.set(join(at.site, paths.jsonld), json);
+    out.set(join(at.site, paths.json), json);
+  }
+  return out;
+}
+
+/** The `iriBase` the declaration at `root` gives, read as data: where the site built from that checkout is published. */
+function iriBaseOf(root: string): string | undefined {
+  const file = findDeclarationFile(root);
+  if (file === undefined) return undefined;
+  const v = (JSON.parse(readFileSync(join(root, file), "utf-8")) as { iriBase?: unknown }).iriBase;
+  return typeof v === "string" && v.length > 0 ? v : undefined;
+}
+
+/** The layer's vocabulary as the tools publish it at `ns`, or undefined when they build none there. */
+function toolsVocabulary(instance: string, ns: string): Record<string, unknown> | undefined {
+  try {
+    const v = buildVocabularyOne(REPO, instance);
+    return v.kind === "built" && v.url === ns ? (JSON.parse(v.content) as Record<string, unknown>) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 /** Files under a directory, recursively. */
 function filesUnder(dir: string): string[] {
   if (!existsSync(dir)) return [];
@@ -2190,6 +2253,11 @@ if (import.meta.main) {
   await loadProvenance(REPO, c);
   const unresolved: string[] = [];
   const files = written(outputs(c, undefined, undefined, unresolved));
+  // A site being built serves each in-scope layer's namespace document.
+  const siteBase = INTO_SITE ? iriBaseOf(REPO) : undefined;
+  if (siteBase !== undefined) {
+    for (const [p, s] of namespaceFiles(c, { site: SITE, siteBase, only: ONLY }, new Set(files.keys()), toolsVocabulary)) files.set(p, s);
+  }
   // Reported, never fatal: a match the record cannot place is left out of the
   // SKOS rather than invented, and this says which and why.
   for (const u of unresolved) console.warn(`! automated match not published: ${u}`);
