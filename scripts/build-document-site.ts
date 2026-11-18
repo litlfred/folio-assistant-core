@@ -94,7 +94,8 @@ import { glossaryEntries, linkGlossaryTables, linkTerms, termLinks as glossaryTe
 import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
-import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, PAGE_LOCALE, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { LOCALE_STYLE, declaredLocales, directionOf, hreflangLinks, languageSwitcher, markUntranslated, nativeName, translationNote } from "./document-locales.ts";
 import { latestNames } from "./document-export.ts";
 import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
 import { crossDocumentIndex, folioDocuments, siteCrossDocumentLinks, siteCrossDocumentRefs } from "./cross-document-refs.ts";
@@ -163,15 +164,22 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
 
+/** A page's language, its direction, and what else its head carries (the `hreflang` links of a translated document). */
+export interface PageMeta {
+  lang?: string;
+  dir?: "ltr" | "rtl";
+  head?: string;
+}
+
 /** A readable page shell. Light and dark follow the reader's system setting. */
-function page(title: string, body: string, math?: MathOptions, tail = ""): string {
+function page(title: string, body: string, math?: MathOptions, tail = "", meta: PageMeta = {}): string {
   return `<!doctype html>
-<html lang="en">
+<html lang="${esc(meta.lang ?? "en")}"${meta.dir === "rtl" ? ` dir="rtl"` : ""}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
-${PAGE_STYLE}${math ? mathHead(math) : ""}
+${PAGE_STYLE}${math ? mathHead(math) : ""}${meta.head ?? ""}
 </head>
 <body>
 <main>
@@ -239,7 +247,7 @@ export function headingIds(html: string): string {
  * {@link DOCUMENT_END_MARKER} where a later step adds to the page. Out of
  * search (`search_exclude`): the page is far larger than the index wants.
  */
-export function themedDocumentPage(layout: string, title: string, html: string): string {
+export function themedDocumentPage(layout: string, title: string, html: string, lang?: string): string {
   layoutName(layout, "document");
   const h0 = html.indexOf("<head>\n");
   const h1 = html.indexOf("</head>");
@@ -262,7 +270,7 @@ export function themedDocumentPage(layout: string, title: string, html: string):
     `</div>${inner.slice(end + "\n</main>".length).replace(/\n+$/, "")}`,
     DOCUMENT_END_MARKER,
   ].join("\n");
-  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `search_exclude: true`, `---`, ...wrapRaw(body), ``].join("\n");
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, ...(lang ? [`lang: ${JSON.stringify(lang)}`] : []), `search_exclude: true`, `---`, ...wrapRaw(body), ``].join("\n");
 }
 
 /**
@@ -1040,7 +1048,7 @@ export interface SiteBuildResult {
   /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
   /** `assets`: the structured-assets page, relative to the site root, when the document has any structured block. */
   /** `downloads`: the current Word and PDF, relative to the site root, when built with `downloads` ({@link downloadLinks}). */
-  documents: { slug: string; title: string; blocks: number; page: string; assets?: string; downloads?: { docx: string; pdf: string } }[];
+  documents: { slug: string; title: string; blocks: number; page: string; assets?: string; downloads?: { docx: string; pdf: string }; translations?: { locale: string; page: string; translated: number; total: number }[] }[];
   errors: string[];
   /** QA lines that do not fail the build, such as a glossary-table term with no glossary entry. */
   warnings: string[];
@@ -1072,6 +1080,10 @@ export async function buildDocumentSite(
   // Math defaults on only for a paper layer; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
   const docs = documentManifests(repoRoot);
+  // The locales the folio declares a translation into (document-locales.ts).
+  const { source, targets } = declaredLocales(readHarnessConfig(repoRoot)?.translation);
+  // The source's pages stay where they were, under the page locale.
+  const routeOf = (l: string) => (l === source ? PAGE_LOCALE : l);
   const result: SiteBuildResult = { documents: [], errors: [], warnings: [] };
   const lazyOf = new Map<string, NonNullable<OutlineDocument["lazy"]>>();
   if (docs.length === 0) {
@@ -1140,16 +1152,32 @@ export async function buildDocumentSite(
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
     // Numbered citations and the reference list, linked both ways (citation-links.ts).
     library ??= opts.bibliographyUrl ? await libraryLinks(repoRoot, opts.bibliographyUrl) : [];
+    const blocks = await documentBlocks(d.path, repoRoot, d.slug);
+    // One version per declared locale with at least one translated block,
+    // from the merged catalogues; the rest of its text is the source, marked.
+    const versions: { locale: string; markdown: string; translated: number; total: number; title: string }[] = [];
+    const labels = new Set(blocks.map((b) => b.label));
+    for (const loc of targets) {
+      const lb = await buildDocumentMarkdown(d.path, { locale: loc });
+      for (const i of lb.issues) if (i.level === "error") result.errors.push(`${d.slug} (${loc}): ${i.message}`);
+      const m = markUntranslated(figureTitlesBelow(numberFigures(lb.markdown)), built.markdown, labels, source);
+      if (m.translated === 0) continue;
+      const h1 = /^# (.+)$/m.exec(m.markdown)?.[1]?.trim();
+      versions.push({ locale: loc, markdown: m.markdown, translated: m.translated, total: m.total, title: withStatus(h1 ?? title, undefined) });
+    }
+    const locales = versions.length ? [source, ...versions.map((v) => v.locale)] : [];
+    const localeHead = locales.length ? hreflangLinks(source, locales, d.slug, routeOf) + `<style>${LOCALE_STYLE}</style>\n` : "";
+    const sourceMeta: PageMeta = { lang: source, dir: directionOf(source), head: localeHead };
+    const switcher = languageSwitcher(source, locales, d.slug, routeOf);
     const whole = await render(built.markdown);
     // From the whole document, so a lazy page's shell lists the figures its blocks hold.
     const contents = contentsList(whole);
-    const html = afterTitle(linkCitations([{ html: whole }], { library })[0]!, downloads + contents);
+    const html = afterTitle(linkCitations([{ html: whole }], { library })[0]!, switcher + downloads + contents);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
     mkdirSync(dir, { recursive: true });
     const mathOpts = math ? { macros: katexMacros(manifest.macros) } : undefined;
-    const blocks = await documentBlocks(d.path, repoRoot, d.slug);
     // `values`: where the ✍ suggest editor reads each variable's current value,
     // `graph` the labels and keys its checks warn against, `suggest` its profiles;
     // all relative to this page.
@@ -1177,11 +1205,11 @@ export async function buildDocumentSite(
     // Themed, the theme's sidebar is the page's index, built from heading ids;
     // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
-      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, headingIds(html), mathOpts))));
-      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, headingIds(html), mathOpts, "", sourceMeta))));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts, "", sourceMeta)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
-      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
+      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts, "", sourceMeta)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
       mkdirSync(join(data, "blocks"), { recursive: true });
@@ -1203,11 +1231,11 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = afterTitle(await render(split.shell), downloads + contents);
+      const shellHtml = afterTitle(await render(split.shell), switcher + downloads + contents);
       const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
-      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
-      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader), true));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader, sourceMeta), true)));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader, sourceMeta), true));
     }
     if (assets.length) {
       const assetsDir = join(dir, ASSETS_DIR);
@@ -1230,6 +1258,26 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
+    // Each translated version: the whole document on one page, in its own
+    // language and direction, at `<locale>/<slug>/` (document-locales.ts).
+    // Its links resolve as the source page's do: both are two levels deep.
+    // No [edit]/[feedback]: they open the SOURCE block, and a reader of the
+    // French page would be editing English; translation feedback has its own route.
+    const translations: NonNullable<SiteBuildResult["documents"][number]["translations"]> = [];
+    for (const v of versions) {
+      const vdir = join(outDir, v.locale, d.slug);
+      mkdirSync(vdir, { recursive: true });
+      const vwhole = await render(v.markdown);
+      const lead = languageSwitcher(v.locale, locales, d.slug, routeOf) + translationNote(source, v.translated, v.total);
+      const vhtml = afterTitle(linkCitations([{ html: vwhole }], { library })[0]!, lead + contentsList(vwhole));
+      const meta: PageMeta = { lang: v.locale, dir: directionOf(v.locale), head: localeHead };
+      writeFileSync(
+        join(vdir, "index.html"),
+        themed ? themedDocumentPage(themed, v.title, page(v.title, headingIds(vhtml), mathOpts, "", meta), v.locale) : page(v.title, pageContents(vhtml) + vhtml, mathOpts, "", meta),
+      );
+      if (existsSync(media)) cpSync(media, join(vdir, "media"), { recursive: true });
+      translations.push({ locale: v.locale, page: `${v.locale}/${d.slug}/index.html`, translated: v.translated, total: v.total });
+    }
     result.documents.push({
       slug: d.slug,
       title,
@@ -1237,6 +1285,7 @@ export async function buildDocumentSite(
       page: documentPage(d.slug),
       ...(assets.length ? { assets: `${documentPageDir(d.slug)}/${ASSETS_DIR}/index.html` } : {}),
       ...(opts.downloads ? { downloads: downloadTargets(d.slug) } : {}),
+      ...(translations.length ? { translations } : {}),
     });
   }
   const list = result.documents
@@ -1245,6 +1294,10 @@ export async function buildDocumentSite(
       (d) =>
         `<li><a href="${esc(d.page)}">${esc(d.title)}</a>${d.assets ? ` · <a href="${esc(d.assets)}">structured assets</a>` : ""}` +
         (d.downloads ? ` · download <a href="${esc(d.downloads.docx)}" download>Word (.docx)</a> or <a href="${esc(d.downloads.pdf)}" download>PDF</a>` : "") +
+        // Each translation, named in its own language (document-locales.ts).
+        (d.translations?.length
+          ? ` · ${d.translations.map((t) => `<a href="${esc(t.page)}" hreflang="${esc(t.locale)}" lang="${esc(t.locale)}">${esc(nativeName(t.locale))}</a>`).join(" · ")}`
+          : "") +
         `</li>`,
     )
     .join("\n");
