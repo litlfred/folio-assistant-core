@@ -319,8 +319,8 @@ already discuss the block.</p>
     </tr>
     <tr>
       <td><strong>🌐 translation</strong></td>
-      <td>the block’s translation pane, inside its 📣 panel</td>
-      <td>judges the translation (✓ OK, or ✎ fix with a candidate or their own text); the verdict is filed as a <code class="language-plaintext highlighter-rouge">translation-adjudication/v1</code> issue (see <em>Translation feedback</em> below)</td>
+      <td>the block’s translation pane, inside its 📣 panel, on every page</td>
+      <td>proposes a translation (a candidate or their own text) or, as an owner, member or collaborator, adjudicates (✓ OK, or chooses one with a reason); filed as a <code class="language-plaintext highlighter-rouge">translation-adjudication/v1</code> issue (see <em>Translation feedback</em> below)</td>
     </tr>
   </tbody>
 </table></div>
@@ -333,24 +333,29 @@ already discuss the block.</p>
 </h2>
     
 
-<p>The 📣 panel of a block carries a 🌐 pane for its translation, drawn by the
-harness (<code class="language-plaintext highlighter-rouge">cat-harness/site-chrome/assets/js/translation-review.js</code>) from the
-site’s <code class="language-plaintext highlighter-rouge">assets/translation-status/review.json</code>. It is the block-level entry to
-the harness’s translation adjudication process, not a process of its own:</p>
+<p>The 📣 panel of <strong>every</strong> block carries a 🌐 pane for its translations,
+source-language pages included, drawn by the harness
+(<code class="language-plaintext highlighter-rouge">cat-harness/site-chrome/assets/js/translation-review.js</code>) from the site’s
+<code class="language-plaintext highlighter-rouge">assets/translation-status/review.json</code> and each catalogue’s strings
+projection. It is the block-level entry to the harness’s translation
+adjudication process, not a process of its own:</p>
 
 <ul>
   <li><strong>Process:</strong> <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/processes/translation-review-adjudication.bpmn"><code class="language-plaintext highlighter-rouge">translation-review-adjudication.bpmn</code></a></li>
-  <li><strong>Skill:</strong> <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-adjudication.md"><code class="language-plaintext highlighter-rouge">translation-adjudication</code></a>,
-with <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-manager.md"><code class="language-plaintext highlighter-rouge">translation-manager</code></a>
+  <li><strong>Skill:</strong> <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-adjudication.md"><code class="language-plaintext highlighter-rouge">translation-adjudication</code></a>
+— who may propose and who may adjudicate, what each writes, the rank and
+the auto-pick, and every refusal — with
+<a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-manager.md"><code class="language-plaintext highlighter-rouge">translation-manager</code></a>
 for the terms (catalogue, <code class="language-plaintext highlighter-rouge">msgstr</code>, fuzzy, official) and
 <a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-candidate-source.md"><code class="language-plaintext highlighter-rouge">translation-candidate-source</code></a>
-for where candidates come from.</li>
+for where candidates come from and the <code class="language-plaintext highlighter-rouge">translation-candidates/v1</code> sidecar.</li>
 </ul>
 
 <p>A block maps to its strings by the catalogue’s <code class="language-plaintext highlighter-rouge">#:</code> references: the strings
-whose reference names the block’s source file are the block’s. The pane shows
-each catalogue’s state (machine, flagged, reviewed, stale, official), and its
-two controls file one issue in the reviewer’s own name:</p>
+whose reference names the block’s source file are the block’s. The pane lists
+every locale’s current translation of them, with its status and how it came
+to be; on a translated page that page’s locale comes first. Its two controls
+file one <code class="language-plaintext highlighter-rouge">translation-adjudication/v1</code> issue in the reviewer’s own name:</p>
 
 <div class="table-wrapper"><table>
   <thead>
@@ -362,38 +367,43 @@ two controls file one issue in the reviewer’s own name:</p>
   <tbody>
     <tr>
       <td><strong>✓ Translation OK</strong></td>
-      <td>an <code class="language-plaintext highlighter-rouge">acceptable</code> verdict for the catalogue and locale, pinned to the hash of the catalogue the reviewer saw</td>
+      <td>an <code class="language-plaintext highlighter-rouge">acceptable</code> verdict for the catalogue and locale, pinned to the hash of the catalogue the reviewer saw; recorded only from an owner, member or collaborator</td>
     </tr>
     <tr>
       <td><strong>✎ Fix translation</strong></td>
-      <td>a <code class="language-plaintext highlighter-rouge">mistranslation</code> with one suggestion per string the reviewer changed: a candidate from the <code class="language-plaintext highlighter-rouge">&lt;catalogue&gt;.candidates.json</code> sidecar (<code class="language-plaintext highlighter-rouge">translation-candidates/v1</code>, any number per string, each with its source) or their own text</td>
+      <td>per string the reviewer changed, a candidate picked from the ranked table or their own text; with <strong>Choose as the translation</strong> and a reason, a choice</td>
     </tr>
   </tbody>
 </table></div>
 
+<p>What that issue writes depends on who filed it, read from GitHub’s
+<code class="language-plaintext highlighter-rouge">author_association</code>, never from the body:</p>
+
+<ul>
+  <li><strong>anyone</strong> proposes: each suggestion is appended to the catalogue’s
+candidates sidecar (<code class="language-plaintext highlighter-rouge">translation-candidates/v1</code>) as a <code class="language-plaintext highlighter-rouge">human</code> candidate,
+beside every other;</li>
+  <li>only an <strong>owner, member or collaborator</strong> adjudicates: a choice with a
+reason also becomes the string’s <code class="language-plaintext highlighter-rouge">msgstr</code>, not fuzzy, and the candidate’s
+<code class="language-plaintext highlighter-rouge">chosen</code> records who (<code class="language-plaintext highlighter-rouge">by</code>), when (<code class="language-plaintext highlighter-rouge">at</code>), the <code class="language-plaintext highlighter-rouge">issue</code> and the <code class="language-plaintext highlighter-rouge">reason</code>;
+anyone else’s choice is kept as their proposal.</li>
+</ul>
+
+<p>Where nobody has chosen, the string shows its best-ranked candidate —
+official, then adjudicated, then a person’s proposal, then a translation
+platform, then an agent, then machine translation (open engines and other web
+services). A QA failure ranks a candidate below every passing one, and a
+<strong>stale</strong> candidate (made for an earlier source text) is never auto-picked.
+That default is fuzzy and unofficial, except an official candidate whose
+<code class="language-plaintext highlighter-rouge">sourceText</code> is the msgid exactly, which is written as <code class="language-plaintext highlighter-rouge">auto-official</code>. The
+tiers, the tie-breaks and the overwrite rules are stated once, in
+<a href="https://github.com/litlfred/folio-assistant-core/blob/cat-harness/library/skills/library-core/translation-adjudication.md#the-rank-and-the-default-pick"><code class="language-plaintext highlighter-rouge">translation-adjudication</code></a>.</p>
+
 <p>No token is in the browser: the issue is a prefilled GitHub URL (copy-then-open
 past GitHub’s URL limit), and the reusable <code class="language-plaintext highlighter-rouge">layer-translation-adjudication.yml</code>
 workflow turns it into a pull request a maintainer merges (a layer opts in
-with a caller like this repository’s <code class="language-plaintext highlighter-rouge">.github/workflows/translation-adjudication.yml</code>). Only an owner,
-member or collaborator’s verdict is recorded.</p>
-
-<p>Today the pane mounts on <strong>translated</strong> pages, and a site that publishes no
-<code class="language-plaintext highlighter-rouge">review.json</code> says so in the pane. The owner’s rulings of 2026-11-18 extend
-it, in the harness:</p>
-
-<ul>
-  <li>the pane shows on every page, source-language pages included, with every
-locale’s current translation and status;</li>
-  <li>a proposal from <strong>any</strong> author is kept as a human candidate in the sidecar,
-so several proposals per string sit side by side;</li>
-  <li>with no person’s choice, the default is ranked by source (official &gt;
-adjudicated &gt; human &gt; platform import &gt; agent &gt; machine translation), and a
-candidate failing QA ranks below every passing one;</li>
-  <li>a collaborator’s choice writes the translation and records who chose it and
-why.</li>
-</ul>
-
-<p>Until that lands, this section describes the pane as it is above.</p>
+with a caller like this repository’s <code class="language-plaintext highlighter-rouge">.github/workflows/translation-adjudication.yml</code>).
+A site that publishes no <code class="language-plaintext highlighter-rouge">review.json</code> says so in the pane.</p>
 <h2 id="every-issue-is-coded-with-its-content">
   
   
