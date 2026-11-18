@@ -16,6 +16,7 @@
   "licenceSource": "the installed package's own package.json (`license`)",
   "usedBy": [
     "scripts/folio-site-chrome-check.ts",
+    "scripts/glossary-term-page.test.ts",
     "scripts/live-figures.test.ts"
   ]
 }
