@@ -65,3 +65,33 @@ export const DOCUMENT_END_MARKER = "<!-- fa-doc:end -->";
 
 /** The class every rule of a themed document page is scoped under, and its document's wrapper. */
 export const DOC_CLASS = "fa-doc";
+
+/** An attribute that holds a URL a browser resolves against the page. */
+const URL_ATTR = /(\s(?:href|src|data|poster|action|xlink:href)=)(["'])([^"']*)\2/g;
+
+/** One URL rebased: a site-relative path, resolved from `fromDir`, relative to `toDir`. Absolute, fragment-only and scheme URLs are left alone. */
+function rebaseUrl(url: string, fromDir: string, toDir: string): string {
+  if (url === "" || /^(?:#|\/|\?|[a-z][a-z0-9+.-]*:)/i.test(url)) return url;
+  const cut = url.search(/[?#]/);
+  const path = cut < 0 ? url : url.slice(0, cut);
+  const rest = cut < 0 ? "" : url.slice(cut);
+  const target = posix.join(fromDir, path);
+  // A link above the site root is not this site's to rebase.
+  if (target.startsWith("..")) return url;
+  let rel = posix.relative(toDir, target) || ".";
+  if (path.endsWith("/") && !rel.endsWith("/")) rel += "/";
+  return rel + rest;
+}
+
+/**
+ * HTML rendered for a page in `fromDir`, made right for a page in `toDir`:
+ * every relative URL it holds (link, image, embedded drawing) rebased, so it
+ * still lands on what it named. A translated document page, `<locale>/<slug>/`,
+ * shows the body rendered for the source page, `en/<slug>/`; without this, a
+ * glossary link `../folio-assistant-core/…` lands in `<locale>/`, where nothing
+ * is built.
+ */
+export function rebaseHtmlUrls(html: string, fromDir: string, toDir: string): string {
+  if (posix.normalize(fromDir) === posix.normalize(toDir)) return html;
+  return html.replace(URL_ATTR, (_m, attr: string, q: string, url: string) => `${attr}${q}${rebaseUrl(url, fromDir, toDir)}${q}`);
+}
