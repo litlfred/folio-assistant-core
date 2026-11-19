@@ -30,6 +30,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { documentBlocks, documentManifests } from "./build-document-site.ts";
 import { documentPage } from "./document-site-route.js";
+import type { BlockLeanFacts, LeanLinkContext } from "./block-lean.ts";
 
 /** One term to look for. */
 export interface TermQuery {
@@ -75,6 +76,8 @@ interface Block {
   source: string;
   text: string;
   defines: readonly string[];
+  /** The block's Lean facts (block-lean.ts), when a declaration formalises it. */
+  lean?: BlockLeanFacts;
 }
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -144,10 +147,10 @@ function excerptAt(text: string, at: number): string {
 const sameFile = (a: string, b: string) => a.split("#", 1)[0]!.replace(/\.(md|ts)$/, "") === b.split("#", 1)[0]!.replace(/\.(md|ts)$/, "");
 
 /** Every labelled block of every document folio in `repoRoot`, with its prose and its `defines`. */
-export async function narrativeBlocks(repoRoot: string): Promise<Block[]> {
+export async function narrativeBlocks(repoRoot: string, lean: LeanLinkContext | false = false): Promise<Block[]> {
   const out: Block[] = [];
   for (const d of documentManifests(repoRoot)) {
-    for (const b of await documentBlocks(d.path, repoRoot, d.slug)) {
+    for (const b of await documentBlocks(d.path, repoRoot, d.slug, lean)) {
       const abs = join(repoRoot, b.source);
       const ts = abs.replace(/\.md$/, ".ts");
       let defines: string[] = [];
@@ -156,7 +159,7 @@ export async function narrativeBlocks(repoRoot: string): Promise<Block[]> {
         if (Array.isArray(m?.defines)) defines = m.defines.filter((x): x is string => typeof x === "string");
       }
       const text = b.source.endsWith(".md") && existsSync(abs) ? proseText(readFileSync(abs, "utf-8")) : "";
-      out.push({ document: d.slug, section: b.section ?? "", label: b.label, page: b.page ?? documentPage(d.slug), source: b.source, text, defines });
+      out.push({ document: d.slug, section: b.section ?? "", label: b.label, page: b.page ?? documentPage(d.slug), source: b.source, text, defines, ...(b.lean ? { lean: b.lean } : {}) });
     }
   }
   return out;
