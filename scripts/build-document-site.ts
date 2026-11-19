@@ -96,7 +96,7 @@ import { glossaryEntries, linkGlossaryTables, linkTerms, termLinks as glossaryTe
 import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
-import { DOC_CLASS, DOCUMENT_END_MARKER, PAGE_LOCALE, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, PAGE_LOCALE, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, rebaseHtmlUrls, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { LOCALE_STYLE, declaredLocales, directionOf, hreflangLinks, languageSwitcher, markUntranslated, nativeName, translationNote } from "./document-locales.ts";
 import { latestNames } from "./document-export.ts";
 import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
@@ -1302,7 +1302,10 @@ export async function buildDocumentSite(
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
     // Each translated version: the whole document on one page, in its own
     // language and direction, at `<locale>/<slug>/` (document-locales.ts).
-    // Its links resolve as the source page's do: both are two levels deep.
+    // Its body is rendered as the source page's is, so every relative link in
+    // it (glossary, live figures, other documents, the library, the structured
+    // assets, media) is rebased from the source page's directory to its own:
+    // a link that resolves from `en/<slug>/` lands nowhere from `<locale>/<slug>/`.
     // No [edit]/[feedback]: they open the SOURCE block, and a reader of the
     // French page would be editing English; translation feedback has its own route.
     const translations: NonNullable<SiteBuildResult["documents"][number]["translations"]> = [];
@@ -1311,14 +1314,15 @@ export async function buildDocumentSite(
       mkdirSync(vdir, { recursive: true });
       const vwhole = await render(v.markdown);
       const lead = languageSwitcher(v.locale, locales, d.slug, routeOf) + translationNote(source, v.translated, v.total);
-      const vhtml = afterTitle(linkCitations([{ html: vwhole }], { library })[0]!, lead + contentsList(vwhole));
+      const vdirSite = `${v.locale}/${d.slug}`;
+      const vbody = rebaseHtmlUrls(linkCitations([{ html: vwhole }], { library })[0]!, pageDirOf, vdirSite);
+      const vhtml = afterTitle(vbody, lead + contentsList(vwhole));
       const meta: PageMeta = { lang: v.locale, dir: directionOf(v.locale), head: localeHead };
       writeFileSync(
         join(vdir, "index.html"),
         themed ? themedDocumentPage(themed, v.title, page(v.title, headingIds(vhtml), mathOpts, "", meta), v.locale) : page(v.title, pageContents(vhtml) + vhtml, mathOpts, "", meta),
       );
-      if (existsSync(media)) cpSync(media, join(vdir, "media"), { recursive: true });
-      translations.push({ locale: v.locale, page: `${v.locale}/${d.slug}/index.html`, translated: v.translated, total: v.total });
+      translations.push({ locale: v.locale, page: `${vdirSite}/index.html`, translated: v.translated, total: v.total });
     }
     result.documents.push({
       slug: d.slug,
