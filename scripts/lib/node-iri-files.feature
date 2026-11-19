@@ -1,4 +1,4 @@
-Feature: each content node is served at its IRI, <iriBase>v<major>/<@id>
+Feature: each content node is served at its IRI, <iriBase>v<major>/<@id>, and every copy the site publishes names it
 
   @test:scripts/lib/node-iri-files.test.ts::nodeIri::a_relative_@id_resolves_against_the_context's_@base
   Scenario: nodeIri: a relative @id resolves against the context's @base
@@ -30,11 +30,17 @@ Feature: each content node is served at its IRI, <iriBase>v<major>/<@id>
     When nodeSitePath runs over it
     Then another site's IRI, a directory or the site itself is not a node path here
 
-  @test:scripts/lib/node-iri-files.test.ts::nodeIriFiles::each_node_at_its_IRI:_the_node_as_.jsonld,_and_a_page_linking_where_it_is_read
-  Scenario: nodeIriFiles: each node at its IRI: the node as .jsonld, and a page linking where it is read
+  @test:scripts/lib/node-iri-files.test.ts::nodeIriFiles::each_node_at_its_IRI:_a_page_at_<path>/index.html_linking_where_it_is_read,_and_the_node_beside_it
+  Scenario: nodeIriFiles: each node at its IRI: a page at <path>/index.html linking where it is read, and the node beside it
     Given the case named by the test
     When nodeIriFiles runs over it
-    Then each node at its IRI: the node as .jsonld, and a page linking where it is read
+    Then each node at its IRI: a page at <path>/index.html linking where it is read, and the node beside it
+
+  @test:scripts/lib/node-iri-files.test.ts::nodeIriFiles::a_node_and_a_node_under_its_IRI_are_served_side_by_side
+  Scenario: nodeIriFiles: a node and a node under its IRI are served side by side
+    Given the case named by the test
+    When nodeIriFiles runs over it
+    Then a node and a node under its IRI are served side by side
 
   @test:scripts/lib/node-iri-files.test.ts::nodeIriFiles::a_node_of_another_site_is_left_out
   Scenario: nodeIriFiles: a node of another site is left out
@@ -53,6 +59,36 @@ Feature: each content node is served at its IRI, <iriBase>v<major>/<@id>
     Given the case named by the test
     When nodePage runs over it
     Then escapes the IRI and keeps </ out of the embedded script
+
+  @test:scripts/lib/node-iri-files.test.ts::nodePage::is_a_page_about_the_node:_its_label,_its_types_and_its_properties
+  Scenario: nodePage: is a page about the node: its label, its types and its properties
+    Given the case named by the test
+    When nodePage runs over it
+    Then is a page about the node: its label, its types and its properties
+
+  @test:scripts/lib/node-iri-files.test.ts::nodeServedFiles::a_node_path_is_served_from_its_directory's_index.html,_with_the_node_as_index.jsonld
+  Scenario: nodeServedFiles: a node path is served from its directory's index.html, with the node as index.jsonld
+    Given the case named by the test
+    When nodeServedFiles runs over it
+    Then a node path is served from its directory's index.html, with the node as index.jsonld
+
+  @test:scripts/lib/node-iri-files.test.ts::graphDocument::each_member's_@id_is_the_IRI_nodeIri_mints_for_it,_its_fragment_kept
+  Scenario: graphDocument: each member's @id is the IRI nodeIri mints for it, its fragment kept
+    Given the case named by the test
+    When graphDocument runs over it
+    Then each member's @id is the IRI nodeIri mints for it, its fragment kept
+
+  @test:scripts/lib/node-iri-files.test.ts::graphDocument::a_member's_IRI_is_the_same_whether_its_@base_is_read_from_its_own_context_or_not
+  Scenario: graphDocument: a member's IRI is the same whether its @base is read from its own context or not
+    Given the case named by the test
+    When graphDocument runs over it
+    Then a member's IRI is the same whether its @base is read from its own context or not
+
+  @test:scripts/lib/node-iri-files.test.ts::graphDocument::a_blank_node_keeps_its_@id
+  Scenario: graphDocument: a blank node keeps its @id
+    Given the case named by the test
+    When graphDocument runs over it
+    Then a blank node keeps its @id
 
   @test:scripts/lib/node-iri-files.test.ts::atCurrentBase::a_node_off_the_old_shared_base,_or_not_JSON,_is_returned_unchanged
   Scenario: atCurrentBase: a node off the old shared base, or not JSON, is returned unchanged

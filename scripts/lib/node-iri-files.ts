@@ -10,9 +10,24 @@
  * library nodes nowhere, so every node IRI was a 404. This computes the two
  * files that make one resolve on the site published at `<iriBase>`:
  *
- * - `v<major>/<@id>.jsonld`: the node, as the generator writes it now;
- * - `v<major>/<@id>.html`: a page a static host serves at the extensionless
- *   IRI, embedding the node and linking to where a person reads it.
+ * - `v<major>/<@id>/index.html`: the page any static host serves at the
+ *   extensionless IRI (not only GitHub Pages, which also answers `<path>.html`),
+ *   showing the node's properties, embedding it, and linking to where a
+ *   person reads it in context;
+ * - `v<major>/<@id>/index.jsonld`: the node, as the generator writes it now.
+ *
+ * Minting and serving are one decision, made here. The site publishes a node
+ * in three places (`<doc>/kg/…`, `<doc>/graph.jsonld`, and at its IRI), and
+ * each takes the node's text as the generator writes it now ({@link
+ * atCurrentBase}, or the regenerated node) and its IRI from {@link nodeIri},
+ * so a copy cannot name an IRI the site does not serve. Before, the `kg/`
+ * copy and `graph.jsonld` carried the node AS COMMITTED: on a folio whose
+ * nodes still named the old shared base, every block was minted at
+ * `https://litlfred.github.io/folio/papers/…` (`check:site-iris`
+ * `foreign-base`, 933 on smart-ra), and `graph.jsonld`'s members, whose
+ * `@base` sits in each member's own context, resolved against the graph
+ * file's own URL, `<iriBase><doc>/papers/…`, a path nothing serves (933
+ * `unserved`). {@link graphDocument} writes each member's `@id` absolute.
  *
  * A committed node still carrying the old shared base (`FOLIO_BASE`) is
  * published under its layer's release base, as the generator now writes it
@@ -84,11 +99,41 @@ export function nodeSitePath(iri: string, siteBase: string): string | undefined 
 
 const escHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** The page served at a node's IRI: the node embedded as JSON-LD, its data file, and the page a person reads it on. */
+/** A property value as a reader reads it: text as text, an IRI as a link, anything else as compact JSON. */
+function valueHtml(v: unknown): string {
+  if (Array.isArray(v)) return v.length === 1 ? valueHtml(v[0]) : `<ul>${v.map((x) => `<li>${valueHtml(x)}</li>`).join("")}</ul>`;
+  if (v === null || v === undefined) return "";
+  if (typeof v === "object") {
+    const o = v as Record<string, unknown>;
+    if ("@value" in o) return escHtml(String(o["@value"]));
+    return `<code>${escHtml(JSON.stringify(o))}</code>`;
+  }
+  const s = String(v);
+  return /^https?:\/\//.test(s) ? `<a href="${escHtml(s)}">${escHtml(s)}</a>` : escHtml(s);
+}
+
+/**
+ * The page served at a node's IRI, `<rel>/index.html`: the node's label, type
+ * and properties, the node embedded as JSON-LD, its data file beside it, and
+ * the page a person reads it on, when it has one.
+ */
 export function nodePage(iri: string, rel: string, text: string, page?: string): string {
-  const name = rel.split("/").pop()!;
-  const up = "../".repeat(rel.split("/").length - 1);
+  let doc: Record<string, unknown> = {};
+  try {
+    const parsed = JSON.parse(text) as unknown;
+    if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)) doc = parsed as Record<string, unknown>;
+  } catch {
+    // shown as its IRI and its data, with no properties
+  }
+  const title = typeof doc["label"] === "string" && doc["label"] !== "" ? doc["label"] : rel.split("/").pop()!;
+  const up = "../".repeat(rel.split("/").length);
   const read = page === undefined ? "" : `<p>Read it in context: <a href="${escHtml(up + page)}">${escHtml(page)}</a>.</p>\n`;
+  const t = doc["@type"];
+  const types = t === undefined ? "" : `<p class="type">${(Array.isArray(t) ? t : [t]).map((x) => `<code>${escHtml(String(x))}</code>`).join(" ")}</p>\n`;
+  const rows = Object.entries(doc)
+    .filter(([k]) => k !== "@context" && k !== "@id" && k !== "@type")
+    .map(([k, v]) => `<dt>${escHtml(k)}</dt><dd>${valueHtml(v)}</dd>`);
+  const props = rows.length ? `<dl>\n${rows.join("\n")}\n</dl>\n` : "";
   // `</` cannot appear inside the script element, so it is escaped in the JSON.
   const json = text.trimEnd().replace(/<\//g, "<\\/");
   return `<!doctype html>
@@ -96,18 +141,47 @@ export function nodePage(iri: string, rel: string, text: string, page?: string):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${escHtml(name)}</title>
-<link rel="alternate" type="application/ld+json" href="${escHtml(name)}.jsonld">
-${page === undefined ? "" : `<link rel="canonical" href="${escHtml(up + page)}">\n`}<script type="application/ld+json">
+<title>${escHtml(title)}</title>
+<link rel="alternate" type="application/ld+json" href="index.jsonld">
+<script type="application/ld+json">
 ${json}
 </script>
 </head>
 <body>
-<h1><code>${escHtml(iri)}</code></h1>
-${read}<p>Machine-readable: <a href="${escHtml(name)}.jsonld">${escHtml(name)}.jsonld</a>.</p>
+<h1>${escHtml(title)}</h1>
+<p><code>${escHtml(iri)}</code></p>
+${read}${types}${props}<p>Machine-readable: <a href="index.jsonld">index.jsonld</a>.</p>
 </body>
 </html>
 `;
+}
+
+/**
+ * Where the files serving a node at site path `rel` go: `<rel>/index.html`,
+ * which every static host answers the extensionless IRI with, and the node
+ * itself beside it as `<rel>/index.jsonld`.
+ */
+export function nodeServedFiles(rel: string): { html: string; jsonld: string } {
+  return { html: `${rel}/index.html`, jsonld: `${rel}/index.jsonld` };
+}
+
+/**
+ * A graph document of `texts` (each one node as the generator writes it): a
+ * `@graph` of the nodes, each `@id` written as the absolute IRI {@link nodeIri}
+ * mints for it. A member's `@base` is in its own context, and a reader that
+ * resolves the graph's relative `@id`s against the graph file's URL (the
+ * document has no `@base` of its own) would place every node beside the
+ * graph file, where nothing is served; an absolute `@id` reads one way only.
+ */
+export function graphDocument(texts: readonly string[]): string {
+  const graph = texts.map((t) => {
+    const node = JSON.parse(t) as Record<string, unknown>;
+    const iri = nodeIri(t);
+    if (iri === undefined || typeof node["@id"] !== "string") return node;
+    const hash = node["@id"].indexOf("#");
+    return { ...node, "@id": hash === -1 ? iri : `${iri}${node["@id"].slice(hash)}` };
+  });
+  return `${JSON.stringify({ "@graph": graph })}\n`;
 }
 
 /**
@@ -125,7 +199,7 @@ export function nodeIriFiles(nodes: readonly PublishedNode[], siteBase: string):
     if (iri === undefined) continue;
     const rel = nodeSitePath(iri, siteBase);
     if (rel === undefined) continue;
-    const jsonld = `${rel}.jsonld`;
+    const { html, jsonld } = nodeServedFiles(rel);
     const prior = files.get(jsonld);
     if (prior !== undefined) {
       if (prior !== n.text) collisions.push(`${iri}: published by both ${from.get(jsonld)} and ${n.source}, with different content`);
@@ -133,7 +207,7 @@ export function nodeIriFiles(nodes: readonly PublishedNode[], siteBase: string):
     }
     files.set(jsonld, n.text);
     from.set(jsonld, n.source);
-    files.set(`${rel}.html`, nodePage(iri, rel, n.text, n.page));
+    files.set(html, nodePage(iri, rel, n.text, n.page));
   }
   return { files, collisions };
 }
