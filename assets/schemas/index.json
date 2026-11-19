@@ -128511,6 +128511,39 @@
       "exported": false
     },
     {
+      "id": "schemas/glossary-namespace.ts#ServedDocument",
+      "name": "ServedDocument",
+      "module": "schemas/glossary-namespace.ts",
+      "kind": "interface",
+      "doc": "A published JSON-LD document whose top-level nodes this site serves, with what each node's page links back to.",
+      "fields": [
+        {
+          "name": "doc",
+          "type": "Node",
+          "optional": false,
+          "array": false,
+          "card": "1..1"
+        },
+        {
+          "name": "linksOf",
+          "type": "(iri: string) => ReadonlyArray<{ label: string; href: string }>",
+          "optional": true,
+          "array": false,
+          "card": "0..1",
+          "doc": "Links shown at the head of the page of the node with this IRI; `href` is site-relative, without a leading `/`."
+        }
+      ],
+      "extendsNames": [],
+      "values": [],
+      "refs": [
+        "schemas/glossary-namespace.ts#Node"
+      ],
+      "unresolved": [],
+      "external": [],
+      "source": "typescript",
+      "exported": true
+    },
+    {
       "id": "schemas/glossary-tables.ts#GlossaryTables",
       "name": "GlossaryTables",
       "module": "schemas/glossary-tables.ts",
@@ -156220,6 +156253,14 @@
       "from": "schemas/glossary-namespace.ts#NamespaceScheme",
       "to": "schemas/glossary.ts#Glossary",
       "via": "glossary",
+      "kind": "field",
+      "optional": false,
+      "array": false
+    },
+    {
+      "from": "schemas/glossary-namespace.ts#ServedDocument",
+      "to": "schemas/glossary-namespace.ts#Node",
+      "via": "doc",
       "kind": "field",
       "optional": false,
       "array": false
