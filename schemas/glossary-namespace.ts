@@ -197,3 +197,176 @@ export function namespacePaths(ns: string, siteBase: string): { html: string; js
   if (rel === "") return undefined;
   return { html: `${rel}/index.html`, jsonld: `${rel}/index.jsonld`, json: `${rel}/index.json` };
 }
+
+// ── A page at every IRI the namespace mints (owner, 2026-11-19) ───────────
+//
+// Glossary concept IRIs keep the slash form, one path per term:
+// `<ns>glossary/<scheme>/<term>`, with `#label-<lang>` fragments on it
+// (owner decision, 2026-11-19: not #anchors on the namespace page). A static
+// host serves such a path only from `<path>/index.html`, so the namespace
+// page's anchors alone left every concept a 404 (`check:site-iris`, 63 on
+// smart-ra). {@link resourcePages} writes that page for every node a
+// published JSON-LD document mints under the namespace, read from the very
+// document that mints it, so what is minted and what is served cannot drift.
+
+/** A published JSON-LD document whose top-level nodes this site serves, with what each node's page links back to. */
+export interface ServedDocument {
+  doc: Node;
+  /** Links shown at the head of the page of the node with this IRI; `href` is site-relative, without a leading `/`. */
+  linksOf?: (iri: string) => ReadonlyArray<{ label: string; href: string }>;
+}
+
+/** A property's name as a reader reads it; anything not named here is shown compact. */
+const PROPERTY_LABELS: Readonly<Record<string, string>> = {
+  "skos:prefLabel": "Label",
+  "skosxl:prefLabel": "Label resources",
+  "skosxl:literalForm": "Label",
+  "skos:altLabel": "Also called",
+  "skos:definition": "Definition",
+  "skos:scopeNote": "Scope note",
+  "skos:editorialNote": "Editorial note",
+  "skos:example": "Example",
+  "skos:note": "Note",
+  "skos:notation": "Code",
+  "skos:inScheme": "In scheme",
+  "skos:broader": "Broader",
+  "skos:related": "Related",
+  "skos:exactMatch": "Exact match",
+  "skos:closeMatch": "Close match",
+  "skos:broadMatch": "Broad match",
+  "skos:narrowMatch": "Narrow match",
+  "skos:memberList": "Members, in order",
+  "skos:member": "Members",
+  "fa:translationStatus": "Translation status",
+  "dcterms:source": "Source",
+  "dcterms:requires": "Requires",
+  "dcterms:subject": "Subject",
+  "rdfs:isDefinedBy": "Defined by",
+  "rdfs:label": "Label",
+  "foaf:focus": "About",
+};
+
+/** The prefixes a document's `@context` binds, an array of contexts included (a context named by URL binds none here). */
+function prefixesOf(context: unknown): Record<string, unknown> {
+  const parts = Array.isArray(context) ? context : [context];
+  return Object.assign({}, ...parts.filter((p): p is Node => typeof p === "object" && p !== null));
+}
+
+/**
+ * Where a static host serves `iri` in a site published at `siteBase`: the
+ * site-relative directory whose `index.html` it is, and its fragment. Undefined
+ * outside the site, and for the site root.
+ */
+export function servedPath(iri: string, siteBase: string): { dir: string; fragment?: string } | undefined {
+  const base = siteBase.endsWith("/") ? siteBase : `${siteBase}/`;
+  if (!iri.startsWith(base)) return undefined;
+  const hash = iri.indexOf("#");
+  const dir = (hash === -1 ? iri : iri.slice(0, hash)).slice(base.length).replace(/\/+$/, "");
+  if (dir === "") return undefined;
+  return hash === -1 ? { dir } : { dir, fragment: iri.slice(hash + 1) };
+}
+
+/**
+ * One page per IRI the documents mint under `ns` (the namespace itself
+ * excepted: {@link namespaceHtml} is its page), keyed by its site-relative
+ * path `<dir>/index.html`. A node whose IRI has a fragment is a section of its
+ * document's page, with that fragment as its `id`, so `…/<term>#label-fr`
+ * lands on the French label. Each page shows every property of its nodes,
+ * labels and definitions in each language, matches as links, and the node's
+ * JSON-LD for an agent.
+ */
+export function resourcePages(ns: string, siteBase: string, docs: readonly ServedDocument[]): Map<string, string> {
+  const nsPath = servedPath(ns, siteBase)?.dir;
+  const groups = new Map<string, { iri: string; nodes: Array<{ node: Node; fragment?: string }>; context: unknown; linksOf?: ServedDocument["linksOf"] }>();
+  for (const d of docs) {
+    const context = d.doc["@context"];
+    const prefixes = prefixesOf(context);
+    for (const node of ((d.doc["@graph"] as Node[] | undefined) ?? []).filter((n) => typeof n["@id"] === "string")) {
+      const iri = expand(String(node["@id"]), prefixes);
+      if (anchorIn(ns, iri) === undefined) continue;
+      const at = servedPath(iri, siteBase);
+      if (at === undefined || at.dir === nsPath) continue;
+      const g = groups.get(at.dir) ?? { iri: iri.split("#")[0]!, nodes: [], context, linksOf: d.linksOf };
+      g.nodes.push({ node, ...(at.fragment !== undefined ? { fragment: at.fragment } : {}) });
+      groups.set(at.dir, g);
+    }
+  }
+  const out = new Map<string, string>();
+  for (const [dir, g] of groups) out.set(`${dir}/index.html`, resourceHtml(dir, g.iri, g.nodes, g.context, siteBase, g.linksOf));
+  return out;
+}
+
+function resourceHtml(
+  dir: string,
+  iri: string,
+  nodes: ReadonlyArray<{ node: Node; fragment?: string }>,
+  context: unknown,
+  siteBase: string,
+  linksOf: ServedDocument["linksOf"],
+): string {
+  const prefixes = prefixesOf(context);
+  const up = "../".repeat(dir.split("/").length);
+  const base = siteBase.endsWith("/") ? siteBase : `${siteBase}/`;
+  const href = (target: string): string => (target.startsWith(base) ? `${up}${target.slice(base.length)}` : target);
+  const own = nodes.find((n) => n.fragment === undefined)?.node;
+  const sections = nodes.filter((n) => n.fragment !== undefined);
+  const labelOf = (n: Node | undefined): string | undefined => {
+    if (n === undefined) return undefined;
+    const vals = [n["skos:prefLabel"], n["skosxl:literalForm"], n["rdfs:label"], n["prefLabel"], n["label"]].find((v) => v !== undefined);
+    const list = (Array.isArray(vals) ? vals : vals === undefined ? [] : [vals]) as unknown[];
+    const en = list.find((v) => typeof v === "object" && v !== null && (v as Node)["@language"] === "en");
+    return text(en ?? list[0]);
+  };
+  const title = labelOf(own) ?? iri;
+  const value = (v: unknown): string => {
+    if (Array.isArray(v)) return v.length === 1 ? value(v[0]) : `<ul>${v.map((x) => `<li>${value(x)}</li>`).join("")}</ul>`;
+    if (v === null || v === undefined) return "";
+    if (typeof v === "object") {
+      const o = v as Node;
+      if ("@value" in o) {
+        const lang = typeof o["@language"] === "string" ? o["@language"] : undefined;
+        return lang ? `<span lang="${escHtml(lang)}">${escHtml(String(o["@value"]))}</span> <small>(${escHtml(lang)})</small>` : escHtml(String(o["@value"]));
+      }
+      if ("@list" in o) return `<ol>${((o["@list"] as unknown[]) ?? []).map((x) => `<li>${value(x)}</li>`).join("")}</ol>`;
+      if (typeof o["@id"] === "string") {
+        const target = expand(o["@id"], prefixes);
+        return `<a href="${escHtml(href(target))}"><code>${escHtml(target)}</code></a>`;
+      }
+      return `<code>${escHtml(JSON.stringify(o))}</code>`;
+    }
+    const s = String(v);
+    return /^https?:\/\//.test(s) ? `<a href="${escHtml(href(s))}">${escHtml(s)}</a>` : escHtml(s);
+  };
+  const props = (n: Node): string => {
+    const rows = Object.entries(n)
+      .filter(([k]) => k !== "@id" && k !== "@type" && k !== "@context")
+      .map(([k, v]) => `<dt>${escHtml(PROPERTY_LABELS[k] ?? k)}</dt><dd>${value(k === "@graph" ? ((v as Node[]) ?? []).map((x) => ({ "@id": x["@id"] })) : v)}</dd>`);
+    return rows.length ? `<dl>\n${rows.join("\n")}\n</dl>` : "";
+  };
+  const typeLine = (n: Node): string => {
+    const t = n["@type"];
+    return t === undefined ? "" : `<p class="type">${(Array.isArray(t) ? t : [t]).map((x) => `<code>${escHtml(String(x))}</code>`).join(" ")}</p>`;
+  };
+  const links = (linksOf?.(iri) ?? []).map((l) => `<a href="${escHtml(`${up}${l.href}`)}">${escHtml(l.label)}</a>`).join(" · ");
+  const json = JSON.stringify({ "@context": context, "@graph": nodes.map((n) => n.node) }, null, 2).replace(/<\//g, "<\\/");
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escHtml(title)}</title>
+<link rel="canonical" href="${escHtml(iri)}">
+<script type="application/ld+json">
+${json}
+</script>
+</head>
+<body>
+<h1>${escHtml(title)}</h1>
+<p><code>${escHtml(iri)}</code></p>
+${links ? `<p class="links">${links}</p>\n` : ""}${own ? `${typeLine(own)}\n${props(own)}\n` : ""}${sections
+    .map((s) => `<section id="${escHtml(s.fragment!)}">\n<h2>${escHtml(labelOf(s.node) ?? s.fragment!)}</h2>\n<p><code>${escHtml(`${iri}#${s.fragment}`)}</code></p>\n${typeLine(s.node)}\n${props(s.node)}\n</section>`)
+    .join("\n")}
+</body>
+</html>
+`;
+}

@@ -65,3 +65,27 @@ Feature: a layer's namespace document carries its glossary concepts
     Given a namespace under another iriBase, and the site root itself
     When their paths are computed
     Then there are none
+
+  @test:schemas/glossary-namespace.test.ts::resourcePages::a_page_at_<path>/index.html_for_every_IRI_minted_in_the_namespace,_and_none_outside_it
+  Scenario: a page at every IRI minted in the namespace
+    Given a SKOS document minting a scheme, a concept and their fragments, and naming an outside concept
+    When the resource pages are built
+    Then there is a <path>/index.html for the scheme and the concept, and none for the outside concept
+
+  @test:schemas/glossary-namespace.test.ts::resourcePages::a_fragment_IRI_is_a_section_of_its_document's_page,_with_the_fragment_as_its_id
+  Scenario: a fragment IRI is a section of its document's page
+    Given a label IRI and an order IRI with fragments
+    When the resource pages are built
+    Then each is a section whose id is its fragment
+
+  @test:schemas/glossary-namespace.test.ts::resourcePages::a_concept's_page_shows_each_language's_label,_its_definition,_scope_note_and_matches,_and_links_back_to_the_glossary
+  Scenario: a concept's page is a real term page
+    Given a concept with labels in two languages, a definition, a scope note and matches
+    When its page is rendered
+    Then it shows each of them, links matches, links inside the site relatively and links back to the glossary
+
+  @test:schemas/glossary-namespace.test.ts::resourcePages::servedPath:_the_directory_and_fragment_a_static_host_serves_an_IRI_from
+  Scenario: where a static host serves an IRI from
+    Given IRIs with and without a fragment, outside the site and equal to it
+    When each one's served path is taken
+    Then it is the directory and fragment inside the site, and none otherwise

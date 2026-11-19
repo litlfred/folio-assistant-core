@@ -5,7 +5,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { anchorIn, glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths } from "./glossary-namespace.ts";
+import { anchorIn, glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, resourcePages, servedPath } from "./glossary-namespace.ts";
 import type { Glossary } from "./glossary.ts";
 
 const ns = "https://example.org/layer/v0/ns/";
@@ -100,5 +100,55 @@ describe("namespacePaths", () => {
   test("a namespace another site serves is not this site's", () => {
     expect(namespacePaths("https://example.org/other/v0/ns/", "https://example.org/layer/")).toBeUndefined();
     expect(namespacePaths("https://example.org/layer/", "https://example.org/layer/")).toBeUndefined();
+  });
+});
+
+describe("resourcePages", () => {
+  const site = "https://example.org/layer/";
+  const skos = {
+    "@context": { skos: "http://www.w3.org/2004/02/skos/core#", skosxl: "http://www.w3.org/2008/05/skos-xl#" },
+    "@graph": [
+      { "@id": `${ns}glossary/demo`, "@type": "skos:ConceptScheme", "skos:prefLabel": "Demo terms" },
+      {
+        "@id": `${ns}glossary/demo/alpha`,
+        "@type": "skos:Concept",
+        "skos:inScheme": { "@id": `${ns}glossary/demo` },
+        "skos:prefLabel": [{ "@value": "alpha", "@language": "en" }, { "@value": "alpha (fr)", "@language": "fr" }],
+        "skos:definition": [{ "@value": "The first <term>.", "@language": "en" }],
+        "skos:scopeNote": "Only in tests.",
+        "skos:exactMatch": [{ "@id": "https://other.example/concept/x" }],
+        "skos:related": [{ "@id": `${ns}glossary/demo/beta` }],
+      },
+      { "@id": `${ns}glossary/demo/alpha#label-fr`, "@type": "skosxl:Label", "skosxl:literalForm": { "@value": "alpha (fr)", "@language": "fr" } },
+      { "@id": `${ns}glossary/demo#order`, "@type": "skos:OrderedCollection", "skos:memberList": { "@list": [{ "@id": `${ns}glossary/demo/alpha` }] } },
+      { "@id": "https://other.example/concept/x", "@type": "skos:Concept" },
+    ],
+  };
+  const pages = resourcePages(ns, site, [{ doc: skos, linksOf: (iri) => (iri.endsWith("/alpha") ? [{ label: "Glossary entry", href: "en/glossary/#demo--alpha" }] : []) }]);
+
+  test("a page at <path>/index.html for every IRI minted in the namespace, and none outside it", () => {
+    expect([...pages.keys()].sort()).toEqual(["v0/ns/glossary/demo/alpha/index.html", "v0/ns/glossary/demo/index.html"]);
+  });
+  test("a fragment IRI is a section of its document's page, with the fragment as its id", () => {
+    expect(pages.get("v0/ns/glossary/demo/alpha/index.html")).toContain('<section id="label-fr">');
+    expect(pages.get("v0/ns/glossary/demo/index.html")).toContain('<section id="order">');
+  });
+  test("a concept's page shows each language's label, its definition, scope note and matches, and links back to the glossary", () => {
+    const html = pages.get("v0/ns/glossary/demo/alpha/index.html")!;
+    expect(html).toContain("<title>alpha</title>");
+    expect(html).toContain('<span lang="fr">alpha (fr)</span>');
+    expect(html).toContain("The first &lt;term&gt;.");
+    expect(html).toContain("<dt>Scope note</dt><dd>Only in tests.</dd>");
+    expect(html).toContain('<a href="https://other.example/concept/x">');
+    // A link inside the site is relative, so a staged copy of the site links itself.
+    expect(html).toContain('<a href="../../../../../v0/ns/glossary/demo/beta">');
+    expect(html).toContain('<a href="../../../../../en/glossary/#demo--alpha">Glossary entry</a>');
+    expect(html).toContain('<script type="application/ld+json">');
+  });
+  test("servedPath: the directory and fragment a static host serves an IRI from", () => {
+    expect(servedPath(`${ns}glossary/demo/alpha#label-fr`, site)).toEqual({ dir: "v0/ns/glossary/demo/alpha", fragment: "label-fr" });
+    expect(servedPath(`${ns}glossary/demo`, site)).toEqual({ dir: "v0/ns/glossary/demo" });
+    expect(servedPath("https://other.example/x", site)).toBeUndefined();
+    expect(servedPath(site, site)).toBeUndefined();
   });
 });
