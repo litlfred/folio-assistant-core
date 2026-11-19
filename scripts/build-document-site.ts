@@ -31,8 +31,9 @@
  *                                in manifest order, for the review page's
  *                                outline and minimap (bean eb4l)
  *   <out>/<slug>/blocks/         a lazy document's block text, as data (bean v433)
- *   <out>/<slug>/kg/             every block's knowledge-graph node, as committed
- *   <out>/<slug>/graph.jsonld    the document's graph: every node in one file
+ *   <out>/<slug>/kg/             every block's knowledge-graph node, as the generator writes it now
+ *   <out>/<slug>/graph.jsonld    the document's graph: every node in one file, each @id absolute
+ *   <out>/v<major>/<@id>/        each node at its IRI: index.html and index.jsonld
  *   <out>/values.jsonld          every {{ … }} value the text refers to, as KG nodes
  *
  * Pages are under the page locale and data is not (issue #2527): see
@@ -78,7 +79,7 @@ import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-modu
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
 import * as instanceDocumentContext from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
 import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
-import { libraryNodes, nodeIriFiles, type PublishedNode } from "./lib/node-iri-files.ts";
+import { graphDocument, libraryNodes, nodeIriFiles, type PublishedNode } from "./lib/node-iri-files.ts";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness-tools/schemas/content/contributions.js";
@@ -431,7 +432,7 @@ export async function documentGraph(
 
 /**
  * Each node served at its IRI, `<iriBase>v<major>/<@id>` (IRI fix 1A, a;
- * owner 2026-11-18): `<@id>.jsonld` and `<@id>.html` under the site, which is
+ * owner 2026-11-18): `<@id>/index.html` and `<@id>/index.jsonld` under the site, which is
  * published at the `iriBase` the folio declares (`scripts/lib/node-iri-files.ts`).
  * The block nodes above sit at `<doc>/kg/…`, a path no IRI names, and the
  * library's nodes were published nowhere. A folio that declares no
@@ -1290,14 +1291,18 @@ export async function buildDocumentSite(
     const graph = await documentGraph(dirname(d.path), d.slug, contributions);
     for (const e of graph.errors.slice(0, GRAPH_ERRORS_LISTED)) result.errors.push(`${d.slug}: ${e}`);
     if (graph.errors.length > GRAPH_ERRORS_LISTED) result.errors.push(`${d.slug}: … and ${graph.errors.length - GRAPH_ERRORS_LISTED} more KG node errors`);
+    // Every copy of a node is the node as the generator writes it now, so each
+    // names the IRI it is served at (node-iri-files.ts): the committed text
+    // differs from it only while it awaits the rebase off the old shared
+    // `@base`, and any other difference failed the build above.
     for (const n of graph.nodes) {
       mkdirSync(dirname(join(data, "kg", n.rel)), { recursive: true });
-      writeFileSync(join(data, "kg", n.rel), n.text);
+      writeFileSync(join(data, "kg", n.rel), n.current);
     }
-    // Each node at its IRI too (below): as written now, read on this page at its block's anchor.
+    // Each node at its IRI too (below), read on this page at its block's anchor.
     for (const n of graph.nodes) iriNodes.push({ text: n.current, source: n.source, page: `${documentPageDir(d.slug)}/#${n.label}` });
     mkdirSync(data, { recursive: true });
-    writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
+    writeFileSync(join(data, "graph.jsonld"), graphDocument(graph.nodes.map((n) => n.current)));
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
     // Each translated version: the whole document on one page, in its own

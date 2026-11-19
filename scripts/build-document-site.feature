@@ -37,6 +37,13 @@ Feature: building a document folio's site
     When the site is built
     Then the block's KG node is published on its own and in the document's graph
 
+  @test:scripts/build-document-site.test.ts::build-document-site::everyMintedNodeIriIsServed
+  Scenario: every IRI a published copy of a block node mints is served by the site
+    Given a folio that declares the iriBase its block nodes are minted under
+    When the site is built
+    Then the document's graph names each node by its absolute IRI
+    And check:site-iris finds every IRI the kg copies, the graph and the node pages mint served
+
   @test:scripts/build-document-site.test.ts::build-document-site::editRuntimeAndValues
   Scenario: a one-page document carries the edit-links runtime (✍ suggest) and the site its values.jsonld
     When the site is built with a repository for actions
