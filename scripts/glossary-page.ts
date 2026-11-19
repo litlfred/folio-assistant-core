@@ -111,7 +111,7 @@ import {
 } from "@litlfred/cat-harness-tools/scripts/lib/scheme-owner.ts";
 
 import { checkoutRootFor } from "./lib/checkout-root.ts";
-import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, type NamespaceScheme } from "../schemas/glossary-namespace.ts";
+import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, resourcePages, type NamespaceScheme, type ServedDocument } from "../schemas/glossary-namespace.ts";
 import { buildVocabularyOne } from "@litlfred/cat-harness-tools/scripts/publish-instance-context.ts";
 
 const CORE = resolve(import.meta.dir, "..");
@@ -2223,11 +2223,20 @@ export function outputs(
  * writes, so a concept links its term page only when the page is there.
  * `vocabularyOf` is the layer's vocabulary as the tools build it, which the
  * concepts are added to; undefined, the document holds the concepts alone.
+ *
+ * Beside it, a page at every IRI each scheme's SKOS mints in the namespace
+ * (`resourcePages`): the scheme, each concept, its `#label-<lang>` labels,
+ * its `/_focus`. Glossary concept IRIs are slash IRIs, one path per term
+ * (owner, 2026-11-19), and a static host serves a path only from
+ * `<path>/index.html`. The SKOS read is the one this run writes into the
+ * site (`pages`, when it is the run's file map), so the IRIs served are the
+ * IRIs minted; a scheme whose SKOS this run does not write is minted afresh
+ * with `toSkos`, the same function.
  */
 export function namespaceFiles(
   c: Pick<ReturnType<typeof collect>, "glossaries">,
   at: { site: string; siteBase: string; only?: string },
-  pages: ReadonlySet<string>,
+  pages: ReadonlySet<string> | ReadonlyMap<string, string>,
   vocabularyOf: (instance: string, ns: string) => Record<string, unknown> | undefined = () => undefined,
 ): Map<string, string> {
   const byInstance = new Map<string, GlossarySource[]>();
@@ -2251,6 +2260,24 @@ export function namespaceFiles(
     out.set(join(at.site, paths.html), namespaceHtml(instance, ns, doc));
     out.set(join(at.site, paths.jsonld), json);
     out.set(join(at.site, paths.json), json);
+    const served: ServedDocument[] = sources.map((s) => {
+      const written = "get" in pages ? pages.get(join(at.site, skosAsset(s))) : undefined;
+      const skos = (written === undefined ? toSkos(s.glossary, s.ns) : JSON.parse(written)) as Record<string, unknown>;
+      const row = `${permalinkOf(pageOf(s))}`.replace(/^\//, "");
+      const back = new Map<string, Array<{ label: string; href: string }>>([
+        [schemeIri(ns, s.glossary), [{ label: "Glossary", href: row }, { label: "SKOS", href: skosAsset(s) }]],
+      ]);
+      for (const t of s.glossary.terms) {
+        if (t.iri) continue;
+        back.set(termIri(ns, s.glossary, t.id), [
+          ...(pages.has(termPagePath(s, t.id)) ? [{ label: "Term page", href: termPermalink(s, t.id).replace(/^\//, "") }] : []),
+          { label: "Glossary entry", href: `${row}#${anchorOf(s, t.id)}` },
+          { label: "SKOS", href: skosAsset(s) },
+        ]);
+      }
+      return { doc: skos, linksOf: (iri: string) => back.get(iri) ?? [] };
+    });
+    for (const [p, html] of resourcePages(ns, at.siteBase, served)) out.set(join(at.site, p), html);
   }
   return out;
 }
@@ -2341,7 +2368,7 @@ if (import.meta.main) {
   // A site being built serves each in-scope layer's namespace document.
   const siteBase = INTO_SITE ? iriBaseOf(REPO) : undefined;
   if (siteBase !== undefined) {
-    for (const [p, s] of namespaceFiles(c, { site: SITE, siteBase, only: ONLY }, new Set(files.keys()), toolsVocabulary)) files.set(p, s);
+    for (const [p, s] of namespaceFiles(c, { site: SITE, siteBase, only: ONLY }, files, toolsVocabulary)) files.set(p, s);
   }
   // Reported, never fatal: a match the record cannot place is left out of the
   // SKOS rather than invented, and this says which and why.
