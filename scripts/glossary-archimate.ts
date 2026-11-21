@@ -25,6 +25,13 @@
  * Only a layer that declares an ArchiMate pages visualiser is read, and
  * each element links to the page `gen-archimate-pages.ts` writes for it. Of a
  * layer's models, the newest that depicts a term is the one shown.
+ *
+ * Writing into a site (`at`), a layer's page is linked on THIS site only when
+ * it is the site's own layer or the page is already there; otherwise it is
+ * linked on the layer's own site, at its `iriBase`. A site that mounts another
+ * layer's glossary (dth-pc mounts dth-sc's) does not build that layer's
+ * ArchiMate pages, and the site-relative links were dead: 58 of them on
+ * dth-pc's site, refused by `links: refuse` (cat-harness-tools#2345).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -51,7 +58,7 @@ export function archimateConfigPath(root: string): string | undefined {
 export interface Depicted {
   name: string;
   type: string;
-  /** Site-root path of the element's page, with a leading slash. */
+  /** Site-root path of the element's page, with a leading slash; or, when the page is on its layer's own site and not this one, its absolute URL. */
   page: string;
 }
 export interface Depiction {
@@ -100,7 +107,24 @@ export function newestFirst(a: string, b: string): number {
   return y.pre.localeCompare(x.pre, "en", { numeric: true });
 }
 
-export async function archimateDepictions(repo: string, terms: readonly TermRef[]): Promise<Map<string, Depiction>> {
+/** Where depictions are written into a site: the site's directory, and the layer it is built for (`--instance`), whose pages it builds. */
+export interface DepictionSite {
+  site: string;
+  own?: string;
+}
+
+/**
+ * A depicted page's link: its site-root `path` where this site carries it (no
+ * `at`, the site's own layer, or the page already in `at.site`), else the page
+ * on its layer's own site at `iriBase`. With no `iriBase` it stays the path.
+ */
+export function depictionHref(path: string, layer: string, iriBase: string | undefined, at?: DepictionSite): string {
+  if (at === undefined || layer === at.own || iriBase === undefined) return path;
+  if (existsSync(join(at.site, path))) return path;
+  return `${iriBase.replace(/\/+$/, "")}${path}`;
+}
+
+export async function archimateDepictions(repo: string, terms: readonly TermRef[], at?: DepictionSite): Promise<Map<string, Depiction>> {
   const out = new Map<string, Depiction>();
   const byIri = new Map(terms.map((t) => [t.iri, t.anchor]));
   const byFile = new Map(terms.map((t) => [`${t.scheme}.glossary.json#${t.id}`, t.anchor]));
@@ -118,7 +142,7 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
   const { declaredPageRoot } = await import(`${am}/scripts/gen-archimate-pages.ts`);
   const { readConfig, archimateDir } = await import(`${am}/scripts/check-archimate.ts`);
   for (const root of roots) {
-    const decl = readDeclaration(root) as { name: string } | undefined;
+    const decl = readDeclaration(root) as { name: string; iriBase?: string } | undefined;
     if (!decl) continue;
     let pageRoot: string;
     let config: { directory: string; models: Array<{ id: string; file: string }> };
@@ -139,7 +163,7 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
         views: Array<{ id: string; name: string; nodes: Array<{ kind: string; ref?: string }> }>;
       };
       const slugOf: Map<string, string> = planSlugs(model);
-      const page = (kind: "element" | "view", id: string) => archimatePagePath(pageRoot, m.id, kind, slugOf.get(id) ?? id);
+      const page = (kind: "element" | "view", id: string) => depictionHref(archimatePagePath(pageRoot, m.id, kind, slugOf.get(id) ?? id), decl.name, decl.iriBase, at);
       const found = new Map<string, Depiction>();
       for (const e of model.elements) {
         const named = e.properties.filter((p) => p.key === "skosConcept").map((p) => conceptOf(p.value));
