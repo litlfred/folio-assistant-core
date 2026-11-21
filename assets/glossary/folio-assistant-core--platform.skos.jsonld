@@ -4,7 +4,11 @@
     "dcterms": "http://purl.org/dc/terms/",
     "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
     "skosxl": "http://www.w3.org/2008/05/skos-xl#",
-    "fa": "https://litlfred.github.io/folio-assistant-core/v0/ns/"
+    "fa": "https://litlfred.github.io/folio-assistant-core/v0/ns/",
+    "_generated": {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/generatedNote",
+      "@type": "@json"
+    }
   },
   "_generated": "folio-assistant-core/scripts/glossary-page.ts — do not hand-edit; run `bun run cat glossary:page`",
   "@graph": [
