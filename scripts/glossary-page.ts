@@ -833,7 +833,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
     .flatMap((s) =>
       s.glossary.terms.map((t) => ({ anchor: anchorOf(s, t.id), iri: t.iri ?? termIri(s.ns, s.glossary, t.id), scheme: s.glossary.id, id: t.id, label: first(t.prefLabel) })),
     );
-  DEPICTIONS = await archimateDepictions(repo, terms);
+  DEPICTIONS = await archimateDepictions(repo, terms, INTO_SITE ? { site: SITE, ...(ONLY !== undefined ? { own: ONLY } : {}) } : undefined);
   return DEPICTIONS;
 }
 
@@ -841,7 +841,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
 function depictionLine(anchor: string): string[] {
   const d = DEPICTIONS.get(anchor);
   if (!d) return [];
-  const a = (x: { name: string; page: string }) => `<a href="{{ '${x.page}' | relative_url }}">${esc(x.name)}</a>`;
+  const a = (x: { name: string; page: string }) => `<a href="${/^https?:\/\//.test(x.page) ? esc(x.page) : `{{ '${x.page}' | relative_url }}`}">${esc(x.name)}</a>`;
   const els = d.elements.map((e) => `${a(e)} <span class="fa-gloss-meta">(${esc(e.type)})</span>`).join(", ");
   const views = d.views.length ? `; views: ${d.views.map(a).join(", ")}` : "";
   return [`<p class="fa-gloss-archimate">Depicted in ArchiMate ${esc(d.instance)} ${esc(d.model)}: ${els}${views}</p>`];
