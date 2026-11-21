@@ -24,7 +24,7 @@
     "additionalProperty": {
       "@type": "PropertyValue",
       "name": "pinnedCommit",
-      "value": "8691b09acc175c43e569a51e36dac14412d8b8cf"
+      "value": "8efc405408a035b6430163d33f51610e7c63bf61"
     }
   },
   "isPartOf": {
@@ -33,8 +33,8 @@
   },
   "significantLink": [
     "https://litlfred.github.io/folio-assistant/cat-harness-tools/",
-    "https://github.com/litlfred/cat-harness-tools/tree/8691b09acc175c43e569a51e36dac14412d8b8cf",
-    "https://github.com/litlfred/cat-harness-tools/blob/8691b09acc175c43e569a51e36dac14412d8b8cf/README.md",
-    "https://github.com/litlfred/cat-harness-tools/blob/8691b09acc175c43e569a51e36dac14412d8b8cf/AGENTS.md"
+    "https://github.com/litlfred/cat-harness-tools/tree/8efc405408a035b6430163d33f51610e7c63bf61",
+    "https://github.com/litlfred/cat-harness-tools/blob/8efc405408a035b6430163d33f51610e7c63bf61/README.md",
+    "https://github.com/litlfred/cat-harness-tools/blob/8efc405408a035b6430163d33f51610e7c63bf61/AGENTS.md"
   ]
 }
