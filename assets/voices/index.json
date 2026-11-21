@@ -90,7 +90,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Arrives at a disagreement, not at an artefact. Is given the findings and the checker's output and — deliberately — not the thing being judged, so the verdict measures the disagreement rather than a fresh reading of the source. Needs both sides and the reason each was offered, before needing anything else."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-adjudicator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-adjudicator"
     },
     {
       "id": "address-administrator",
@@ -123,7 +125,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Accountable for who can do what. Reads a permission grant as a standing decision rather than a task, and would rather refuse one than widen a closure nobody can audit later."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-administrator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-administrator"
     },
     {
       "id": "address-author",
@@ -156,7 +160,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Knows the subject and is mid-edit. Came to change one block, not to learn the system. Has the folio open and the schema only half in mind; will follow a convention if it is stated where they already are, and invent one if it is not."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-author/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-author"
     },
     {
       "id": "address-authoring-agent",
@@ -189,7 +195,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Has the whole corpus available and no memory of the last session. Will follow the most specific instruction it can find and improvise when it finds none. Reads a skill before it reads the code."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-authoring-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-authoring-agent"
     },
     {
       "id": "address-business-analyst",
@@ -222,7 +230,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Turns stated needs into requirements others can build against. Works in the gap between what a stakeholder said and what the system can do, and is the one who notices when those differ."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-business-analyst/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-business-analyst"
     },
     {
       "id": "address-clinical-sme",
@@ -255,7 +265,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Expert in the subject, not in the system. Judges whether the content is clinically right; is not interested in FHIR profiles or schema fields and should not have to be."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-clinical-sme/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-clinical-sme"
     },
     {
       "id": "address-code-reviewer",
@@ -288,7 +300,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Reads a node, not a program. Knows the graph's vocabulary and expects a node to declare what it is; does not know why this one was written and should not have to guess. The failure they are hunting is a node that looks well-formed and resolves to nothing — which no test catches, because nothing ran."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-code-reviewer/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-code-reviewer"
     },
     {
       "id": "address-deep-researcher",
@@ -321,7 +335,9 @@
           "citesInstance": "litlfred/folio-assistant-core",
           "quote": "Cites to a location, not to a document. Distinguishes what a source says from what it implies, and marks a synthesis as a synthesis rather than letting it read as a quotation."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-deep-researcher/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-deep-researcher"
     },
     {
       "id": "address-docs-authoring-agent",
@@ -354,7 +370,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Writes for somebody who has not read the codebase. Knows which directories are generated and must never be hand-edited; assumes nothing about what the reader already believes."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-docs-authoring-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-docs-authoring-agent"
     },
     {
       "id": "address-editor",
@@ -387,7 +405,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Author plus the authority to accept. Sees QA findings and decides which are real. Under time pressure and accountable for what lands, so they need the evidence before the argument."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-editor/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-editor"
     },
     {
       "id": "address-editorial-authoring-agent",
@@ -420,7 +440,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Reads a block already written and asks whether a reader could follow it. Knows the house voice and the rendering pipeline; does not know the mathematics, and must not be asked to judge it."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-editorial-authoring-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-editorial-authoring-agent"
     },
     {
       "id": "address-evidence-agent",
@@ -453,7 +475,9 @@
           "citesInstance": "litlfred/folio-assistant-core",
           "quote": "Searches trusted sources and appraises what comes back. Its value is in what it REJECTS, so it must be able to say why a source was not used."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-evidence-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-evidence-agent"
     },
     {
       "id": "address-feedback-provider",
@@ -486,7 +510,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "May be a program that cannot be argued with, or a reader with no context for why the artefact is as it is. Either way it knows one thing the adjudicator does not — what it actually looked at — and the process is worthless if that does not reach the lane below."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-feedback-provider/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-feedback-provider"
     },
     {
       "id": "address-ingestion-agent",
@@ -519,7 +545,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Turns an uploaded source into corpus. Works from documents of unknown quality and must record provenance for everything it derives, because a derived claim with no source is unusable later."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-ingestion-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-ingestion-agent"
     },
     {
       "id": "address-integration-watcher",
@@ -552,7 +580,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Sees a diff, not a conversation. Knows its axis narrowly and deeply, and knows that a finding it cannot substantiate costs more than one it never raised."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-integration-watcher/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-integration-watcher"
     },
     {
       "id": "address-librarian",
@@ -585,7 +615,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Treats provenance as the perishable part. A document can be re-read at any time; how it arrived, from where, in what state and under what licence is knowable only while it is arriving, so that is what gets written down first."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-librarian/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-librarian"
     },
     {
       "id": "address-narrative-reviewer",
@@ -618,7 +650,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Reads for the reader, not for the author. Knows the subject well enough to tell a register slip from a term of art, and is looking at prose that already passed its mechanical checks — so everything left is judgement. Will not re-read a chapter to find out what a block assumes; if the editorial dependency is not stated, they record that as the finding."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-narrative-reviewer/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-narrative-reviewer"
     },
     {
       "id": "address-onboarding-agent",
@@ -651,7 +685,9 @@
           "citesInstance": "litlfred/folio-assistant-core",
           "quote": "Meets a repository it has never seen and must orient before acting. Will follow the first plausible convention it finds, so the earliest instruction it reads matters most."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-onboarding-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-onboarding-agent"
     },
     {
       "id": "address-platform-authoring-agent",
@@ -684,7 +720,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Thinks in contracts between this layer and a consumer it cannot see. Knows that a partial graph must never pass for a whole one, and that three states at a boundary are not degrees of two."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-platform-authoring-agent/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-platform-authoring-agent"
     },
     {
       "id": "address-programme-manager",
@@ -717,7 +755,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Tracking delivery across several workstreams. Needs state and trend, not detail. Will plan against any number shown, so an invented estimate is worse than a blank."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-programme-manager/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-programme-manager"
     },
     {
       "id": "address-publication-manager",
@@ -750,7 +790,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Owns the release. Cares about what is authorised, what is built and what is public — and about the gap between them."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-publication-manager/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-publication-manager"
     },
     {
       "id": "address-qc-reviewer",
@@ -783,7 +825,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Checks the BUILT artefact, not the source. Looks at the rendered page, the PDF, the published site — and cares whether it is correct there, not whether the manifest was valid."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-qc-reviewer/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-qc-reviewer"
     },
     {
       "id": "address-review-coordinator",
@@ -816,7 +860,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Holding a 300-page change and a handful of reviewers with different expertise. Needs to know where the changes are, who has read what, and what is still open, section by section, without reading every block themselves."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-review-coordinator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-review-coordinator"
     },
     {
       "id": "address-reviewer",
@@ -849,7 +895,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Reading someone else's change, usually against a deadline, usually without the context that produced it. Needs to know what changed and what it affects before they need to know why."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-reviewer/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-reviewer"
     },
     {
       "id": "address-session-coordinator",
@@ -882,7 +930,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Arrives with no memory of the last session and siblings working in parallel. Knows that a claim announces rather than reserves, and that another branch may already be doing this."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-session-coordinator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-session-coordinator"
     },
     {
       "id": "address-sibling-session",
@@ -915,7 +965,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Another agent or human on the same store, with different context and its own claims. Present precisely to mark what is NOT yours to close."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-sibling-session/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-sibling-session"
     },
     {
       "id": "address-stakeholder",
@@ -948,7 +1000,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Affected by the outcome, not building it. Reviews at defined checkpoints and otherwise is not watching. Needs to re-acquire context each time without reading the history."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-stakeholder/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-stakeholder"
     },
     {
       "id": "address-terminologist",
@@ -981,7 +1035,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Owns coded concepts and value sets. Precise by profession; a near-enough code is a wrong code. Cares about provenance and binding strength more than prose."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-terminologist/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-terminologist"
     },
     {
       "id": "address-translation-adjudicator",
@@ -1014,7 +1070,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Decides between competing translations, usually a subject expert in the target language. Arrives at a disagreement and needs both options and the reason each was offered."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-translation-adjudicator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-translation-adjudicator"
     },
     {
       "id": "address-translation-coordinator",
@@ -1047,7 +1105,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Runs the translation cycle without necessarily speaking the target languages. Tracks what is extracted, sent, returned and signed off — and what has gone stale since."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-translation-coordinator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-translation-coordinator"
     },
     {
       "id": "address-translator",
@@ -1080,7 +1140,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Works in the target language and needs the source's INTENT, not just its words. Context-starved by default: a string with no surrounding meaning gets translated wrong."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-translator/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-translator"
     },
     {
       "id": "address-user",
@@ -1113,7 +1175,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "Has a goal and no interest in the machinery. Types with difficulty and will not read three paragraphs to find a choice. Knows their own domain far better than the system, and will be right about it when the agent is not."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/address-user/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/address-user"
     },
     {
       "id": "agent-skill-authoring",
@@ -1305,7 +1369,9 @@
           "pages": "4",
           "quote": "The three most prevalent individual defects are all spec violations: R1.3 miss- ing trigger guidance (52.3%), R2.4 name-as-heading dupli- cation (44.3%), and R3.2 too many inline examples (32.1%)."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/cat-harness/agent-skill-authoring/",
+      "iri": "https://litlfred.github.io/folio-assistant/cat-harness/voice/agent-skill-authoring"
     },
     {
       "id": "agent-skill-authoring-claude",
@@ -1437,7 +1503,9 @@
           "pages": "19",
           "quote": "Claude (\"Claude A\") to create a Skill that is used by other instances (\"Claude B\"). Claude A helps you design and refine instructions, while Claude B tests them in real tasks."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/cat-harness/agent-skill-authoring-claude/",
+      "iri": "https://litlfred.github.io/folio-assistant/cat-harness/voice/agent-skill-authoring-claude"
     },
     {
       "id": "agent-skill-authoring-gemini-cli",
@@ -1597,7 +1665,9 @@
           "pages": "3",
           "quote": "Limit scope: Design skills to be as focused as possible to minimize the potential impact of errors."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/cat-harness/agent-skill-authoring-gemini-cli/",
+      "iri": "https://litlfred.github.io/folio-assistant/cat-harness/voice/agent-skill-authoring-gemini-cli"
     },
     {
       "id": "agent-skill-authoring-openai",
@@ -1773,7 +1843,9 @@
           "cites": "skills-in-openai-api-notebook#s003-when-to-use-skills",
           "quote": "The procedure changes every day (skills shine when the workflow stabilizes)."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/cat-harness/agent-skill-authoring-openai/",
+      "iri": "https://litlfred.github.io/folio-assistant/cat-harness/voice/agent-skill-authoring-openai"
     },
     {
       "id": "linked-data",
@@ -1900,7 +1972,9 @@
           "pages": "37",
           "quote": "The JSON properties activity and plan map to the object properties prov:qualifiedAssociation and prov:hadPlan, respectively."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/linked-data/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/linked-data"
     },
     {
       "id": "secure-code-authoring",
@@ -2162,7 +2236,9 @@
           "pages": "7",
           "quote": "You can use the CODEOWNERS feature to control how changes are made to your workflow files."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/cat-harness/secure-code-authoring/",
+      "iri": "https://litlfred.github.io/folio-assistant/cat-harness/voice/secure-code-authoring"
     },
     {
       "id": "technical-writer",
@@ -2328,7 +2404,9 @@
           "citesInstance": "litlfred/cat-harness",
           "quote": "When the prose names a schema, link to the schema source and to its UML documentation where one exists. A schema named but not linked forces the reader to guess which file, and the guess is wrong exactly when the schema has moved."
         }
-      ]
+      ],
+      "page": "en/cat-harness/voices/folio-assistant-core/technical-writer/",
+      "iri": "https://litlfred.github.io/folio-assistant/folio-assistant-core/voice/technical-writer"
     }
   ],
   "totals": {

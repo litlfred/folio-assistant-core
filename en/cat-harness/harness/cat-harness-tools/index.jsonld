@@ -1,0 +1,40 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/cat-harness-tools/",
+  "url": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/cat-harness-tools/",
+  "@type": "WebPage",
+  "name": "C@T Harness Tools on Folio Assistant Core",
+  "about": {
+    "@type": "SoftwareSourceCode",
+    "identifier": "cat-harness-tools",
+    "name": "C@T Harness Tools",
+    "description": "What implements the harness's Tool definitions: the MCP servers, their tool registrars and routes. Definitions stay in cat-harness; this layer runs them.",
+    "version": "0.1.0",
+    "codeRepository": "https://github.com/litlfred/cat-harness-tools",
+    "isBasedOn": [
+      {
+        "@id": "https://litlfred.github.io/cat-harness/"
+      },
+      {
+        "identifier": "bootstrap-tools"
+      }
+    ],
+    "additionalProperty": {
+      "@type": "PropertyValue",
+      "name": "pinnedCommit",
+      "value": "8691b09acc175c43e569a51e36dac14412d8b8cf"
+    }
+  },
+  "isPartOf": {
+    "@id": "https://litlfred.github.io/folio-assistant-core/",
+    "name": "Folio Assistant Core"
+  },
+  "significantLink": [
+    "https://litlfred.github.io/folio-assistant/cat-harness-tools/",
+    "https://github.com/litlfred/cat-harness-tools/tree/8691b09acc175c43e569a51e36dac14412d8b8cf",
+    "https://github.com/litlfred/cat-harness-tools/blob/8691b09acc175c43e569a51e36dac14412d8b8cf/README.md",
+    "https://github.com/litlfred/cat-harness-tools/blob/8691b09acc175c43e569a51e36dac14412d8b8cf/AGENTS.md"
+  ]
+}

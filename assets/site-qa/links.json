@@ -1,23 +1,7 @@
 {
  "$schema": "site-link-report/v1",
- "pages": 1288,
+ "pages": 2923,
  "unresolved": [
-  {
-   "page": "en/cat-harness/attestations/folio-assistant-core/index.html",
-   "href": "../../../cat-harness-tools/qa-attestations/folio-assistant-core/test/attestations/block-qa/docs/source/guides-writing-a-document/1-scaffold-the-folio.attestations/"
-  },
-  {
-   "page": "en/cat-harness/attestations/folio-assistant-core/index.html",
-   "href": "../../../cat-harness-tools/qa-attestations/folio-assistant-core/test/attestations/block-qa/docs/source/process-publication-workflow/every-workflow-in-the-repo.attestations/"
-  },
-  {
-   "page": "en/cat-harness/attestations/folio-assistant-core/index.html",
-   "href": "../../../cat-harness-tools/qa-attestations/folio-assistant-core/test/attestations/block-qa/docs/source/process-publication-workflow/how-to-read-them.attestations/"
-  },
-  {
-   "page": "en/cat-harness/attestations/folio-assistant-core/index.html",
-   "href": "../../../cat-harness-tools/qa-attestations/folio-assistant-core/test/attestations/block-qa/docs/source/process-publication-workflow/the-work-plan-tasks-as-beans.attestations/"
-  },
   {
    "page": "en/folio-assistant-core/folio-reference/index.html",
    "href": "../bibliography/"

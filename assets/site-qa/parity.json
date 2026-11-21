@@ -32,13 +32,13 @@
   ]
  },
  "candidate": {
-  "pages": 1281,
+  "pages": 2901,
   "counts": {
    "siteNav": 0,
-   "search": 284,
-   "navbarRow": 284,
-   "rail": 1003,
-   "translationMeta": 283
+   "search": 1095,
+   "navbarRow": 1095,
+   "rail": 1819,
+   "translationMeta": 1087
   },
   "dirs": [
    "ar",
@@ -49,7 +49,9 @@
    "folio-assistant-core",
    "fr",
    "id-lookup",
+   "payload",
    "ru",
+   "slices",
    "zh"
   ],
   "index": [
@@ -61,13 +63,13 @@
  },
  "baseline": {
   "features": {
-   "pages": 1281,
+   "pages": 2901,
    "counts": {
     "siteNav": 0,
-    "search": 284,
-    "navbarRow": 284,
-    "rail": 1003,
-    "translationMeta": 283
+    "search": 1095,
+    "navbarRow": 1095,
+    "rail": 1819,
+    "translationMeta": 1087
    },
    "dirs": [
     "ar",
@@ -78,7 +80,9 @@
     "folio-assistant-core",
     "fr",
     "id-lookup",
+    "payload",
     "ru",
+    "slices",
     "zh"
    ],
    "index": [
@@ -88,6 +92,6 @@
     "translationMeta"
    ]
   },
-  "from": "d0e984034081"
+  "from": "559988aa5aa0"
  }
 }

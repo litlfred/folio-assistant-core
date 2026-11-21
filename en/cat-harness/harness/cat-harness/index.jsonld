@@ -1,0 +1,41 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/cat-harness/",
+  "url": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/cat-harness/",
+  "@type": "WebPage",
+  "name": "C@T Harness on Folio Assistant Core",
+  "about": {
+    "@id": "https://litlfred.github.io/cat-harness/",
+    "@type": "SoftwareSourceCode",
+    "identifier": "cat-harness",
+    "name": "C@T Harness",
+    "description": "computable adjudication and agentic test harness\n\ncaaat-harness\n\nca&at-harness\n\n.c&at-harness\n\n c@t-harness",
+    "version": "0.1.0",
+    "codeRepository": "https://github.com/litlfred/cat-harness",
+    "isBasedOn": [
+      {
+        "@id": "https://litlfred.github.io/bootstrap/"
+      }
+    ],
+    "additionalProperty": {
+      "@type": "PropertyValue",
+      "name": "pinnedCommit",
+      "value": "44f3c050ce5565cab593436a2450004e6dc7a4bb"
+    },
+    "keywords": [
+      "docs"
+    ]
+  },
+  "isPartOf": {
+    "@id": "https://litlfred.github.io/folio-assistant-core/",
+    "name": "Folio Assistant Core"
+  },
+  "significantLink": [
+    "https://litlfred.github.io/folio-assistant/#harness-cat-harness",
+    "https://github.com/litlfred/cat-harness/tree/44f3c050ce5565cab593436a2450004e6dc7a4bb",
+    "https://github.com/litlfred/cat-harness/blob/44f3c050ce5565cab593436a2450004e6dc7a4bb/README.md",
+    "https://github.com/litlfred/cat-harness/blob/44f3c050ce5565cab593436a2450004e6dc7a4bb/AGENTS.md"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/bootstrap-tools/",
+  "url": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/bootstrap-tools/",
+  "@type": "WebPage",
+  "name": "Bootstrap tools on Folio Assistant Core",
+  "about": {
+    "@type": "SoftwareSourceCode",
+    "identifier": "bootstrap-tools",
+    "name": "Bootstrap tools",
+    "description": "The Zod source of bootstrap's schemas, the generators that write bootstrap's JSON Schemas, schema page and READMEs, and the checks bootstrap's content must pass — runnable by an agent, with zod, liquidjs, Playwright and bpmn-js as its dependencies.",
+    "version": "0.1.0",
+    "codeRepository": "https://github.com/litlfred/bootstrap-tools",
+    "isBasedOn": [
+      {
+        "@id": "https://litlfred.github.io/bootstrap/"
+      }
+    ],
+    "additionalProperty": {
+      "@type": "PropertyValue",
+      "name": "pinnedCommit",
+      "value": "60e5ffc23b88137c0d9eaef00601da89237df094"
+    }
+  },
+  "isPartOf": {
+    "@id": "https://litlfred.github.io/folio-assistant-core/",
+    "name": "Folio Assistant Core"
+  },
+  "significantLink": [
+    "https://litlfred.github.io/folio-assistant/en/cat-harness/code/bootstrap-tools/",
+    "https://github.com/litlfred/bootstrap-tools/tree/60e5ffc23b88137c0d9eaef00601da89237df094",
+    "https://github.com/litlfred/bootstrap-tools/blob/60e5ffc23b88137c0d9eaef00601da89237df094/README.md",
+    "https://github.com/litlfred/bootstrap-tools/blob/60e5ffc23b88137c0d9eaef00601da89237df094/AGENTS.md"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/"
+  },
+  "@id": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/folio-assistant-core/",
+  "url": "https://litlfred.github.io/folio-assistant-core/en/cat-harness/harness/folio-assistant-core/",
+  "@type": "WebPage",
+  "name": "Folio Assistant Core on Folio Assistant Core",
+  "about": {
+    "@id": "https://litlfred.github.io/folio-assistant-core/",
+    "@type": "SoftwareSourceCode",
+    "identifier": "folio-assistant-core",
+    "name": "Folio Assistant Core",
+    "description": "What a folio IS — the content-object model, the block kinds, the adapters, and the `folio` graph typology itself.",
+    "version": "0.1.0",
+    "codeRepository": "https://github.com/litlfred/folio-assistant-core",
+    "isBasedOn": [
+      {
+        "@id": "https://litlfred.github.io/cat-harness/"
+      },
+      {
+        "identifier": "cat-harness-tools"
+      }
+    ],
+    "keywords": [
+      "document"
+    ]
+  },
+  "isPartOf": {
+    "@id": "https://litlfred.github.io/folio-assistant-core/",
+    "name": "Folio Assistant Core"
+  },
+  "significantLink": [
+    "https://github.com/litlfred/folio-assistant-core/tree/559988aa5aa0ff2ed5d8186545e9a2fcc08925b6",
+    "https://github.com/litlfred/folio-assistant-core/blob/559988aa5aa0ff2ed5d8186545e9a2fcc08925b6/README.md",
+    "https://github.com/litlfred/folio-assistant-core/blob/559988aa5aa0ff2ed5d8186545e9a2fcc08925b6/AGENTS.md"
+  ]
+}
