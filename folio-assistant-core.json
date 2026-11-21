@@ -350,6 +350,14 @@
       ]
     },
     {
+      "id": "attestations",
+      "path": "test/attestations/",
+      "description": "The JUDGEMENT half of this layer's QA verdicts: one `qa-attestations/v1` file per subject at `<family>/<mirrored subject path>.attestations.json`, kept on main where a `git rm` of derived results cannot reach it (owner ruling D2 (a), 2026-10-01; shape and read states in cat-harness-tools `schemas/sdlc/qa-attestations.ts`). At declaration: 4 `block-qa` files, reviewer verdicts on blocks of the publication-workflow and writing-a-document guides. Declared because the files were on main undeclared: the attestations dashboard listed them and linked a page for each, but node-kind pages are only written for declared directories, so a site build that refuses broken links refused those four links (cat-harness-tools#2345). Declared WITH its files, per bean dh4f.",
+      "graphTypologies": [
+        "attestations"
+      ]
+    },
+    {
       "id": "memory",
       "path": "memory/",
       "description": "Agent memory about content authoring, review and publication: lessons (block kinds, the document render path, normative statements, locale directories) an agent carries between sessions, one `\"$schema\": \"folio-memory/v1\"` node each. Read by cat-harness's `agent-memory` assembler alongside every other layer's declared `memory` directory.",
