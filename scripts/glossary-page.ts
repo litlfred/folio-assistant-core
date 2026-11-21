@@ -113,6 +113,7 @@ import {
 import { checkoutRootFor } from "./lib/checkout-root.ts";
 import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, resourcePages, type NamespaceScheme, type ServedDocument } from "../schemas/glossary-namespace.ts";
 import { buildVocabularyOne } from "@litlfred/cat-harness-tools/scripts/publish-instance-context.ts";
+import { propertyIri } from "@litlfred/cat-harness-tools/schemas/kg/namespaces.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = checkoutRootFor(CORE);
@@ -1434,6 +1435,20 @@ const GENERATED_FM = `generated: ${GENERATED_BY} — do not hand-edit; run \`bun
 const GENERATED_JSON = `${GENERATED_BY} — do not hand-edit; run \`bun run cat glossary:page\``;
 
 /**
+ * A SKOS document's `@context` with `_generated` mapped to a term, the way
+ * `gen-subgraph-jsonld.ts` maps it on every subgraph file: `generatedNote`,
+ * kept verbatim as `@json`. Unmapped, a JSON-LD processor drops the key as an
+ * `invalid property`, and `publish:verify`'s `jsonld-expand` fails every
+ * scheme whose context binds a namespace of ours (folio-assistant#3190: the
+ * five translated schemes, once their context gained `fa:`). The note says who
+ * wrote the file, not anything about the concepts.
+ */
+export function withGeneratedTerm(context: unknown): unknown {
+  const term = { _generated: { "@id": propertyIri("generatedNote"), "@type": "@json" } };
+  return Array.isArray(context) ? [...context, term] : { ...(context as Record<string, unknown>), ...term };
+}
+
+/**
  * Render with the page's own size in it. Two passes: the page states its own
  * size, so it is rendered once to measure and once to say so. The size is
  * rounded, which the few bytes of the statement itself cannot move.
@@ -2194,9 +2209,10 @@ export function outputs(
     // reader that looks for them at the head — a JSON-LD processor and every
     // validator of `folio-glossary/v1` — so the declaration goes after them.
     // `declaresGenerated` parses rather than matching the first key (`ws99`),
-    // which is what makes that free. On the SKOS side `_generated` is an
-    // UNMAPPED term: the `@context` declares `skos` and `dcterms` and no
-    // `@vocab`, so a JSON-LD processor drops it and the graph is unchanged.
+    // which is what makes that free. On the SKOS side `_generated` is a
+    // MAPPED term ({@link withGeneratedTerm}): an unmapped key is dropped as an
+    // `invalid property`, which `publish:verify`'s `jsonld-expand` fails once
+    // the context binds a namespace of ours (`fa:`, for a translated scheme).
     const matches = auto.bySource.get(sourceKey(s));
     const skos = toSkos(
       s.extracted ? s.glossary : withTranslations(s, translations),
@@ -2204,7 +2220,7 @@ export function outputs(
       matches ? { matches, agent } : undefined,
     );
     const { "@context": context, ...skosRest } = skos;
-    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": context, _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
+    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": withGeneratedTerm(context), _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
     if (s.extracted) {
       const { $schema, ...rest } = s.glossary;
       out.set(extractedFile(s), `${JSON.stringify({ $schema, _generated: GENERATED_JSON, ...rest }, null, 2)}\n`);
