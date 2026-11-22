@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "5f31246bb322cfef057cbb55f7d09e036d3e30a3",
+          "ref": "8ab72ec6658e1514c7c2a187144c9362c1d4331a",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,7 +40,7 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-22",
-              "ref": "5f31246bb322cfef057cbb55f7d09e036d3e30a3",
+              "ref": "8ab72ec6658e1514c7c2a187144c9362c1d4331a",
               "evidence": "litlfred 2026-11-22T15:33:16Z, decision card cmsg_017WNUkNK8kdDziPK58Pv6G9THqoGPsH9aB3w92kZZ2w7n in the project chat: \"A. Yes, +12 hours\" on \"Open a new 12-hour merge window?\" — non-content merge and re-pin window to 2026-11-23T03:33Z"
             }
           }
