@@ -159,7 +159,7 @@
 
 <link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><script src="../../../../assets/draft-banner.js" defer data-fa-page-layout></script><noscript data-fa-draft-noscript><link rel="stylesheet" href="../../../../assets/draft-banner-noscript.css"></noscript><meta name="fa-pinned-data" content="../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/remote-mount.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#mount-subscribe-or-associate-choose-first","label":"Mount, subscribe or associate: choose first"},{"href":"#the-two-halves-of-the-declaration","label":"The two halves of the declaration"},{"href":"#hydrated-the-index-files-are-published-per-pin-in-a-package","label":"Hydrated: the index files are published per pin, in a package"},{"href":"#tools-choose-by-id-mount-runnable","label":"Tools: choose by id, mount runnable"},{"href":"#why-the-default-path-is-the-home-path","label":"Why the default path is the home path"},{"href":"#the-closure","label":"The closure"},{"href":"#the-lock-and-the-three-states","label":"The lock, and the three states","children":[{"href":"#a-fresh-clone-the-roots-cat-bootstrap","label":"A fresh clone: the root’s cat bootstrap","depth":1},{"href":"#re-pinning-from-a-checkout-mounted-from-the-lock","label":"Re-pinning: from a checkout mounted from the lock","depth":1},{"href":"#the-layers-cache-one-fetch-every-byte-still-verified","label":"The layers cache: one fetch, every byte still verified","depth":1}],"fold":"3 sub-sections"},{"href":"#a-changed-lock-re-renders-the-agent-surface","label":"A changed lock re-renders the agent surface"},{"href":"#trust-what-lets-a-mount-proceed-h8","label":"Trust: what lets a mount proceed (H8)","children":[{"href":"#standing-consent-a-site-keeps-itself-on-an-upstream-branch","label":"Standing consent: a site keeps itself on an upstream branch","depth":1}],"fold":"1 sub-section"},{"href":"#publishing-a-remote-mounted-downstream--provision-gh-pages-first","label":"Publishing a remote-mounted downstream — provision gh-pages first"},{"href":"#never","label":"Never"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/remote-mount.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#mount-subscribe-or-associate-choose-first","label":"Mount, subscribe or associate: choose first"},{"href":"#the-two-halves-of-the-declaration","label":"The two halves of the declaration"},{"href":"#hydrated-the-index-files-are-published-per-pin-in-a-package","label":"Hydrated: the index files are published per pin, in a package"},{"href":"#tools-choose-by-id-mount-runnable","label":"Tools: choose by id, mount runnable"},{"href":"#why-the-default-path-is-the-home-path","label":"Why the default path is the home path"},{"href":"#the-closure","label":"The closure"},{"href":"#the-lock-and-the-three-states","label":"The lock, and the three states","children":[{"href":"#a-fresh-clone-the-roots-cat-bootstrap","label":"A fresh clone: the root’s cat bootstrap","depth":1},{"href":"#re-pinning-from-a-checkout-mounted-from-the-lock","label":"Re-pinning: from a checkout mounted from the lock","depth":1},{"href":"#the-layers-cache-one-fetch-every-byte-still-verified","label":"The layers cache: one fetch, every byte still verified","depth":1}],"fold":"3 sub-sections"},{"href":"#a-changed-lock-re-renders-the-agent-surface","label":"A changed lock re-renders the agent surface"},{"href":"#trust-what-lets-a-mount-proceed-h8","label":"Trust: what lets a mount proceed (H8)","children":[{"href":"#standing-consent-a-site-keeps-itself-on-an-upstream-branch","label":"Standing consent: a site keeps itself on an upstream branch","depth":1}],"fold":"1 sub-section"},{"href":"#publishing-a-remote-mounted-downstream--provision-gh-pages-first","label":"Publishing a remote-mounted downstream — provision gh-pages first"},{"href":"#when-the-session-start-hook-did-not-run","label":"When the session-start hook did not run"},{"href":"#never","label":"Never"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -1040,6 +1040,59 @@ never forced; without the flag it only reports <code class="language-plaintext h
 command), then set Pages to <strong>“Deploy from a branch: gh-pages, / (root)”</strong>.
 A worked example is in
 <a href="https://github.com/litlfred/cat-harness/blob/main/skills/conduct/conduct-core/repo-conversion.md"><code class="language-plaintext highlighter-rouge">repo-conversion</code></a> §5.</p>
+<h2 id="when-the-session-start-hook-did-not-run">
+  
+  
+    <a href="#when-the-session-start-hook-did-not-run" class="anchor-heading" aria-labelledby="when-the-session-start-hook-did-not-run"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> When the session-start hook did not run
+  
+  
+</h2>
+    
+
+<p>Everything above that says “the session-start hook already runs this”
+assumes the hook ran. It runs only when a session <strong>starts inside the
+checkout</strong>. Claude Code reads <code class="language-plaintext highlighter-rouge">.claude/settings.json</code> from the directory the
+session opened in, and other agents read their own settings file the same
+way. So the hook does not run when:</p>
+
+<ul>
+  <li>the repository was attached or cloned <strong>after</strong> the session started (a
+cloud session that adds a repository partway through, a <code class="language-plaintext highlighter-rouge">git clone</code> you
+ran yourself);</li>
+  <li>the session opened in a parent directory, a sibling checkout or a home
+directory, and you changed into the checkout later;</li>
+  <li>the agent reading the checkout has no hook support at all.</li>
+</ul>
+
+<p>Nothing reports the skipped hook. The checkout looks normal, and what is
+missing shows up later as a different fault: an empty <code class="language-plaintext highlighter-rouge">beans list</code> that
+reads as “no work”, a platform path such as <code class="language-plaintext highlighter-rouge">folio-assistant/</code> that does not
+exist so a validator or <code class="language-plaintext highlighter-rouge">qa-sweep</code> “cannot run”, a Lean cache that was never
+restored. Each of those then gets reported as a limit of the environment,
+when the fix was one command.</p>
+
+<p><strong>So check before your first durable step, and run the hook by hand when it
+did not run.</strong> From the checkout root:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>jq <span class="nt">-r</span> <span class="s1">'.hooks.SessionStart[].hooks[].command'</span> .claude/settings.json
+</code></pre></div></div>
+
+<p>lists the commands in order. Run each one from the checkout root, in that
+order, before anything else in the session. A command that ends in <code class="language-plaintext highlighter-rouge">&amp;</code> is a
+background build; start it and go on. When the checkout has no
+<code class="language-plaintext highlighter-rouge">.claude/settings.json</code>, run <code class="language-plaintext highlighter-rouge">bun run cat state:mount</code>, which is the one step
+every harnessed checkout’s hook carries.</p>
+
+<p>Two checks tell you whether the hook ran, without trusting memory:</p>
+
+<ul>
+  <li>every state graph the checkout declares on a branch (<code class="language-plaintext highlighter-rouge">beans/</code>, <code class="language-plaintext highlighter-rouge">todos/</code>)
+is on disk;</li>
+  <li>every remote-mounted layer the checkout uses is on disk at its mount path.</li>
+</ul>
+
+<p>If either fails, the hook did not run. Do not report “the tool is not
+available” until you have run it.</p>
 <h2 id="never">
   
   
@@ -1050,6 +1103,8 @@ A worked example is in
     
 
 <ul>
+  <li><strong>Never report a mounted path as unavailable</strong> before checking that the
+session-start hook ran. See “When the session-start hook did not run”.</li>
   <li><strong>Never add a submodule</strong> to get a dependency, and never clone into <code class="language-plaintext highlighter-rouge">.deps/</code>.</li>
   <li><strong>Never pin a branch or an abbreviated SHA.</strong> The schema refuses both.</li>
   <li><strong>Never move a pin back.</strong> Align layers forward to the newest commit any

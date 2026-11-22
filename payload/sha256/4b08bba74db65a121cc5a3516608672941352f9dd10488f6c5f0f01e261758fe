@@ -554,8 +554,54 @@ command), then set Pages to **"Deploy from a branch: gh-pages, / (root)"**.
 A worked example is in
 [`repo-conversion`](../../conduct/conduct-core/repo-conversion.md) §5.
 
+## When the session-start hook did not run
+
+Everything above that says "the session-start hook already runs this"
+assumes the hook ran. It runs only when a session **starts inside the
+checkout**. Claude Code reads `.claude/settings.json` from the directory the
+session opened in, and other agents read their own settings file the same
+way. So the hook does not run when:
+
+- the repository was attached or cloned **after** the session started (a
+  cloud session that adds a repository partway through, a `git clone` you
+  ran yourself);
+- the session opened in a parent directory, a sibling checkout or a home
+  directory, and you changed into the checkout later;
+- the agent reading the checkout has no hook support at all.
+
+Nothing reports the skipped hook. The checkout looks normal, and what is
+missing shows up later as a different fault: an empty `beans list` that
+reads as "no work", a platform path such as `folio-assistant/` that does not
+exist so a validator or `qa-sweep` "cannot run", a Lean cache that was never
+restored. Each of those then gets reported as a limit of the environment,
+when the fix was one command.
+
+**So check before your first durable step, and run the hook by hand when it
+did not run.** From the checkout root:
+
+```bash
+jq -r '.hooks.SessionStart[].hooks[].command' .claude/settings.json
+```
+
+lists the commands in order. Run each one from the checkout root, in that
+order, before anything else in the session. A command that ends in `&` is a
+background build; start it and go on. When the checkout has no
+`.claude/settings.json`, run `bun run cat state:mount`, which is the one step
+every harnessed checkout's hook carries.
+
+Two checks tell you whether the hook ran, without trusting memory:
+
+- every state graph the checkout declares on a branch (`beans/`, `todos/`)
+  is on disk;
+- every remote-mounted layer the checkout uses is on disk at its mount path.
+
+If either fails, the hook did not run. Do not report "the tool is not
+available" until you have run it.
+
 ## Never
 
+- **Never report a mounted path as unavailable** before checking that the
+  session-start hook ran. See "When the session-start hook did not run".
 - **Never add a submodule** to get a dependency, and never clone into `.deps/`.
 - **Never pin a branch or an abbreviated SHA.** The schema refuses both.
 - **Never move a pin back.** Align layers forward to the newest commit any

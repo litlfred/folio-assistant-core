@@ -1,11 +1,11 @@
 {
   "$schema": "folio-slice-sqlite/v1",
   "slice": "kg",
-  "file": "kg.d2c81968b4c7abff2fb65d8caf39d0590cf6d8d2c7f436aeedb21621ccdb9da7.sqlite3",
+  "file": "kg.16c5c20333d3aa46a29462e74cc42a26970d240c1519b6fc77a6d07087606cca.sqlite3",
   "schemaVersion": 2,
-  "sha256": "d2c81968b4c7abff2fb65d8caf39d0590cf6d8d2c7f436aeedb21621ccdb9da7",
+  "sha256": "16c5c20333d3aa46a29462e74cc42a26970d240c1519b6fc77a6d07087606cca",
   "bytes": 5021696,
-  "contentDigest": "37a05000a5baf3d23a63b50fe44b92de0fe97d3b5435cab11fab0f26c08f991c",
+  "contentDigest": "33cd19cf9f38d51fa88fffcb1334f30670cfc0e21115b01c0e066e0e1c517472",
   "sqliteVersion": "3.53.4",
   "pageSize": 4096,
   "fts5": {
@@ -24,10 +24,10 @@
   "payloads": {
     "mode": "published",
     "count": 305,
-    "bytes": 3219383
+    "bytes": 3221529
   },
   "rows": {
-    "nodes": 5317,
+    "nodes": 5318,
     "edges": 17202,
     "dangling": 12
   },
