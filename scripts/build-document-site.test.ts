@@ -12,6 +12,8 @@ import { join, resolve } from "node:path";
 import { LAZY_OPEN, afterTitle, buildDocumentSite, contentsList, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
+import { checkSiteIris } from "@litlfred/cat-harness-tools/scripts/check-site-iris.ts";
+import { FOLIO_BASE } from "@litlfred/cat-harness-tools/schemas/kg/jsonld.js";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
 
@@ -110,6 +112,30 @@ describe("build-document-site", () => {
     expect(node.label).toBe("prose:overview");
     const graph = JSON.parse(readFileSync(join(out, "handbook", "graph.jsonld"), "utf-8")) as { "@graph": Array<{ label: string }> };
     expect(graph["@graph"].map((n) => n.label)).toEqual(["prose:overview"]);
+  });
+
+  // Every IRI a published copy of a node mints is served by the site, judged
+  // by the check the site publish runs (IRI fix 1A, f): the `kg/` copy, the
+  // document's `graph.jsonld` and the node at its IRI. On smart-ra the first
+  // two minted 933 IRIs each that nothing served (2026-11-19).
+  test("everyMintedNodeIriIsServed", async () => {
+    const d = scaffold();
+    // A scaffold outside this checkout is no layer the write boundary rebases,
+    // so its nodes keep the base they were generated with; the site is
+    // declared at that base, so every IRI they mint is this site's to serve.
+    const decl = join(d, "handbook.json");
+    writeFileSync(decl, JSON.stringify({ ...JSON.parse(readFileSync(decl, "utf-8")), iriBase: FOLIO_BASE, version: "0.1.0" }, null, 2));
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    const iri = `${FOLIO_BASE}papers/handbook/blocks/prose-overview`;
+    const graph = JSON.parse(readFileSync(join(out, "handbook", "graph.jsonld"), "utf-8")) as { "@graph": Array<{ "@id": string }> };
+    expect(graph["@graph"].map((n) => n["@id"])).toEqual([iri]);
+    expect(readFileSync(join(out, "papers", "handbook", "blocks", "prose-overview", "index.html"), "utf-8")).toContain(`<code>${iri}</code>`);
+    const report = checkSiteIris(out, FOLIO_BASE, 0);
+    expect(report.findings.filter((f) => f.kind !== "unserved-context")).toEqual([]);
+    // The kg/ copy, graph.jsonld and the node at its IRI: three documents, each minting it.
+    expect(report.documents).toBeGreaterThanOrEqual(3);
   });
 
   test("editRuntimeAndValues", async () => {
