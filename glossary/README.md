@@ -10,6 +10,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `glossary`, hold
 
 | file | what it is | used by |
 |---|---|---|
+| [`cat-harness.glossary.json`](cat-harness.glossary.json) | Folio Assistant platform terms (cat-harness) |  |
 | [`folio-assistant-core.glossary.json`](folio-assistant-core.glossary.json) | Folio Assistant platform terms |  |
 | [`guideline-domain.glossary.json`](guideline-domain.glossary.json) | Guideline domain |  |
 | [`generated/`](generated/) | _nothing declares what this holds_ | |

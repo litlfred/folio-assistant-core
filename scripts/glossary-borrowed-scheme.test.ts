@@ -1,15 +1,17 @@
 /**
- * A scheme a layer declares about a layer it MOUNTS is minted, served and
- * linked on the declaring layer's own site.
+ * A scheme a layer declares about a layer it MOUNTS but does not `need` is
+ * minted, served and linked on the declaring layer's own site.
  *
- * smart-ra's `organizations` scheme cites `who-iris/library/…`, and who-iris is
- * a mount. Credited to who-iris, its IRIs went to who-iris's namespace and its
- * term pages to `instance/who-iris/`. smart-ra's site build (`--instance
- * dpi-h-ra`) skips who-iris, and who-iris's site is built from a repository
- * that never holds the file, so the 17 IRIs smart-ra cites, and the Spanish
- * document's term links to the platform's who-iris pages, were all 404s
+ * A document folio's scheme of organizations cited a library layer the folio
+ * mounts for its documents. Credited to that layer, its IRIs went to the
+ * layer's namespace and its term pages to the layer's instance route. The
+ * folio's site build (`--instance <folio>`) skips that layer, and the layer's
+ * own site is built from a repository that never holds the file, so the 17
+ * IRIs the folio cites, and a translated document's term links, were all 404s
  * (2026-11-23). The fixture is that shape: a host layer `hb`, a mounted layer
- * `lib`, and `hb`'s scheme citing `lib/library/…`.
+ * `lib` it does not need, and `hb`'s scheme citing `lib/library/…`. A second
+ * mounted layer `base`, which `hb` needs, keeps the crediting the layers below
+ * rely on.
  */
 import { afterAll, describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -27,19 +29,23 @@ const write = (path: string, body: unknown) => {
   mkdirSync(join(repo, path, ".."), { recursive: true });
   writeFileSync(join(repo, path), typeof body === "string" ? body : JSON.stringify(body));
 };
-const declaration = (name: string, iriBase?: string) => ({
+const declaration = (name: string, iriBase?: string, needs?: string[]) => ({
   $schema: "cat-harness-declaration/1.0.0",
   name,
   title: name,
   version: "0.1.0",
   ...(iriBase ? { iriBase } : {}),
+  ...(needs ? { needs } : {}),
   directories: [{ id: "glossary", path: "glossary/", graphTypologies: ["glossary"], description: "The glossary." }],
 });
-write("hb.json", declaration("hb", HB));
+write("hb.json", declaration("hb", HB, ["base"]));
 write("lib/lib.json", declaration("lib"));
+write("base/base.json", declaration("base"));
+write("base/glossary/README.md", "base's own glossary directory.");
+write("base/schemas/role.ts", "export {};");
 write("lib/glossary/README.md", "lib's own glossary directory.");
 write("lib/library/handbook/index.md", "A handbook lib catalogues.");
-write("index.lock.json", { instances: [{ instance: "lib", path: "lib" }] });
+write("index.lock.json", { instances: [{ instance: "lib", path: "lib" }, { instance: "base", path: "base" }] });
 write("glossary/organizations.glossary.json", {
   $schema: "folio-glossary/v1",
   id: "organizations",
@@ -52,12 +58,12 @@ write("glossary/organizations.glossary.json", {
 });
 afterAll(() => rmSync(repo, { recursive: true, force: true }));
 
-describe("a scheme declared about a mounted layer", async () => {
+describe("a scheme declared about a mounted layer it does not need", async () => {
   const c = collect(repo);
   const orgs = c.glossaries.find((s) => s.glossary.id === "organizations")!;
 
   test("the mount is another repository", () => {
-    expect(repositoryRoots(repo)).toEqual([join(repo, "lib"), repo]);
+    expect(repositoryRoots(repo)).toEqual([join(repo, "base"), join(repo, "lib"), repo]);
   });
 
   test("is the declaring layer's, minted in its namespace", () => {
@@ -110,6 +116,22 @@ describe("a scheme declared about a mounted layer", async () => {
       expect({ instance: own.instance, declaredBy: own.declaredBy }).toEqual({ instance: "lib", declaredBy: "lib" });
     } finally {
       rmSync(join(repo, "lib/glossary/catalogue.glossary.json"));
+    }
+  });
+
+  test("a scheme about a mounted layer the declarer needs stays that layer's", () => {
+    write("glossary/roles.glossary.json", {
+      $schema: "folio-glossary/v1",
+      id: "roles",
+      title: "Roles",
+      source: "base/schemas/role.ts",
+      terms: [{ id: "actor", prefLabel: "actor", status: "candidate" }],
+    });
+    try {
+      const roles = collect(repo).glossaries.find((s) => s.glossary.id === "roles")!;
+      expect({ instance: roles.instance, declaredBy: roles.declaredBy }).toEqual({ instance: "base", declaredBy: "hb" });
+    } finally {
+      rmSync(join(repo, "glossary/roles.glossary.json"));
     }
   });
 });

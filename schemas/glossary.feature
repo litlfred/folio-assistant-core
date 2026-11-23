@@ -223,9 +223,8 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     Then there is more than one and none repeats
 
   @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::termMintedInOwnersNamespace
-  Scenario: (c) every term with a repository source is minted in the namespace of the layer whose root holds it, authored and extracted alike, within the declaring layer's repository
+  Scenario: (c) every term with a repository source is minted in the namespace of the layer whose root holds it, authored and extracted alike
     When every term with a repository source is checked against the layer holding it
-    And a source held by a layer mounted from another repository counts for the layer that declares the scheme
     Then more than 1000 terms and at least one authored term are checked
     And every IRI is in its owner's namespace
 
@@ -234,9 +233,8 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     Given an authored scheme whose terms are sourced in two layers
     When its owner is resolved
     Then with no defining source it is an error
-    And read as one repository, with a defining source, or one term, the owner is cat-harness-tools
+    And with a defining source, or one term, the owner is cat-harness-tools
     And with no terms the owner is folio-assistant-core
-    And read with each layer its own repository, as mounts are, a source in cat-harness-tools leaves the owner folio-assistant-core
     And paths and IRIs are resolved to owners and repository paths as expected
 
   @test:schemas/glossary.test.ts::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::requiresOnlyEarlierTerms
