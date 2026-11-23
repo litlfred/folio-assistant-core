@@ -9,6 +9,13 @@ may import from the harness, and the harness may never import from it. That
 direction is checked — `bun run cat check:partition:edges` reports any edge running
 the wrong way.
 
+> **New here?** Read [`SURVEY.md`](SURVEY.md) first: a survey of agentic
+> authoring with folio-assistant — starting a document in an empty repository,
+> the data models, mechanical and agentic validation, mathematical results as a
+> (Lean, narrative proof, narrative statement) triple checked by blind two-way
+> translation, library ingestion, compute witnesses, and the separation of
+> mathematics from measurement.
+
 **Contents**
 
 <!-- readme:toc:begin -->
