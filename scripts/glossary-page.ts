@@ -113,6 +113,7 @@ import {
 import { checkoutRootFor } from "./lib/checkout-root.ts";
 import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, resourcePages, type NamespaceScheme, type ServedDocument } from "../schemas/glossary-namespace.ts";
 import { buildVocabularyOne } from "@litlfred/cat-harness-tools/scripts/publish-instance-context.ts";
+import { propertyIri } from "@litlfred/cat-harness-tools/schemas/kg/namespaces.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = checkoutRootFor(CORE);
@@ -833,7 +834,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
     .flatMap((s) =>
       s.glossary.terms.map((t) => ({ anchor: anchorOf(s, t.id), iri: t.iri ?? termIri(s.ns, s.glossary, t.id), scheme: s.glossary.id, id: t.id, label: first(t.prefLabel) })),
     );
-  DEPICTIONS = await archimateDepictions(repo, terms);
+  DEPICTIONS = await archimateDepictions(repo, terms, INTO_SITE ? { site: SITE, ...(ONLY !== undefined ? { own: ONLY } : {}) } : undefined);
   return DEPICTIONS;
 }
 
@@ -841,7 +842,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
 function depictionLine(anchor: string): string[] {
   const d = DEPICTIONS.get(anchor);
   if (!d) return [];
-  const a = (x: { name: string; page: string }) => `<a href="{{ '${x.page}' | relative_url }}">${esc(x.name)}</a>`;
+  const a = (x: { name: string; page: string }) => `<a href="${/^https?:\/\//.test(x.page) ? esc(x.page) : `{{ '${x.page}' | relative_url }}`}">${esc(x.name)}</a>`;
   const els = d.elements.map((e) => `${a(e)} <span class="fa-gloss-meta">(${esc(e.type)})</span>`).join(", ");
   const views = d.views.length ? `; views: ${d.views.map(a).join(", ")}` : "";
   return [`<p class="fa-gloss-archimate">Depicted in ArchiMate ${esc(d.instance)} ${esc(d.model)}: ${els}${views}</p>`];
@@ -1432,6 +1433,20 @@ const GENERATED_FM = `generated: ${GENERATED_BY} — do not hand-edit; run \`bun
 
 /** The same fact for a JSON file, as a top-level `_generated`. */
 const GENERATED_JSON = `${GENERATED_BY} — do not hand-edit; run \`bun run cat glossary:page\``;
+
+/**
+ * A SKOS document's `@context` with `_generated` mapped to a term, the way
+ * `gen-subgraph-jsonld.ts` maps it on every subgraph file: `generatedNote`,
+ * kept verbatim as `@json`. Unmapped, a JSON-LD processor drops the key as an
+ * `invalid property`, and `publish:verify`'s `jsonld-expand` fails every
+ * scheme whose context binds a namespace of ours (folio-assistant#3190: the
+ * five translated schemes, once their context gained `fa:`). The note says who
+ * wrote the file, not anything about the concepts.
+ */
+export function withGeneratedTerm(context: unknown): unknown {
+  const term = { _generated: { "@id": propertyIri("generatedNote"), "@type": "@json" } };
+  return Array.isArray(context) ? [...context, term] : { ...(context as Record<string, unknown>), ...term };
+}
 
 /**
  * Render with the page's own size in it. Two passes: the page states its own
@@ -2194,9 +2209,10 @@ export function outputs(
     // reader that looks for them at the head — a JSON-LD processor and every
     // validator of `folio-glossary/v1` — so the declaration goes after them.
     // `declaresGenerated` parses rather than matching the first key (`ws99`),
-    // which is what makes that free. On the SKOS side `_generated` is an
-    // UNMAPPED term: the `@context` declares `skos` and `dcterms` and no
-    // `@vocab`, so a JSON-LD processor drops it and the graph is unchanged.
+    // which is what makes that free. On the SKOS side `_generated` is a
+    // MAPPED term ({@link withGeneratedTerm}): an unmapped key is dropped as an
+    // `invalid property`, which `publish:verify`'s `jsonld-expand` fails once
+    // the context binds a namespace of ours (`fa:`, for a translated scheme).
     const matches = auto.bySource.get(sourceKey(s));
     const skos = toSkos(
       s.extracted ? s.glossary : withTranslations(s, translations),
@@ -2204,7 +2220,7 @@ export function outputs(
       matches ? { matches, agent } : undefined,
     );
     const { "@context": context, ...skosRest } = skos;
-    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": context, _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
+    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": withGeneratedTerm(context), _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
     if (s.extracted) {
       const { $schema, ...rest } = s.glossary;
       out.set(extractedFile(s), `${JSON.stringify({ $schema, _generated: GENERATED_JSON, ...rest }, null, 2)}\n`);

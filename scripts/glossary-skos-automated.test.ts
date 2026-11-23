@@ -20,7 +20,7 @@ import jsonld from "jsonld";
 import { localLoader } from "@litlfred/cat-harness-tools/scripts/publish-verify.ts";
 import type { SchemeState } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
 import { AUTOMATED_RUN, automatedGraphIri, termIri, toSkos, type Glossary } from "../schemas/glossary.ts";
-import { MATCHING_AGENT, automatedMatches, matchingAgentIri, sourceKey, type GlossarySource } from "./glossary-page.ts";
+import { MATCHING_AGENT, automatedMatches, matchingAgentIri, sourceKey, withGeneratedTerm, type GlossarySource } from "./glossary-page.ts";
 import { checkoutRootFor } from "./lib/checkout-root.ts";
 
 const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
@@ -139,16 +139,24 @@ describe("the emitted SKOS, read through jsonld.js", () => {
   // The shape `outputs()` writes: `_generated` second.
   const published = (d: Record<string, unknown>) => {
     const { "@context": context, ...rest } = d;
-    return { "@context": context, _generated: "generated — do not hand-edit", ...rest };
+    return { "@context": withGeneratedTerm(context), _generated: "generated — do not hand-edit", ...rest };
   };
 
   test("provAddsNoWarning", async () => {
-    // `_generated` is an unmapped key, dropped by design (see `outputs()`),
-    // and jsonld.js reports the drop as "invalid property" under the plain
-    // context today. The PROV context must not add anything to that.
+    // The PROV context must add no warning to the published shape.
     const before = await eventsOf(published(toSkos(tools.glossary, tools.ns)));
     const after = await eventsOf(published(doc));
     expect(after.events).toEqual(before.events);
+  });
+
+  test("publishedGeneratedNoteIsMapped", async () => {
+    // `_generated` is a term, not a dropped key: unmapped, jsonld.js reports
+    // "invalid property" and `publish:verify` fails the scheme
+    // (folio-assistant#3190). Both context shapes: plain, and PROV's array.
+    for (const d of [toSkos(platformA.glossary, platformA.ns), doc]) {
+      const { events } = await eventsOf(published(d));
+      expect(events).toEqual([]);
+    }
   });
 
   test("expandsWithoutWarning", async () => {
