@@ -526,6 +526,10 @@ describe("extraction helpers", () => {
  * over the REAL repository and works its answer out independently of
  * `collect()`: the layer holding a path is found here by walking the
  * declared roots, not by calling the code under test.
+ *
+ * Held to one repository (2026-11-23): a source in a layer mounted from
+ * another repository is a citation, and the term stays in the namespace of
+ * the layer that declares it, the only one whose site holds the file.
  */
 describe("every term in the namespace of the instance that owns its source", () => {
   const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
@@ -540,6 +544,19 @@ describe("every term in the namespace of the instance that owns its source", () 
     const p = resolve(REPO, path);
     return roots.find((r) => p === r.root || p.startsWith(`${r.root}/`))?.decl.name;
   };
+  // Independent too: the checkout and each directory its lock mounts are the repositories.
+  const lockFile = join(REPO, "index.lock.json");
+  const mounted = existsSync(lockFile)
+    ? ((JSON.parse(readFileSync(lockFile, "utf-8")) as { instances?: Array<{ path?: string }> }).instances ?? []).flatMap((i) => (i.path ? [resolve(REPO, i.path)] : []))
+    : [];
+  const repositories = [resolve(REPO), ...mounted].sort((a, b) => b.length - a.length);
+  const repositoryOfName = (name: string | undefined) => {
+    const root = roots.find((r) => r.decl.name === name)?.root;
+    return root === undefined ? undefined : repositories.find((r) => root === r || root.startsWith(`${r}/`));
+  };
+  /** `held`, unless it is another repository's than `declaredBy`'s: then `declaredBy`. */
+  const credited = (held: string | undefined, declaredBy: string | undefined) =>
+    held !== undefined && declaredBy !== undefined && repositoryOfName(held) !== repositoryOfName(declaredBy) ? declaredBy : held;
   // A repository path is one that exists; a scheme's dcterms:source may be prose.
   const isPath = (src?: string) =>
     !!src && !/^[a-z][a-z0-9+.-]*:\/\//i.test(src) && existsSync(resolve(REPO, src.split("#", 2)[0]!));
@@ -568,7 +585,7 @@ describe("every term in the namespace of the instance that owns its source", () 
       const defining = isPath(s.glossary.source) ? holder(s.glossary.source!.split("#", 2)[0]!) : undefined;
       for (const t of s.glossary.terms) {
         if (!isPath(t.source)) continue;
-        const owner = defining ?? holder(t.source!.split("#", 2)[0]!);
+        const owner = credited(defining ?? holder(t.source!.split("#", 2)[0]!), s.declaredBy);
         const ns = owner ? nsOfName.get(owner) : undefined;
         checked++;
         if (!s.extracted) authored++;
@@ -590,13 +607,21 @@ describe("every term in the namespace of the instance that owns its source", () 
         { id: "b", prefLabel: "b", status: "candidate", source: "folio-assistant-core/schemas/glossary.ts" },
       ],
     });
-    expect("error" in schemeOwner(REPO, mixed, "folio-assistant-core", owners)).toBe(true);
+    // Read as ONE repository (`[REPO]`), as a folio and its sub-layers are:
+    // the crediting rules themselves.
+    const one = [resolve(REPO)];
+    expect("error" in schemeOwner(REPO, mixed, "folio-assistant-core", owners, one)).toBe(true);
     // The code-list case: the scheme names the layer that DEFINES it.
-    expect(schemeOwner(REPO, { ...mixed, source: "cat-harness-tools/schemas/content/odrl.ts" }, "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
+    expect(schemeOwner(REPO, { ...mixed, source: "cat-harness-tools/schemas/content/odrl.ts" }, "folio-assistant-core", owners, one)).toEqual({ owner: "cat-harness-tools" });
     // One layer holds every source: that layer, not the declaring one.
-    expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
+    expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners, one)).toEqual({ owner: "cat-harness-tools" });
     // No repository source at all: the layer whose directory holds the file.
-    expect(schemeOwner(REPO, g({ terms: [] }), "folio-assistant-core", owners)).toEqual({ owner: "folio-assistant-core" });
+    expect(schemeOwner(REPO, g({ terms: [] }), "folio-assistant-core", owners, one)).toEqual({ owner: "folio-assistant-core" });
+    // Each layer its own repository, as mounts are: a source in another
+    // repository is cited, never credited (2026-11-23).
+    const each = [resolve(REPO), ...owners.map((o) => o.root)].sort((a, b) => b.length - a.length);
+    expect(schemeOwner(REPO, { ...mixed, source: "cat-harness-tools/schemas/content/odrl.ts" }, "folio-assistant-core", owners, each)).toEqual({ owner: "folio-assistant-core" });
+    expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners, each)).toEqual({ owner: "folio-assistant-core" });
     // A sub-layer, never the root, holds a path inside it.
     expect(ownerOfPath(REPO, "cat-harness-tools/schemas/content/odrl.ts", owners)).toBe("cat-harness-tools");
     // A path at the index root is held by NO layer. This read

@@ -339,18 +339,54 @@ export function ownerOfPath(repo: string, path: string, owners: readonly Instanc
 }
 
 /**
+ * The root of every repository in the checkout at `repo`: the checkout itself
+ * and each layer its `index.lock.json` mounts, longest first. A mount is
+ * another repository's bytes laid down at its pin; the checkout's own layers,
+ * sub-layers included, are one repository.
+ */
+export function repositoryRoots(repo: string): string[] {
+  const root = resolve(repo);
+  const mounts = [...mountedInstances(root).values()].map((p) => resolve(root, p)).filter((d) => d !== root);
+  return [...new Set([root, ...mounts])].sort((a, b) => b.length - a.length);
+}
+
+/**
  * The layer that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
  * the one rule the term-mapping record keys by too (bean `q3n9`, owner ruling
  * A, 2026-10-24). Re-exported here, with this checkout's layers as the
  * default, for the callers that already import it from the page.
+ *
+ * Held to the declaring layer's REPOSITORY (2026-11-23): a source in a layer
+ * this checkout mounts from another repository is a citation, and the scheme
+ * stays the declaring layer's. A site serves only what its own build holds
+ * (`namespaceFiles`, folio-assistant-core#850), and the mounted layer's site
+ * is built from its own repository, which never holds the file. smart-ra's
+ * `organizations` scheme cites `who-iris/library/…`. Credited to who-iris, it
+ * was minted in who-iris's namespace and its term pages placed under
+ * `instance/who-iris/`, and no site built either: 17 IRIs and the term links
+ * of the Spanish document were 404s. The shared rule carries the same check
+ * (cat-harness-tools `schemeOwner`); applying it here as well keeps this page
+ * right at a tools pin that predates it, and is a no-op once it is there.
  */
 export function schemeOwner(
   repo: string,
   g: OwnedScheme,
   declaredBy: string,
   owners: readonly InstanceRoot[] = instanceOwners(repo),
+  repositories: readonly string[] = repositoryRoots(repo),
 ): { owner: string } | { error: string } {
-  return sharedSchemeOwner(repo, g, declaredBy, owners);
+  // `repositories` reaches the shared rule once its pin takes it; a pin that
+  // predates it ignores the extra argument, and the check below does its work.
+  const shared = sharedSchemeOwner as (...args: [string, OwnedScheme, string, readonly InstanceRoot[], readonly string[]]) => { owner: string } | { error: string };
+  const own = shared(repo, g, declaredBy, owners, repositories);
+  if ("error" in own || own.owner === declaredBy) return own;
+  const repositoryOf = (name: string): string | undefined => {
+    const root = owners.find((o) => o.name === name)?.root;
+    return root === undefined ? undefined : repositories.find((r) => root === r || root.startsWith(`${r}${sep}`) || root.startsWith(`${r}/`));
+  };
+  const home = repositoryOf(declaredBy);
+  const held = repositoryOf(own.owner);
+  return home !== undefined && held !== undefined && home !== held ? { owner: declaredBy } : own;
 }
 
 /**
