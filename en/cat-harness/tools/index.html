@@ -320,9 +320,9 @@ is <code class="language-plaintext highlighter-rouge">satisfies</code>, and it r
 to do that</em>, never <em>this skill is a tool</em>.</p>
 
 <div class="tg-grid">
-<a class="tg-stat" href="#every-tool"><b>217</b><span>Tool nodes</span></a>
+<a class="tg-stat" href="#every-tool"><b>218</b><span>Tool nodes</span></a>
 <a class="tg-stat" href="#does-every-satisfies-name-a-skill-that-exists"><b>98</b><span>skills satisfied</span></a>
-<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>186</b><span>invoked as a shell command</span></a>
+<a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>187</b><span>invoked as a shell command</span></a>
 <a class="tg-stat" href="#how-they-are-invoked-and-installed"><b>30</b><span>reachable over MCP</span></a>
 </div>
 
@@ -351,7 +351,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
     </tr>
     <tr>
       <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/tools/cat-harness/">cat-harness</a></td>
-      <td>185</td>
+      <td>186</td>
     </tr>
     <tr>
       <td><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/tools/cat-harness-tools/">cat-harness-tools</a></td>
@@ -380,7 +380,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
-      <td>186</td>
+      <td>187</td>
     </tr>
     <tr>
       <td><span class="tg-tag tg-inproc" data-surface="inProcess">inProcess</span></td>
@@ -407,7 +407,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   <tbody>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">none</code></td>
-      <td>192</td>
+      <td>193</td>
     </tr>
     <tr>
       <td><code class="language-plaintext highlighter-rouge">cli</code></td>
@@ -428,7 +428,7 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
 </h2>
     
 
-<p>Yes — all <strong>98</strong> skills named across <strong>217</strong> tools resolve to a
+<p>Yes — all <strong>98</strong> skills named across <strong>218</strong> tools resolve to a
 skill document in this checkout. A <code class="language-plaintext highlighter-rouge">satisfies</code> pointing at nothing would be a
 tool advertising a capability the graph cannot locate.</p>
 <h2 id="every-tool">
@@ -440,7 +440,7 @@ tool advertising a capability the graph cannot locate.</p>
 </h2>
     
 
-<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (7)</button><button type="button" aria-pressed="false" data-surface="inProcess">inProcess (35)</button><button type="button" aria-pressed="false" data-surface="manual">manual (9)</button><button type="button" aria-pressed="false" data-surface="mcp">mcp (30)</button><button type="button" aria-pressed="false" data-surface="shell">cli (186)</button><span><span id="tg-shown">217</span> of 217 shown</span></div>
+<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="action">github action (8)</button><button type="button" aria-pressed="false" data-surface="inProcess">inProcess (35)</button><button type="button" aria-pressed="false" data-surface="manual">manual (9)</button><button type="button" aria-pressed="false" data-surface="mcp">mcp (30)</button><button type="button" aria-pressed="false" data-surface="shell">cli (187)</button><span><span id="tg-shown">218</span> of 218 shown</span></div>
 
 <div class="table-wrapper"><table>
   <thead>
@@ -1731,6 +1731,14 @@ tool advertising a capability the graph cannot locate.</p>
       <td>Build the published site on this machine, so a page can be looked at rather than described: the same Jekyll build <code class="language-plaintext highlighter-rouge">pages-publish</code> runs in CI, into a directory of your choosing, and never pushed. The local half of the two site builds: local and GitHub builds are two Tools for one skill.</td>
       <td><span class="tg-tag tg-shell" data-surface="shell">cli</span></td>
       <td><code class="language-plaintext highlighter-rouge">docs-generation</code></td>
+      <td>1 in / 1 out</td>
+      <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
+    </tr>
+    <tr>
+      <td><a id="site-publish-after"></a><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/tools/cat-harness/site-publish-after/"><code class="language-plaintext highlighter-rouge">site-publish-after</code></a> · <a href="https://litlfred.github.io/folio-assistant/cat-harness/tools/site-publish-after.jsonld">JSON-LD</a><br />Name the workflows a site publish waits for on the same commit</td>
+      <td>Print the repository’s workflows that a site publish must wait for, on the same commit, before it builds: every workflow that calls a reusable workflow a declared site publisher names in <code class="language-plaintext highlighter-rouge">after</code> (for example an IG’s AST refresh, which seeds the cache the site is built from), plus <code class="language-plaintext highlighter-rouge">site.publishAfter</code> from <code class="language-plaintext highlighter-rouge">index.config.json</code>. A workflow that calls the shared site publish is never named: it is the publish itself. The shared <code class="language-plaintext highlighter-rouge">folio-site-publish.yml</code> runs it and then waits for each workflow it names.</td>
+      <td><span class="tg-tag tg-shell" data-surface="shell">cli</span> <span class="tg-tag tg-action" data-surface="action">github action</span></td>
+      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
       <td>1 in / 1 out</td>
       <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
     </tr>

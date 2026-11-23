@@ -159,7 +159,7 @@
 
 <link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><script src="../../../../assets/draft-banner.js" defer data-fa-page-layout></script><noscript data-fa-draft-noscript><link rel="stylesheet" href="../../../../assets/draft-banner-noscript.css"></noscript><meta name="fa-pinned-data" content="../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-217","label":"Operations (217)"},{"href":"#mcp-tools-34","label":"MCP tools (34)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/tools/api/","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#operations-218","label":"Operations (218)"},{"href":"#mcp-tools-34","label":"MCP tools (34)"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -261,10 +261,10 @@
   <li><a href="../openapi.json"><code class="language-plaintext highlighter-rouge">openapi.json</code></a> — OpenAPI 3.1.0, one operation per Tool. Open it in Swagger UI or Redoc, or generate a client from it. The paths are the Tools’ call contracts, not HTTP endpoints: each operation’s <code class="language-plaintext highlighter-rouge">x-invoke</code> says how the Tool is really reached.</li>
   <li><a href="../mcp-tools.json"><code class="language-plaintext highlighter-rouge">mcp-tools.json</code></a> — the answer an MCP server gives to <code class="language-plaintext highlighter-rouge">tools/list</code>: each tool’s name, description and input schema, read from the registrar that serves it.</li>
 </ul>
-<h2 id="operations-217">
+<h2 id="operations-218">
   
   
-    <a href="#operations-217" class="anchor-heading" aria-labelledby="operations-217"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (217)
+    <a href="#operations-218" class="anchor-heading" aria-labelledby="operations-218"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Operations (218)
   
   
 </h2>
@@ -1399,6 +1399,13 @@
       <td>Build the docs site locally</td>
       <td><code class="language-plaintext highlighter-rouge">dest</code>?: RepoPath</td>
       <td><code class="language-plaintext highlighter-rouge">site</code>?: RepoPath</td>
+      <td>shell</td>
+    </tr>
+    <tr>
+      <td><a id="site-publish-after"></a><a href="https://litlfred.github.io/folio-assistant/en/cat-harness/tools/cat-harness/site-publish-after/"><code class="language-plaintext highlighter-rouge">POST</code> <code class="language-plaintext highlighter-rouge">/tools/site-publish-after</code></a></td>
+      <td>Name the workflows a site publish waits for on the same commit</td>
+      <td><code class="language-plaintext highlighter-rouge">repo</code>?: RepoPath</td>
+      <td><code class="language-plaintext highlighter-rouge">workflows</code>?: Text</td>
       <td>shell</td>
     </tr>
     <tr>
