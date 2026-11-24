@@ -97,7 +97,7 @@ import { MAPPING_TARGETS } from "@litlfred/cat-harness-tools/schemas/content/ter
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, templateName } from "./glossary-pot.ts";
 import { archimateDepictions, type Depiction } from "./glossary-archimate.ts";
 import type { Passage } from "./term-passages.ts";
-import { leanDocs, leanSourceContext, pagesUrlOf, readDocsIndex, docsFromIndex, type BlockLeanFacts } from "./block-lean.ts";
+import { leanDocs, leanDocsAll, leanSourceContext, pagesUrlOf, readDocsIndex, docsFromIndex, type BlockLeanFacts } from "./block-lean.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
@@ -956,13 +956,22 @@ let BLOCK_LEAN: ReadonlyMap<string, BlockLeanFacts> = new Map();
  */
 async function glossaryLeanContext(root: string): Promise<Parameters<typeof import("./term-passages.ts").narrativeBlocks>[1]> {
   const ctx = leanSourceContext(root);
-  const declared = leanDocs(root);
-  if (!declared) return ctx;
-  const { route, mount } = declared;
+  if (!leanDocs(root)) return ctx;
   const repo = ctx.repoUrl ? ownerRepo(ctx.repoUrl) : undefined;
-  const index = await readDocsIndex({ route, ...(mount ? { mount } : {}), ...(INTO_SITE ? { site: SITE } : {}), ...(pagesUrlOf(repo) ? { siteUrl: pagesUrlOf(repo)! } : {}) });
-  if (index === undefined) return ctx;
-  return { ...ctx, docs: (name: string) => docsFromIndex(index, route, new Set([name])).get(name) };
+  // One index per declared render (one sub-KG per package), each read once; a
+  // block links into the one belonging to its own paper (block-lean.ts leanDocs).
+  const indices = new Map<string, Awaited<ReturnType<typeof readDocsIndex>>>();
+  for (const { route, mount } of leanDocsAll(root)) {
+    if (!indices.has(route)) indices.set(route, await readDocsIndex({ route, ...(mount ? { mount } : {}), ...(INTO_SITE ? { site: SITE } : {}), ...(pagesUrlOf(repo) ? { siteUrl: pagesUrlOf(repo)! } : {}) }));
+  }
+  if (![...indices.values()].some((i) => i !== undefined)) return ctx;
+  return {
+    ...ctx,
+    docs: (name: string, paperDir?: string) => {
+      const route = leanDocs(root, paperDir)?.route;
+      return route === undefined ? undefined : docsFromIndex(indices.get(route), route, new Set([name])).get(name);
+    },
+  };
 }
 
 /** Read every document folio in the checkout and match each authored term against it. */

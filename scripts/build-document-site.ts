@@ -1210,7 +1210,7 @@ export async function buildDocumentSite(
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
     // Numbered citations and the reference list, linked both ways (citation-links.ts).
     library ??= opts.bibliographyUrl ? await libraryLinks(repoRoot, opts.bibliographyUrl) : [];
-    const blocks = await documentBlocks(d.path, repoRoot, d.slug, opts.lean === false ? false : await leanLinks(repoRoot, outDir, d.slug, opts));
+    const blocks = await documentBlocks(d.path, repoRoot, d.slug, opts.lean === false ? false : await leanLinks(repoRoot, outDir, d.slug, opts, dirname(d.path)));
     // One version per declared locale with at least one translated block,
     // from the merged catalogues; the rest of its text is the source, marked.
     const versions: { locale: string; markdown: string; translated: number; total: number; title: string }[] = [];
@@ -1467,7 +1467,7 @@ if (import.meta.main) {
         "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)\n" +
         "         [--link-terms]              (link each Capitalized glossary term in prose to its glossary entry)\n" +
         "         [--downloads]               (link the current Word and PDF, written by document-export.ts release into <out>/en/<slug>/export, under each title)\n" +
-        "         [--lean-docs-index <path|url> | --no-lean]  (the ∀ icon's rendered-docs links: doc-gen4's declaration-data.bmp; default the built, else published, site's under the declared lean route)",
+        "         [--lean-docs-index <path|url> | --no-lean]  (the ∀ icon's rendered-docs links: doc-gen4's declaration-data.bmp, a KG directory, or a staged site tree holding <route>/data/index.json per declared lean route; default the built, else published, site's)",
     );
     process.exit(0);
   }
@@ -1514,24 +1514,34 @@ if (import.meta.main) {
  * The Lean links every block of one document shares (block-lean.ts): the
  * checkout's origin and commit for the source link, and, when the folio
  * declares a `lean` directory, each declaration's page in the rendered docs
- * under that directory's route, relative to the document's page. The index is
- * read once per build: a page for a declaration the index does not list is
- * not linked.
+ * under that directory's route, relative to the document's page. With one
+ * `lean` directory per package (sub-KGs), the one belonging to the document's
+ * own paper (`paperDir`, {@link leanDocs}). The index is read once per build:
+ * a page for a declaration the index does not list is not linked.
+ *
+ * `lean.index` is doc-gen4's index or a KG's directory, or a STAGED SITE TREE
+ * holding `<route>/data/index.json` for each route: a build that writes the
+ * Lean render after the document pages (it is derived from a branch-kept
+ * store) stages it there first, so the links are made from the same render.
  */
 export async function leanLinks(
   repoRoot: string,
   outDir: string,
   slug: string,
   opts: { actions?: Partial<BlockActionsConfig> | false; lean?: false | { index?: string } },
+  paperDir?: string,
 ): Promise<LeanLinkContext> {
   const ctx: LeanLinkContext = leanSourceContext(repoRoot);
-  const declared = leanDocs(repoRoot);
+  const declared = leanDocs(repoRoot, paperDir);
   if (!declared) return ctx;
   const { route, mount } = declared;
   const repo = (opts.actions && opts.actions.repo) || process.env.GITHUB_REPOSITORY || (ctx.repoUrl ? ownerRepo(ctx.repoUrl) : undefined);
   const siteUrl = (opts.actions && opts.actions.siteUrl) || pagesUrlOf(repo);
-  const key = `${route}|${opts.lean && opts.lean.index ? opts.lean.index : ""}|${siteUrl ?? ""}`;
-  if (!docsIndexCache.has(key)) docsIndexCache.set(key, readDocsIndex({ route, ...(mount ? { mount } : {}), ...(opts.lean && opts.lean.index ? { source: opts.lean.index } : {}), site: outDir, ...(siteUrl ? { siteUrl } : {}) }));
+  const given = opts.lean && opts.lean.index ? opts.lean.index : undefined;
+  const staged = given !== undefined && !/^https?:\/\//.test(given) && existsSync(join(given, ...route.split("/"), "data", "index.json")) ? join(given, ...route.split("/")) : undefined;
+  const source = staged ?? given;
+  const key = `${route}|${source ?? ""}|${siteUrl ?? ""}`;
+  if (!docsIndexCache.has(key)) docsIndexCache.set(key, readDocsIndex({ route, ...(mount ? { mount } : {}), ...(source ? { source } : {}), site: outDir, ...(siteUrl ? { siteUrl } : {}) }));
   const index = await docsIndexCache.get(key)!;
   if (index === undefined) return ctx;
   const pageDir = documentPageDir(slug);
