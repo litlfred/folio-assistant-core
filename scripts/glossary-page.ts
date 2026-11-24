@@ -60,6 +60,7 @@
  * @covers glossary, swimlane-glossary, docs — it reads every layer's glossary
  *   directory and links the harness's ledger without copying it
  */
+import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve, sep } from "node:path";
 
@@ -96,6 +97,7 @@ import { MAPPING_TARGETS } from "@litlfred/cat-harness-tools/schemas/content/ter
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, templateName } from "./glossary-pot.ts";
 import { archimateDepictions, type Depiction } from "./glossary-archimate.ts";
 import type { Passage } from "./term-passages.ts";
+import { leanDocs, leanSourceContext, pagesUrlOf, readDocsIndex, docsFromIndex, type BlockLeanFacts } from "./block-lean.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
@@ -262,17 +264,32 @@ function allGeneratedDirs(repo: string = REPO): string[] {
  * else the checkout's `origin`, as `build-document-site.ts` finds it, so a
  * folio's sources do not link into the platform's repository.
  */
-const FORGE = (() => {
-  const platform = "https://github.com/litlfred/folio-assistant";
-  if (!INTO_SITE) return platform;
+const FORGE: string | undefined = (() => {
+  // Owner, 2026-11-19: nothing hard-wired to an owner/repo. The checkout's
+  // own forge (`GITHUB_REPOSITORY` in CI, else its origin), and with neither,
+  // no forge links at all rather than links into a repository named here.
   const origin = detectRepoUrl(REPO);
   const repo = process.env.GITHUB_REPOSITORY ?? (origin?.includes("github.com") ? ownerRepo(origin) : undefined);
-  return repo ? `https://github.com/${repo}` : platform;
+  return repo ? `https://github.com/${repo}` : undefined;
 })();
-/** A file's page on the forge — in its submodule's own repository when it sits in one. */
-const blobUrl = (path: string): string => {
+/**
+ * The ref a source link names: the origin's default branch when the checkout
+ * records it, else `HEAD`, which GitHub resolves to the default branch. Never
+ * a branch name written here.
+ */
+const FORGE_REF: string = (() => {
+  try {
+    const r = execFileSync("git", ["-C", REPO, "symbolic-ref", "--quiet", "--short", "refs/remotes/origin/HEAD"], { encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    return r.replace(/^origin\//, "") || "HEAD";
+  } catch {
+    return "HEAD";
+  }
+})();
+/** A file's page on the forge — in its submodule's own repository when it sits in one; undefined with no forge. */
+const blobUrl = (path: string): string | undefined => {
+  if (FORGE === undefined) return undefined;
   const at = forgeLocation(path, FORGE);
-  return `${at.repoUrl}/blob/main/${at.path}`;
+  return `${at.repoUrl}/blob/${FORGE_REF}/${at.path}`;
 };
 
 export interface GlossarySource {
@@ -861,7 +878,8 @@ const link = (u: string) => `<a href="${esc(u)}">${esc(u.replace(/^https?:\/\//,
 const sourceLink = (src: string) => {
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(src)) return link(src);
   const path = src.split("#", 2)[0]!;
-  return `<a href="${esc(blobUrl(path))}"><code>${esc(src)}</code></a>`;
+  const u = blobUrl(path);
+  return u === undefined ? `<code>${esc(src)}</code>` : `<a href="${esc(u)}"><code>${esc(src)}</code></a>`;
 };
 const pageLink = (k: PageKey, text: string) =>
   ONLY !== undefined && k !== `@${ONLY}` ? esc(text) : `<a href="{{ '${permalinkOf(k)}' | relative_url }}">${esc(text)}</a>`;
@@ -926,6 +944,26 @@ export function termPermalink(s: Pick<GlossarySource, "instance" | "glossary">, 
  */
 let PASSAGES: ReadonlyMap<string, Passage[]> = new Map();
 let BLOCK_HREF: ReadonlyMap<string, string> = new Map();
+/** Each block's Lean facts (block-lean.ts) by source file, its rendered-docs page a site-root path: what a term's ∀ links read. */
+let BLOCK_LEAN: ReadonlyMap<string, BlockLeanFacts> = new Map();
+
+/**
+ * The Lean links every narrative block shares, for the glossary: the
+ * checkout's origin and commit, and the rendered docs under the folio's
+ * declared `lean` route, as SITE-ROOT paths (a glossary page links them with
+ * `relative_url`). The docs index is the built site's when the render was
+ * staged into it, else the published site's; neither readable, no docs links.
+ */
+async function glossaryLeanContext(root: string): Promise<Parameters<typeof import("./term-passages.ts").narrativeBlocks>[1]> {
+  const ctx = leanSourceContext(root);
+  const declared = leanDocs(root);
+  if (!declared) return ctx;
+  const { route, mount } = declared;
+  const repo = ctx.repoUrl ? ownerRepo(ctx.repoUrl) : undefined;
+  const index = await readDocsIndex({ route, ...(mount ? { mount } : {}), ...(INTO_SITE ? { site: SITE } : {}), ...(pagesUrlOf(repo) ? { siteUrl: pagesUrlOf(repo)! } : {}) });
+  if (index === undefined) return ctx;
+  return { ...ctx, docs: (name: string) => docsFromIndex(index, route, new Set([name])).get(name) };
+}
 
 /** Read every document folio in the checkout and match each authored term against it. */
 export async function loadProvenance(repo: string, c: ReturnType<typeof collect>): Promise<ReadonlyMap<string, Passage[]>> {
@@ -944,11 +982,12 @@ export async function loadProvenance(repo: string, c: ReturnType<typeof collect>
     );
   const merged = new Map<string, Passage[]>();
   const hrefs = new Map<string, string>();
+  const leans = new Map<string, BlockLeanFacts>();
   const seen = new Set<string>();
   for (const root of roots) {
     let blocks: Awaited<ReturnType<typeof narrativeBlocks>>;
     try {
-      blocks = await narrativeBlocks(root);
+      blocks = await narrativeBlocks(root, await glossaryLeanContext(root));
     } catch {
       continue; // a root whose document manifests do not load here contributes nothing
     }
@@ -956,18 +995,46 @@ export async function loadProvenance(repo: string, c: ReturnType<typeof collect>
     for (const b of blocks) {
       seen.add(`${b.document}#${b.label}`);
       hrefs.set(b.source.replace(/\.(md|ts)$/, ""), `${b.page}#${b.label}`);
+      if (b.lean) leans.set(b.source.replace(/\.(md|ts)$/, ""), b.lean);
     }
     for (const [k, v] of passagesIn(blocks, terms)) merged.set(k, [...(merged.get(k) ?? []), ...v]);
   }
   PASSAGES = merged;
   BLOCK_HREF = hrefs;
+  BLOCK_LEAN = leans;
   return merged;
 }
 
 /** Set the provenance directly (tests). */
-export function setProvenance(passages: ReadonlyMap<string, Passage[]>, blockHref: ReadonlyMap<string, string> = new Map()): void {
+export function setProvenance(
+  passages: ReadonlyMap<string, Passage[]>,
+  blockHref: ReadonlyMap<string, string> = new Map(),
+  blockLean: ReadonlyMap<string, BlockLeanFacts> = new Map(),
+): void {
   PASSAGES = passages;
   BLOCK_HREF = blockHref;
+  BLOCK_LEAN = blockLean;
+}
+
+/**
+ * A term's links to where it is defined (owner, 2026-11-19): the definition
+ * in the rendered document, and, when that block is formalised, its Lean
+ * declaration's source and its page in the rendered Lean docs. Only what the
+ * build resolved is shown; an empty string when there is nothing.
+ */
+export function definitionLinks(t: { source?: string }): string {
+  if (!t.source) return "";
+  const key = t.source.split("#", 1)[0]!.replace(/\.(md|ts)$/, "");
+  const row = BLOCK_HREF.get(key);
+  const lean = BLOCK_LEAN.get(key);
+  const parts: string[] = [];
+  if (row) parts.push(`<a href="{{ '/${esc(row)}' | relative_url }}">Definition</a>`);
+  if (lean) {
+    const decl = `<code>${esc(lean.decl)}</code>`;
+    parts.push(lean.source ? `<a href="${esc(lean.source)}" title="The declaration in its .lean file">\u2200 Lean source</a> ${decl}` : `\u2200 ${decl}`);
+    if (lean.docs) parts.push(`<a href="{{ '/${esc(lean.docs)}' | relative_url }}" title="The declaration in the rendered Lean docs">Lean docs</a>`);
+  }
+  return parts.length ? `<p class="fa-gloss-defined">${parts.join(" · ")}</p>` : "";
 }
 
 /** A note's text with its web addresses as links. */
@@ -1040,6 +1107,7 @@ function termEntry(row: Row, marks?: ReadonlyMap<string, string>): string {
     `<dd>`,
     definition,
     ...(t.scopeNote && !s.extracted ? [`<p class="fa-gloss-note">${noteHtml(t.scopeNote)}</p>`] : []),
+    ...(s.extracted ? [] : [definitionLinks(t)].filter(Boolean)),
     ...(row.related?.length ? [relatedBlock(row)] : []),
     ...(t.requires?.length
       ? [
@@ -1748,6 +1816,7 @@ ${translations}
 <ul>
 <li>${pageLink(`@${s.instance}`, `${s.glossary.title}`)}: <a href="{{ '${entry}' | relative_url }}">glossary entry</a>${rowHref ? ` · <a href="{{ '/${esc(rowHref)}' | relative_url }}">glossary row in the document</a>` : t.source ? ` · source ${sourceLink(t.source)}` : ""}</li>
 ${t.isDefinedBy ? `<li>defined by ${link(t.isDefinedBy)}</li>` : ""}
+${definitionLinks(t) ? `<li>${definitionLinks(t).replace(/^<p class="fa-gloss-defined">|<\/p>$/g, "")}</li>` : ""}
 </ul>
 
 ${[...list("Broader", broader), ...list("Narrower", narrower), ...list("Related", related)].join("\n")}

@@ -100,6 +100,9 @@ import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, PAGE_LOCALE, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, rebaseHtmlUrls, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { LOCALE_STYLE, declaredLocales, directionOf, hreflangLinks, languageSwitcher, markUntranslated, nativeName, translationNote } from "./document-locales.ts";
 import { latestNames } from "./document-export.ts";
+import { blockLean, docsFromIndex, linkFromPage, leanDocs, leanSourceContext, pagesUrlOf, readDocsIndex, type BlockLeanFacts, type LeanLinkContext } from "./block-lean.ts";
+/** The Lean render's declaration index, read once per build (leanLinks); here, above the CLI, so it is initialised before `import.meta.main` runs. */
+const docsIndexCache = new Map<string, ReturnType<typeof readDocsIndex>>();
 import { figureTitlesBelow, numberFigures } from "./figure-numbers.ts";
 import { crossDocumentIndex, folioDocuments, siteCrossDocumentLinks, siteCrossDocumentRefs } from "./cross-document-refs.ts";
 
@@ -996,10 +999,17 @@ export async function documentOutline(manifestPath: string, folioRoot: string, s
  * The source is the block's `.md` when it has one (the prose a person edits),
  * else its `.ts` manifest.
  */
-export async function documentBlocks(manifestPath: string, repoRoot: string, slug: string): Promise<BlockContext[]> {
+export async function documentBlocks(
+  manifestPath: string,
+  repoRoot: string,
+  slug: string,
+  lean: LeanLinkContext | false = {},
+): Promise<Array<BlockContext & { lean?: BlockLeanFacts }>> {
   const docDir = dirname(manifestPath);
   const paper = (await import(manifestPath)).default as Paper;
-  const out: BlockContext[] = [];
+  const out: Array<BlockContext & { lean?: BlockLeanFacts }> = [];
+  // The ∀ icon's facts (block-lean.ts): where sources link, read once.
+  const leanCtx: LeanLinkContext | undefined = lean === false ? undefined : { ...leanSourceContext(repoRoot), ...lean };
   for (const chRef of paper.chapters) {
     const chDir = join(docDir, chRef.dir);
     const chPath = join(chDir, `${chRef.dir}.ts`);
@@ -1014,7 +1024,8 @@ export async function documentBlocks(manifestPath: string, repoRoot: string, slu
           const b = (await import(ts)).default as { label?: string };
           if (!b.label) continue;
           const md = join(chDir, `${root}.md`);
-          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: documentPage(slug) });
+          const l = leanCtx ? blockLean(b as never, ts, docDir, repoRoot, leanCtx) : undefined;
+          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: documentPage(slug), ...(l ? { lean: l } : {}) });
         }
         if (sec.subsections) await walk(sec.subsections);
       }
@@ -1114,6 +1125,12 @@ export async function buildDocumentSite(
     linkTerms?: boolean;
     /** Put the Word and PDF download links ({@link downloadLinks}) under each document's title, on its structured-assets page and on the landing. */
     downloads?: boolean;
+    /**
+     * The ∀ icon on every block a Lean declaration formalises ({@link leanLinks}). `false`: no ∀.
+     * `index`: doc-gen4's declaration index to read (a path or a URL) instead of the
+     * built site's or the published site's.
+     */
+    lean?: false | { index?: string };
   } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper layer; see the note on renderDocumentHtml.
@@ -1193,7 +1210,7 @@ export async function buildDocumentSite(
     const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
     // Numbered citations and the reference list, linked both ways (citation-links.ts).
     library ??= opts.bibliographyUrl ? await libraryLinks(repoRoot, opts.bibliographyUrl) : [];
-    const blocks = await documentBlocks(d.path, repoRoot, d.slug);
+    const blocks = await documentBlocks(d.path, repoRoot, d.slug, opts.lean === false ? false : await leanLinks(repoRoot, outDir, d.slug, opts));
     // One version per declared locale with at least one translated block,
     // from the merged catalogues; the rest of its text is the source, marked.
     const versions: { locale: string; markdown: string; translated: number; total: number; title: string }[] = [];
@@ -1449,7 +1466,8 @@ if (import.meta.main) {
         "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
         "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)\n" +
         "         [--link-terms]              (link each Capitalized glossary term in prose to its glossary entry)\n" +
-        "         [--downloads]               (link the current Word and PDF, written by document-export.ts release into <out>/en/<slug>/export, under each title)",
+        "         [--downloads]               (link the current Word and PDF, written by document-export.ts release into <out>/en/<slug>/export, under each title)\n" +
+        "         [--lean-docs-index <path|url> | --no-lean]  (the ∀ icon's rendered-docs links: doc-gen4's declaration-data.bmp; default the built, else published, site's under the declared lean route)",
     );
     process.exit(0);
   }
@@ -1481,6 +1499,7 @@ if (import.meta.main) {
     ...(bibliographyUrl ? { bibliographyUrl } : {}),
     ...(args.includes("--link-terms") ? { linkTerms: true } : {}),
     ...(args.includes("--downloads") ? { downloads: true } : {}),
+    ...(args.includes("--no-lean") ? { lean: false as const } : opt("lean-docs-index") ? { lean: { index: opt("lean-docs-index")! } } : {}),
   });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   for (const w of r.warnings) console.error(`⚠ ${w}`);
@@ -1489,6 +1508,38 @@ if (import.meta.main) {
     process.exit(1);
   }
   console.error(`✓ ${r.documents.length} document(s) → ${relative(repo, out) || "."}`);
+}
+
+/**
+ * The Lean links every block of one document shares (block-lean.ts): the
+ * checkout's origin and commit for the source link, and, when the folio
+ * declares a `lean` directory, each declaration's page in the rendered docs
+ * under that directory's route, relative to the document's page. The index is
+ * read once per build: a page for a declaration the index does not list is
+ * not linked.
+ */
+export async function leanLinks(
+  repoRoot: string,
+  outDir: string,
+  slug: string,
+  opts: { actions?: Partial<BlockActionsConfig> | false; lean?: false | { index?: string } },
+): Promise<LeanLinkContext> {
+  const ctx: LeanLinkContext = leanSourceContext(repoRoot);
+  const declared = leanDocs(repoRoot);
+  if (!declared) return ctx;
+  const { route, mount } = declared;
+  const repo = (opts.actions && opts.actions.repo) || process.env.GITHUB_REPOSITORY || (ctx.repoUrl ? ownerRepo(ctx.repoUrl) : undefined);
+  const siteUrl = (opts.actions && opts.actions.siteUrl) || pagesUrlOf(repo);
+  const key = `${route}|${opts.lean && opts.lean.index ? opts.lean.index : ""}|${siteUrl ?? ""}`;
+  if (!docsIndexCache.has(key)) docsIndexCache.set(key, readDocsIndex({ route, ...(mount ? { mount } : {}), ...(opts.lean && opts.lean.index ? { source: opts.lean.index } : {}), site: outDir, ...(siteUrl ? { siteUrl } : {}) }));
+  const index = await docsIndexCache.get(key)!;
+  if (index === undefined) return ctx;
+  const pageDir = documentPageDir(slug);
+  const docs = (name: string): string | undefined => {
+    const at = docsFromIndex(index, route, new Set([name])).get(name);
+    return at === undefined ? undefined : linkFromPage(pageDir, at);
+  };
+  return { ...ctx, docs };
 }
 
 /** A document's title with its status, "Title - Working Draft", or the title alone. */
