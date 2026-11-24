@@ -8,5 +8,6 @@
   "docoType": "doco:Section",
   "heading": "Example",
   "headingPlural": "Examples",
-  "indexRank": 7
+  "indexRank": 7,
+  "libraryOrigin": "extracted"
 }
