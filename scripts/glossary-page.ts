@@ -339,18 +339,70 @@ export function ownerOfPath(repo: string, path: string, owners: readonly Instanc
 }
 
 /**
+ * The root of every repository in the checkout at `repo`: the checkout itself
+ * and each layer its `index.lock.json` mounts, longest first. A mount is
+ * another repository's bytes laid down at its pin; the checkout's own layers,
+ * sub-layers included, are one repository.
+ */
+export function repositoryRoots(repo: string): string[] {
+  const root = resolve(repo);
+  const mounts = [...mountedInstances(root).values()].map((p) => resolve(root, p)).filter((d) => d !== root);
+  return [...new Set([root, ...mounts])].sort((a, b) => b.length - a.length);
+}
+
+/**
  * The layer that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
  * the one rule the term-mapping record keys by too (bean `q3n9`, owner ruling
  * A, 2026-10-24). Re-exported here, with this checkout's layers as the
  * default, for the callers that already import it from the page.
+ *
+ * A source in a layer mounted from ANOTHER REPOSITORY, one the declaring
+ * layer does not `need` (directly or through the layers it needs), is a
+ * citation, and the scheme stays the declaring layer's (2026-11-23). A site
+ * serves only what its own build holds (`namespaceFiles`,
+ * folio-assistant-core#850). A layer mounted only for what it holds, such as
+ * a library of cited documents, has its site built from its own repository,
+ * which never holds the declaring layer's file. Credited to it, the scheme's
+ * IRIs were minted in its namespace and its term pages placed under its
+ * instance route, and no site served either. A layer the declarer `needs` is
+ * the stack it is built on and extends: its vocabulary stays its own, as the
+ * layers below name it.
  */
 export function schemeOwner(
   repo: string,
   g: OwnedScheme,
   declaredBy: string,
   owners: readonly InstanceRoot[] = instanceOwners(repo),
+  repositories: readonly string[] = repositoryRoots(repo),
 ): { owner: string } | { error: string } {
-  return sharedSchemeOwner(repo, g, declaredBy, owners);
+  const own = sharedSchemeOwner(repo, g, declaredBy, owners);
+  if ("error" in own || own.owner === declaredBy) return own;
+  const rootOf = (name: string): string | undefined => owners.find((o) => o.name === name)?.root;
+  const repositoryOf = (name: string): string | undefined => {
+    const root = rootOf(name);
+    return root === undefined ? undefined : repositories.find((r) => root === r || root.startsWith(`${r}${sep}`) || root.startsWith(`${r}/`));
+  };
+  const home = repositoryOf(declaredBy);
+  const held = repositoryOf(own.owner);
+  if (home === undefined || held === undefined || home === held) return own;
+  return neededBy(declaredBy, rootOf).has(own.owner) ? own : { owner: declaredBy };
+}
+
+/** Every layer `name` needs, directly or through the layers it needs, read from each declaration. */
+function neededBy(name: string, rootOf: (name: string) => string | undefined): Set<string> {
+  const seen = new Set<string>();
+  const queue = [name];
+  while (queue.length) {
+    const root = rootOf(queue.shift()!);
+    const needs = root === undefined ? [] : ((readDeclaration(root) as { needs?: unknown } | undefined)?.needs ?? []);
+    for (const n of Array.isArray(needs) ? needs : []) {
+      if (typeof n === "string" && !seen.has(n)) {
+        seen.add(n);
+        queue.push(n);
+      }
+    }
+  }
+  return seen;
 }
 
 /**
