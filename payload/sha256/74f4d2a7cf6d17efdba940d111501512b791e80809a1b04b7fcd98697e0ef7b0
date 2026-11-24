@@ -39,9 +39,44 @@ final content-object generation step.
 
 - User says "upload", "scan", "process document", "intake"
 - User drops a file into `uploads/`
+- User attaches a file to a chat message (see §Files attached in the agent chat)
 - User mentions a guideline, standard, or normative document
 - User wants to convert a raw document into content objects
 - Files appear in `uploads/` that haven't been processed yet
+
+## Files attached in the agent chat
+
+Owner directive (2026-11-22): a file attached to a chat message must be
+triaged, never silently used and dropped. A chat attachment is **not** in the
+repository. It lands outside the tree (for example under
+`/mnt/user-data/uploads/…` or the session's upload cache), carries an opaque
+id instead of a name, and disappears when the container is reclaimed. Nothing
+that searches the corpus can see it. So for every attached file:
+
+1. **Identify it.** Read page 1 for the title, authors, and arXiv stamp or DOI,
+   and name it in the reply so the person can see what arrived.
+2. **Decide from context.** By default, ingest it when it is a paper, preprint
+   or chapter that is, or may become, a source: the person asks for a review
+   against the corpus, a prior-art or citation question, or a paper already
+   listed "to acquire". Do not ingest it when it is clearly transient: a
+   screenshot, a log, a draft to edit, or a personal or sensitive document.
+3. **Ask when unclear.** Ask one short question with numbered options:
+   (1) ingest it fully, (2) park it in the intake queue for later, or
+   (3) use it for this task only. Keep working while you wait.
+4. **Ingest fully.** Copy the file onto a working branch and run the
+   whole pipeline in this skill (structure, sections, candidates, index row)
+   into the repository's ingested-document directory. A repository may name
+   it differently from `uploads/`; read its own instructions. A parked file
+   is not ingested, and the reply says so.
+5. **Verify that the text arrived.** Every section file must hold the
+   document's own text, not a stub or a download banner. Grep for a term
+   distinctive to that document. Scanned PDFs need OCR text: a scanned PDF
+   that carries an outline once skipped OCR and landed with empty sections
+   (cat-harness-tools PR 2498). Check that the index row exists.
+6. **Register the citation** if the document is or will be cited, with fields
+   taken from the document itself.
+7. **Report** for each file: document id, section count, byte total, index
+   row, reference key, and anything that failed.
 
 ## uploads/ Directory Convention
 

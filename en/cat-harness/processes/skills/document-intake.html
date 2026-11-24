@@ -159,7 +159,7 @@
 
 <link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><script src="../../../../assets/draft-banner.js" defer data-fa-page-layout></script><noscript data-fa-draft-noscript><link rel="stylesheet" href="../../../../assets/draft-banner-noscript.css"></noscript><meta name="fa-pinned-data" content="../../../.."></head>
 
-<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/document-intake.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#overview","label":"Overview"},{"href":"#when-to-use-this-skill","label":"When to Use This Skill"},{"href":"#uploads-directory-convention","label":"uploads/ Directory Convention","children":[{"href":"#the-two-records-an-upload-writes","label":"The two records an upload writes","depth":1}],"fold":"1 sub-section"},{"href":"#pipeline-stages","label":"Pipeline Stages","children":[{"href":"#stage-1-upload--uploaded","label":"Stage 1: Upload (→ uploaded)","depth":1},{"href":"#stage-2-extraction--extracted","label":"Stage 2: Extraction (→ extracted)","depth":1},{"href":"#stage-3-structural-analysis--structured","label":"Stage 3: Structural Analysis (→ structured)","depth":1},{"href":"#stage-4-mapping--mapped","label":"Stage 4: Mapping (→ mapped)","depth":1},{"href":"#stage-5-content-generation--generated","label":"Stage 5: Content Generation (→ generated)","depth":1}],"fold":"5 sub-sections"},{"href":"#structured-document-processing","label":"Structured-Document Processing","children":[{"href":"#detecting-normative-structure","label":"Detecting normative structure","depth":1},{"href":"#label-conventions-for-guidelines","label":"Label conventions for guidelines","depth":1},{"href":"#cross-referencing-recommendations","label":"Cross-referencing recommendations","depth":1}],"fold":"3 sub-sections"},{"href":"#integration-with-other-skills","label":"Integration with Other Skills"},{"href":"#resuming-partial-processing","label":"Resuming Partial Processing"},{"href":"#checklist","label":"Checklist"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/processes/skills/document-intake.html","documentIndex":{"label":"On this page","icon":"§","items":[{"href":"#overview","label":"Overview"},{"href":"#when-to-use-this-skill","label":"When to Use This Skill"},{"href":"#files-attached-in-the-agent-chat","label":"Files attached in the agent chat"},{"href":"#uploads-directory-convention","label":"uploads/ Directory Convention","children":[{"href":"#the-two-records-an-upload-writes","label":"The two records an upload writes","depth":1}],"fold":"1 sub-section"},{"href":"#pipeline-stages","label":"Pipeline Stages","children":[{"href":"#stage-1-upload--uploaded","label":"Stage 1: Upload (→ uploaded)","depth":1},{"href":"#stage-2-extraction--extracted","label":"Stage 2: Extraction (→ extracted)","depth":1},{"href":"#stage-3-structural-analysis--structured","label":"Stage 3: Structural Analysis (→ structured)","depth":1},{"href":"#stage-4-mapping--mapped","label":"Stage 4: Mapping (→ mapped)","depth":1},{"href":"#stage-5-content-generation--generated","label":"Stage 5: Content Generation (→ generated)","depth":1}],"fold":"5 sub-sections"},{"href":"#structured-document-processing","label":"Structured-Document Processing","children":[{"href":"#detecting-normative-structure","label":"Detecting normative structure","depth":1},{"href":"#label-conventions-for-guidelines","label":"Label conventions for guidelines","depth":1},{"href":"#cross-referencing-recommendations","label":"Cross-referencing recommendations","depth":1}],"fold":"3 sub-sections"},{"href":"#integration-with-other-skills","label":"Integration with Other Skills"},{"href":"#resuming-partial-processing","label":"Resuming Partial Processing"},{"href":"#checklist","label":"Checklist"}],"collapsible":true}}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
   <a class="skip-to-main" href="#main-content">Skip to main content</a>
   <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
   <symbol id="svg-link" viewBox="0 0 24 24">
@@ -316,10 +316,53 @@ final content-object generation step.</p>
 <ul>
   <li>User says “upload”, “scan”, “process document”, “intake”</li>
   <li>User drops a file into <code class="language-plaintext highlighter-rouge">uploads/</code></li>
+  <li>User attaches a file to a chat message (see §Files attached in the agent chat)</li>
   <li>User mentions a guideline, standard, or normative document</li>
   <li>User wants to convert a raw document into content objects</li>
   <li>Files appear in <code class="language-plaintext highlighter-rouge">uploads/</code> that haven’t been processed yet</li>
 </ul>
+<h2 id="files-attached-in-the-agent-chat">
+  
+  
+    <a href="#files-attached-in-the-agent-chat" class="anchor-heading" aria-labelledby="files-attached-in-the-agent-chat"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Files attached in the agent chat
+  
+  
+</h2>
+    
+
+<p>Owner directive (2026-11-22): a file attached to a chat message must be
+triaged, never silently used and dropped. A chat attachment is <strong>not</strong> in the
+repository. It lands outside the tree (for example under
+<code class="language-plaintext highlighter-rouge">/mnt/user-data/uploads/…</code> or the session’s upload cache), carries an opaque
+id instead of a name, and disappears when the container is reclaimed. Nothing
+that searches the corpus can see it. So for every attached file:</p>
+
+<ol>
+  <li><strong>Identify it.</strong> Read page 1 for the title, authors, and arXiv stamp or DOI,
+and name it in the reply so the person can see what arrived.</li>
+  <li><strong>Decide from context.</strong> By default, ingest it when it is a paper, preprint
+or chapter that is, or may become, a source: the person asks for a review
+against the corpus, a prior-art or citation question, or a paper already
+listed “to acquire”. Do not ingest it when it is clearly transient: a
+screenshot, a log, a draft to edit, or a personal or sensitive document.</li>
+  <li><strong>Ask when unclear.</strong> Ask one short question with numbered options:
+(1) ingest it fully, (2) park it in the intake queue for later, or
+(3) use it for this task only. Keep working while you wait.</li>
+  <li><strong>Ingest fully.</strong> Copy the file onto a working branch and run the
+whole pipeline in this skill (structure, sections, candidates, index row)
+into the repository’s ingested-document directory. A repository may name
+it differently from <code class="language-plaintext highlighter-rouge">uploads/</code>; read its own instructions. A parked file
+is not ingested, and the reply says so.</li>
+  <li><strong>Verify that the text arrived.</strong> Every section file must hold the
+document’s own text, not a stub or a download banner. Grep for a term
+distinctive to that document. Scanned PDFs need OCR text: a scanned PDF
+that carries an outline once skipped OCR and landed with empty sections
+(cat-harness-tools PR 2498). Check that the index row exists.</li>
+  <li><strong>Register the citation</strong> if the document is or will be cited, with fields
+taken from the document itself.</li>
+  <li><strong>Report</strong> for each file: document id, section count, byte total, index
+row, reference key, and anything that failed.</li>
+</ol>
 <h2 id="uploads-directory-convention">
   
   
