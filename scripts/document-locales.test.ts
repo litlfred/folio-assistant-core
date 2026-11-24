@@ -6,10 +6,11 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, posix, resolve } from "node:path";
 
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 import { buildDocumentSite } from "./build-document-site.ts";
+import { rebaseHtmlUrls } from "./document-site-route.ts";
 import { declaredLocales, directionOf, hreflangLinks, languageSwitcher, markUntranslated, nativeName, translationNote } from "./document-locales.ts";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
@@ -84,7 +85,10 @@ function twoLocaleFolio(): string {
   symlinkSync(REPO_ROOT, join(d, "folio-assistant"));
   const ch = join(d, "folio", "handbook", "introduction");
   writeFileSync(join(ch, "scope.ts"), `import { prose } from "../../schema/builders";\n\nexport default prose({ label: "prose:scope", title: "Scope", uses: [] });\n`);
-  writeFileSync(join(ch, "scope.md"), "Scope text stays in English.\n");
+  // A figure the page links relative to itself: the translated pages must reach it too.
+  writeFileSync(join(ch, "scope.md"), "Scope text stays in English.\n\n![A figure](media/figure.png)\n");
+  mkdirSync(join(d, "folio", "handbook", "media"), { recursive: true });
+  writeFileSync(join(d, "folio", "handbook", "media", "figure.png"), "png");
   const node = JSON.parse(readFileSync(join(ch, "overview.jsonld"), "utf-8"));
   writeFileSync(join(ch, "scope.jsonld"), JSON.stringify({ ...node, "@id": "papers/handbook/blocks/prose-scope", label: "prose:scope", title: "Scope", text: "scope.md" }, null, 2) + "\n");
   const chapter = join(ch, "introduction.ts");
@@ -200,6 +204,49 @@ describe("a site per declared locale", () => {
       expect(await p.evaluate(() => document.documentElement.lang)).toBe("en");
     } finally {
       await browser.close();
+    }
+  }, 60_000);
+});
+
+/** Every relative URL a built page holds, with the site path it resolves to. */
+function relativeUrls(out: string, page: string): { url: string; target: string }[] {
+  const html = readFileSync(join(out, page), "utf-8");
+  const urls = [...html.matchAll(/\s(?:href|src|data|poster|xlink:href)="([^"]*)"/g)].map((m) => m[1]!);
+  return urls
+    .filter((u) => u !== "" && !/^(?:#|\/|\?|[a-z][a-z0-9+.-]*:)/i.test(u))
+    .map((url) => ({ url, target: posix.join(posix.dirname(page), url.replace(/[?#].*$/, "")) }));
+}
+
+describe("a translated page's links (glossary links from es/ landed in es/folio-assistant-core/)", () => {
+  test("rebasedFromTheSourcePageToEachLocale", () => {
+    const html = `<p><a href="../folio-assistant-core/glossary/instance/dpi-h-ra/#t">t</a> <img src="media/f.png"> <object data="../x/v.svg"></object> <a href="#here">h</a> <a href="https://who.int/">w</a> <a href="/abs">a</a></p>`;
+    for (const loc of ["ar", "es", "fr", "ru", "zh"]) {
+      const out = rebaseHtmlUrls(html, "en/dpi-h-ra", `${loc}/dpi-h-ra`);
+      expect(out).toContain(`href="../../en/folio-assistant-core/glossary/instance/dpi-h-ra/#t"`);
+      expect(out).toContain(`src="../../en/dpi-h-ra/media/f.png"`);
+      expect(out).toContain(`data="../../en/x/v.svg"`);
+      expect(out).toContain(`href="#here"`);
+      expect(out).toContain(`href="https://who.int/"`);
+      expect(out).toContain(`href="/abs"`);
+    }
+    expect(rebaseHtmlUrls(html, "en/dpi-h-ra", "en/dpi-h-ra")).toBe(html);
+  });
+
+  test("everyRelativeLinkOfATranslatedPageLands", async () => {
+    const d = twoLocaleFolio();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { actions: false });
+    expect(r.errors).toEqual([]);
+    const en = relativeUrls(out, "en/handbook/index.html");
+    expect(en.map((u) => u.url)).toContain("media/figure.png");
+    for (const loc of ["fr", "ar"]) {
+      const urls = relativeUrls(out, `${loc}/handbook/index.html`);
+      // The figure is reached where the source page's copy is, not a copy beside each translation.
+      expect(urls.map((u) => u.url)).toContain("../../en/handbook/media/figure.png");
+      const broken = urls.filter((u) => !existsSync(join(out, ...u.target.split("/"))) && !existsSync(join(out, dirname(u.target))));
+      expect(broken).toEqual([]);
+      // Nothing points into the locale's own tree but its own and the other versions' pages.
+      for (const u of urls) if (u.target.startsWith(`${loc}/`)) expect(u.target).toBe(`${loc}/handbook/index.html`);
     }
   }, 60_000);
 });

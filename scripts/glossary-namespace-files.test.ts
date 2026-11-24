@@ -7,7 +7,8 @@ import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 
 import { namespaceFiles, skosAsset, termPagePath, type GlossarySource } from "./glossary-page.ts";
-import type { Glossary } from "../schemas/glossary.ts";
+import { toSkos, type Glossary } from "../schemas/glossary.ts";
+import { servedPath } from "../schemas/glossary-namespace.ts";
 
 const site = "/site";
 const scheme = (id: string, terms: string[]) =>
@@ -23,7 +24,11 @@ const c = { glossaries: [own, ownExtracted, other] };
 describe("namespaceFiles", () => {
   test("writes the namespace document of a layer whose namespace is under the site, and of no other", () => {
     const files = namespaceFiles(c, { site, siteBase: "https://example.org/layer/" }, new Set());
-    expect([...files.keys()].sort()).toEqual([join(site, "v0/ns/index.html"), join(site, "v0/ns/index.json"), join(site, "v0/ns/index.jsonld")]);
+    expect([...files.keys()].filter((k) => !k.startsWith(join(site, "v0/ns/glossary/"))).sort()).toEqual([join(site, "v0/ns/index.html"), join(site, "v0/ns/index.json"), join(site, "v0/ns/index.jsonld")]);
+    // Beside it, a page at each concept IRI (owner, 2026-11-19), of this layer only.
+    expect(files.has(join(site, "v0/ns/glossary/demo/alpha/index.html"))).toBe(true);
+    expect(files.has(join(site, "v0/ns/glossary/kg-skills/gamma/index.html"))).toBe(true);
+    expect([...files.keys()].some((k) => k.includes("theirs"))).toBe(false);
     const doc = JSON.parse(files.get(join(site, "v0/ns/index.jsonld"))!);
     expect(doc["@id"]).toBe("https://example.org/layer/v0/ns/");
     const ids = (doc["@graph"] as Array<{ "@id": string }>).map((n) => n["@id"]);
@@ -51,5 +56,37 @@ describe("namespaceFiles", () => {
     const html = files.get(join(site, "v0/ns/index.html"))!;
     expect(html).toContain('id="graphTypology/glossary"');
     expect(html).toContain('id="glossary/demo/alpha"');
+  });
+  test("serves every IRI the scheme's SKOS mints in the namespace: a page at each path, an id for each fragment", () => {
+    const g = {
+      id: "demo",
+      title: "demo",
+      ordered: true,
+      terms: [
+        { id: "alpha", prefLabel: { en: "alpha", fr: "alpha (fr)", es: "alfa" }, definition: { en: "The first." }, scopeNote: "In tests.", status: "authored" },
+        { id: "beta", prefLabel: "beta", related: ["alpha"], status: "authored" },
+      ],
+    } as unknown as Glossary;
+    const layer = src("layer", "https://example.org/layer/v0/ns/", g);
+    const files = namespaceFiles({ glossaries: [layer] }, { site, siteBase: "https://example.org/layer/" }, new Set());
+    const minted = (toSkos(g, layer.ns)["@graph"] as Array<{ "@id": string }>).map((n) => n["@id"]).filter((i) => i.startsWith(layer.ns));
+    expect(minted).toContain("https://example.org/layer/v0/ns/glossary/demo/alpha#label-fr");
+    expect(minted).toContain("https://example.org/layer/v0/ns/glossary/demo#order");
+    for (const iri of minted) {
+      const at = servedPath(iri, "https://example.org/layer/")!;
+      const page = files.get(join(site, at.dir, "index.html"));
+      expect([iri, page !== undefined]).toEqual([iri, true]);
+      if (at.fragment !== undefined) expect([iri, page!.includes(`id="${at.fragment}"`)]).toEqual([iri, true]);
+    }
+    const alpha = files.get(join(site, "v0/ns/glossary/demo/alpha/index.html"))!;
+    expect(alpha).toContain('<span lang="es">alfa</span>');
+    expect(alpha).toContain(`href="../../../../../${skosAsset(layer)}"`);
+  });
+  test("serves the SKOS this run writes into the site, not a second minting of it", () => {
+    const written = { "@context": {}, "@graph": [{ "@id": "https://example.org/layer/v0/ns/glossary/demo/only-in-the-written-skos", "skos:prefLabel": "written" }] };
+    const run = new Map([[join(site, skosAsset(own)), JSON.stringify(written)]]);
+    const files = namespaceFiles({ glossaries: [own] }, { site, siteBase: "https://example.org/layer/" }, run);
+    expect(files.has(join(site, "v0/ns/glossary/demo/only-in-the-written-skos/index.html"))).toBe(true);
+    expect(files.has(join(site, "v0/ns/glossary/demo/alpha/index.html"))).toBe(false);
   });
 });

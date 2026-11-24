@@ -23,3 +23,15 @@ Feature: a site being built serves each in-scope layer's namespace document
     Given a vocabulary the tools build for the layer
     When the namespace files are computed
     Then the page anchors both the vocabulary's entries and the concepts
+
+  @test:scripts/glossary-namespace-files.test.ts::namespaceFiles::serves_every_IRI_the_scheme's_SKOS_mints_in_the_namespace:_a_page_at_each_path,_an_id_for_each_fragment
+  Scenario: every IRI the SKOS export mints is served
+    Given an ordered scheme whose term has labels in three languages
+    When the namespace files are computed
+    Then each IRI its SKOS mints in the namespace has a page at <path>/index.html, holding an id for its fragment
+
+  @test:scripts/glossary-namespace-files.test.ts::namespaceFiles::serves_the_SKOS_this_run_writes_into_the_site,_not_a_second_minting_of_it
+  Scenario: the pages are read from the SKOS this run writes
+    Given a run whose file map holds the scheme's SKOS
+    When the namespace files are computed
+    Then the pages are those of that SKOS's IRIs

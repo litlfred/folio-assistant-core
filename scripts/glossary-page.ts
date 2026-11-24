@@ -113,8 +113,9 @@ import {
 } from "@litlfred/cat-harness-tools/scripts/lib/scheme-owner.ts";
 
 import { checkoutRootFor } from "./lib/checkout-root.ts";
-import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, type NamespaceScheme } from "../schemas/glossary-namespace.ts";
+import { glossaryConceptNodes, namespaceDocument, namespaceHtml, namespacePaths, resourcePages, type NamespaceScheme, type ServedDocument } from "../schemas/glossary-namespace.ts";
 import { buildVocabularyOne } from "@litlfred/cat-harness-tools/scripts/publish-instance-context.ts";
+import { propertyIri } from "@litlfred/cat-harness-tools/schemas/kg/namespaces.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = checkoutRootFor(CORE);
@@ -355,18 +356,70 @@ export function ownerOfPath(repo: string, path: string, owners: readonly Instanc
 }
 
 /**
+ * The root of every repository in the checkout at `repo`: the checkout itself
+ * and each layer its `index.lock.json` mounts, longest first. A mount is
+ * another repository's bytes laid down at its pin; the checkout's own layers,
+ * sub-layers included, are one repository.
+ */
+export function repositoryRoots(repo: string): string[] {
+  const root = resolve(repo);
+  const mounts = [...mountedInstances(root).values()].map((p) => resolve(root, p)).filter((d) => d !== root);
+  return [...new Set([root, ...mounts])].sort((a, b) => b.length - a.length);
+}
+
+/**
  * The layer that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
  * the one rule the term-mapping record keys by too (bean `q3n9`, owner ruling
  * A, 2026-10-24). Re-exported here, with this checkout's layers as the
  * default, for the callers that already import it from the page.
+ *
+ * A source in a layer mounted from ANOTHER REPOSITORY, one the declaring
+ * layer does not `need` (directly or through the layers it needs), is a
+ * citation, and the scheme stays the declaring layer's (2026-11-23). A site
+ * serves only what its own build holds (`namespaceFiles`,
+ * folio-assistant-core#850). A layer mounted only for what it holds, such as
+ * a library of cited documents, has its site built from its own repository,
+ * which never holds the declaring layer's file. Credited to it, the scheme's
+ * IRIs were minted in its namespace and its term pages placed under its
+ * instance route, and no site served either. A layer the declarer `needs` is
+ * the stack it is built on and extends: its vocabulary stays its own, as the
+ * layers below name it.
  */
 export function schemeOwner(
   repo: string,
   g: OwnedScheme,
   declaredBy: string,
   owners: readonly InstanceRoot[] = instanceOwners(repo),
+  repositories: readonly string[] = repositoryRoots(repo),
 ): { owner: string } | { error: string } {
-  return sharedSchemeOwner(repo, g, declaredBy, owners);
+  const own = sharedSchemeOwner(repo, g, declaredBy, owners);
+  if ("error" in own || own.owner === declaredBy) return own;
+  const rootOf = (name: string): string | undefined => owners.find((o) => o.name === name)?.root;
+  const repositoryOf = (name: string): string | undefined => {
+    const root = rootOf(name);
+    return root === undefined ? undefined : repositories.find((r) => root === r || root.startsWith(`${r}${sep}`) || root.startsWith(`${r}/`));
+  };
+  const home = repositoryOf(declaredBy);
+  const held = repositoryOf(own.owner);
+  if (home === undefined || held === undefined || home === held) return own;
+  return neededBy(declaredBy, rootOf).has(own.owner) ? own : { owner: declaredBy };
+}
+
+/** Every layer `name` needs, directly or through the layers it needs, read from each declaration. */
+function neededBy(name: string, rootOf: (name: string) => string | undefined): Set<string> {
+  const seen = new Set<string>();
+  const queue = [name];
+  while (queue.length) {
+    const root = rootOf(queue.shift()!);
+    const needs = root === undefined ? [] : ((readDeclaration(root) as { needs?: unknown } | undefined)?.needs ?? []);
+    for (const n of Array.isArray(needs) ? needs : []) {
+      if (typeof n === "string" && !seen.has(n)) {
+        seen.add(n);
+        queue.push(n);
+      }
+    }
+  }
+  return seen;
 }
 
 /**
@@ -851,7 +904,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
     .flatMap((s) =>
       s.glossary.terms.map((t) => ({ anchor: anchorOf(s, t.id), iri: t.iri ?? termIri(s.ns, s.glossary, t.id), scheme: s.glossary.id, id: t.id, label: first(t.prefLabel) })),
     );
-  DEPICTIONS = await archimateDepictions(repo, terms);
+  DEPICTIONS = await archimateDepictions(repo, terms, INTO_SITE ? { site: SITE, ...(ONLY !== undefined ? { own: ONLY } : {}) } : undefined);
   return DEPICTIONS;
 }
 
@@ -859,7 +912,7 @@ export async function loadDepictions(repo: string, c: ReturnType<typeof collect>
 function depictionLine(anchor: string): string[] {
   const d = DEPICTIONS.get(anchor);
   if (!d) return [];
-  const a = (x: { name: string; page: string }) => `<a href="{{ '${x.page}' | relative_url }}">${esc(x.name)}</a>`;
+  const a = (x: { name: string; page: string }) => `<a href="${/^https?:\/\//.test(x.page) ? esc(x.page) : `{{ '${x.page}' | relative_url }}`}">${esc(x.name)}</a>`;
   const els = d.elements.map((e) => `${a(e)} <span class="fa-gloss-meta">(${esc(e.type)})</span>`).join(", ");
   const views = d.views.length ? `; views: ${d.views.map(a).join(", ")}` : "";
   return [`<p class="fa-gloss-archimate">Depicted in ArchiMate ${esc(d.instance)} ${esc(d.model)}: ${els}${views}</p>`];
@@ -1500,6 +1553,20 @@ const GENERATED_FM = `generated: ${GENERATED_BY} — do not hand-edit; run \`bun
 
 /** The same fact for a JSON file, as a top-level `_generated`. */
 const GENERATED_JSON = `${GENERATED_BY} — do not hand-edit; run \`bun run cat glossary:page\``;
+
+/**
+ * A SKOS document's `@context` with `_generated` mapped to a term, the way
+ * `gen-subgraph-jsonld.ts` maps it on every subgraph file: `generatedNote`,
+ * kept verbatim as `@json`. Unmapped, a JSON-LD processor drops the key as an
+ * `invalid property`, and `publish:verify`'s `jsonld-expand` fails every
+ * scheme whose context binds a namespace of ours (folio-assistant#3190: the
+ * five translated schemes, once their context gained `fa:`). The note says who
+ * wrote the file, not anything about the concepts.
+ */
+export function withGeneratedTerm(context: unknown): unknown {
+  const term = { _generated: { "@id": propertyIri("generatedNote"), "@type": "@json" } };
+  return Array.isArray(context) ? [...context, term] : { ...(context as Record<string, unknown>), ...term };
+}
 
 /**
  * Render with the page's own size in it. Two passes: the page states its own
@@ -2263,9 +2330,10 @@ export function outputs(
     // reader that looks for them at the head — a JSON-LD processor and every
     // validator of `folio-glossary/v1` — so the declaration goes after them.
     // `declaresGenerated` parses rather than matching the first key (`ws99`),
-    // which is what makes that free. On the SKOS side `_generated` is an
-    // UNMAPPED term: the `@context` declares `skos` and `dcterms` and no
-    // `@vocab`, so a JSON-LD processor drops it and the graph is unchanged.
+    // which is what makes that free. On the SKOS side `_generated` is a
+    // MAPPED term ({@link withGeneratedTerm}): an unmapped key is dropped as an
+    // `invalid property`, which `publish:verify`'s `jsonld-expand` fails once
+    // the context binds a namespace of ours (`fa:`, for a translated scheme).
     const matches = auto.bySource.get(sourceKey(s));
     const skos = toSkos(
       s.extracted ? s.glossary : withTranslations(s, translations),
@@ -2273,7 +2341,7 @@ export function outputs(
       matches ? { matches, agent } : undefined,
     );
     const { "@context": context, ...skosRest } = skos;
-    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": context, _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
+    out.set(join(SITE, skosAsset(s)), `${JSON.stringify({ "@context": withGeneratedTerm(context), _generated: GENERATED_JSON, ...skosRest }, null, 2)}\n`);
     if (s.extracted) {
       const { $schema, ...rest } = s.glossary;
       out.set(extractedFile(s), `${JSON.stringify({ $schema, _generated: GENERATED_JSON, ...rest }, null, 2)}\n`);
@@ -2292,11 +2360,20 @@ export function outputs(
  * writes, so a concept links its term page only when the page is there.
  * `vocabularyOf` is the layer's vocabulary as the tools build it, which the
  * concepts are added to; undefined, the document holds the concepts alone.
+ *
+ * Beside it, a page at every IRI each scheme's SKOS mints in the namespace
+ * (`resourcePages`): the scheme, each concept, its `#label-<lang>` labels,
+ * its `/_focus`. Glossary concept IRIs are slash IRIs, one path per term
+ * (owner, 2026-11-19), and a static host serves a path only from
+ * `<path>/index.html`. The SKOS read is the one this run writes into the
+ * site (`pages`, when it is the run's file map), so the IRIs served are the
+ * IRIs minted; a scheme whose SKOS this run does not write is minted afresh
+ * with `toSkos`, the same function.
  */
 export function namespaceFiles(
   c: Pick<ReturnType<typeof collect>, "glossaries">,
   at: { site: string; siteBase: string; only?: string },
-  pages: ReadonlySet<string>,
+  pages: ReadonlySet<string> | ReadonlyMap<string, string>,
   vocabularyOf: (instance: string, ns: string) => Record<string, unknown> | undefined = () => undefined,
 ): Map<string, string> {
   const byInstance = new Map<string, GlossarySource[]>();
@@ -2320,6 +2397,24 @@ export function namespaceFiles(
     out.set(join(at.site, paths.html), namespaceHtml(instance, ns, doc));
     out.set(join(at.site, paths.jsonld), json);
     out.set(join(at.site, paths.json), json);
+    const served: ServedDocument[] = sources.map((s) => {
+      const written = "get" in pages ? pages.get(join(at.site, skosAsset(s))) : undefined;
+      const skos = (written === undefined ? toSkos(s.glossary, s.ns) : JSON.parse(written)) as Record<string, unknown>;
+      const row = `${permalinkOf(pageOf(s))}`.replace(/^\//, "");
+      const back = new Map<string, Array<{ label: string; href: string }>>([
+        [schemeIri(ns, s.glossary), [{ label: "Glossary", href: row }, { label: "SKOS", href: skosAsset(s) }]],
+      ]);
+      for (const t of s.glossary.terms) {
+        if (t.iri) continue;
+        back.set(termIri(ns, s.glossary, t.id), [
+          ...(pages.has(termPagePath(s, t.id)) ? [{ label: "Term page", href: termPermalink(s, t.id).replace(/^\//, "") }] : []),
+          { label: "Glossary entry", href: `${row}#${anchorOf(s, t.id)}` },
+          { label: "SKOS", href: skosAsset(s) },
+        ]);
+      }
+      return { doc: skos, linksOf: (iri: string) => back.get(iri) ?? [] };
+    });
+    for (const [p, html] of resourcePages(ns, at.siteBase, served)) out.set(join(at.site, p), html);
   }
   return out;
 }
@@ -2410,7 +2505,7 @@ if (import.meta.main) {
   // A site being built serves each in-scope layer's namespace document.
   const siteBase = INTO_SITE ? iriBaseOf(REPO) : undefined;
   if (siteBase !== undefined) {
-    for (const [p, s] of namespaceFiles(c, { site: SITE, siteBase, only: ONLY }, new Set(files.keys()), toolsVocabulary)) files.set(p, s);
+    for (const [p, s] of namespaceFiles(c, { site: SITE, siteBase, only: ONLY }, files, toolsVocabulary)) files.set(p, s);
   }
   // Reported, never fatal: a match the record cannot place is left out of the
   // SKOS rather than invented, and this says which and why.
