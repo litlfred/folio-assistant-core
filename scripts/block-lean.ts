@@ -13,7 +13,7 @@
  *
  * Nothing here names a repository, a branch or a route:
  * - the status is the `block-status-overlay` slot the formalisation layer
- *   fills (folio-assistant-sci), collapsed by `leanStatusBucket`; with the slot
+ *   fills (whichever layer registers into it), collapsed by `leanStatusBucket`; with the slot
  *   empty, the manifest's own value;
  * - the `.lean` file is the `lean-coverage` slot's `resolveLeanFile`, under
  *   the paper's Lake root; the link is `leanSourceUrl`, at the checkout's
