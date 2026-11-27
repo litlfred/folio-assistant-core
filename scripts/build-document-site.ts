@@ -72,7 +72,7 @@ import { visit } from "unist-util-visit";
 import { findDeclarationFile, folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness-tools/schemas/kg/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
-import { DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
+import { BLOCK_ACTIONS_CSS, DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness-tools/schemas/types.js";
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
@@ -156,6 +156,8 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   dfn.defterm { font-style: normal; font-weight: 600; }
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
+  .fa-chap:not([data-filled]) { padding: .25rem 0 1rem; }
+  .fa-chap-open { font: inherit; font-size: .85rem; cursor: pointer; }
   .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; color: var(--muted); font-size: .9rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
   .fa-downloads { font-size: .9rem; color: var(--muted); }
@@ -217,6 +219,8 @@ const THEMED_STYLE = `
 .${DOC_CLASS} dfn.defterm { font-style: normal; font-weight: 600; }
 .${DOC_CLASS} .cite { opacity: .72; }
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
+.${DOC_CLASS} .fa-chap:not([data-filled]) { padding: .25rem 0 1rem; }
+.${DOC_CLASS} .fa-chap-open { font: inherit; font-size: .85rem; cursor: pointer; }
 .${DOC_CLASS} .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; opacity: .6; font-size: .9rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .fa-downloads { font-size: .9rem; }
@@ -584,6 +588,43 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
   return { shell: shell.join("\n"), blocks };
 }
 
+/**
+ * Split a lazy page's shell Markdown into chapters (owner, 2026-11-27: *"load
+ * one chapter at a time, as reader needs/requests it"*). A chapter starts at a
+ * heading one level below the title (the first heading after it), with the
+ * anchor lines just above it. `head` is everything before the first chapter;
+ * each chapter's `lead` (its anchor and heading) stays in the shell and its
+ * `body` (sections, block placeholders) is published as data. Fenced lines are
+ * never read as headings.
+ */
+export function splitChapters(shell: string): { head: string; chapters: { lead: string; body: string }[] } {
+  const lines = shell.split("\n");
+  const FENCE = /^\s*(```|~~~)/;
+  const ANCHOR = /^<a id="[^"]+"><\/a>\s*$/;
+  const heads: { i: number; level: number }[] = [];
+  for (let i = 0, f = false; i < lines.length; i++) {
+    if (FENCE.test(lines[i]!)) { f = !f; continue; }
+    const m = !f && /^(#{1,6})\s/.exec(lines[i]!);
+    if (m) heads.push({ i, level: m[1]!.length });
+  }
+  const title = heads[0];
+  const level = heads.slice(1).reduce((a, h) => Math.min(a, h.level), 7);
+  const starts = heads.slice(1).filter((h) => h.level === level).map((h) => h.i);
+  if (!title || starts.length < 2) return { head: shell, chapters: [] };
+  // The anchors (and blank lines) just above a chapter heading belong to it.
+  const begin = starts.map((i) => {
+    let k = i;
+    while (k - 1 > title.i && (ANCHOR.test(lines[k - 1]!) || lines[k - 1]!.trim() === "")) k--;
+    while (k < i && lines[k]!.trim() === "") k++;
+    return k;
+  });
+  const chapters = begin.map((b, n) => {
+    const end = n + 1 < begin.length ? begin[n + 1]! : lines.length;
+    return { lead: lines.slice(b, starts[n]! + 1).join("\n"), body: lines.slice(starts[n]! + 1, end).join("\n") };
+  });
+  return { head: lines.slice(0, begin[0]).join("\n"), chapters };
+}
+
 /** Every `id="…"` in a block's HTML, so a link to a term inside an unloaded block finds its chunk. */
 const idsIn = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]!);
 
@@ -592,9 +633,18 @@ const idsIn = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map((m) =>
  * `blocks` is the chunks' directory relative to the page: the page is under
  * the locale and its data is not (`document-site-route.ts`).
  */
-function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Record<string, number> }, blocks: string): string {
+export interface LazyIndex {
+  chunks: number;
+  of: Record<string, number>;
+  ids: Record<string, number>;
+  /** Chapter mode: how many chapters, and the chapter of every id and block label. */
+  chap?: { n: number; of: Record<string, number> };
+}
+
+function lazyLoader(index: LazyIndex, blocks: string, chapters?: string): string {
   const json = JSON.stringify(index).replace(/</g, "\\u003c");
   const dir = JSON.stringify(`${blocks}/`).replace(/</g, "\\u003c");
+  const chapDir = JSON.stringify(`${chapters ?? ""}/`).replace(/</g, "\\u003c");
   return `
 <script type="application/json" id="fa-blocks">${json}</script>
 <script>
@@ -675,7 +725,8 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
   const folded = new Set();
   const unfold = (list) => keep(() => { for (const ph of list) { ph.removeAttribute("hidden"); delete ph.dataset.fold; folded.delete(ph); } });
   let foldAt = null;
-  if (document.documentElement.hasAttribute("data-fa-open")) {
+  // In chapter mode nothing above a link is loaded, so nothing needs folding.
+  if (!ix.chap && document.documentElement.hasAttribute("data-fa-open")) {
     let id;
     try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
     foldAt = document.getElementById(id) || (ix.ids[id] !== undefined ? blks.find((b) => ix.of[b.dataset.blk] === ix.ids[id]) : null) || null;
@@ -707,12 +758,39 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
     // them), and nothing above the link will grow from here on.
     if (foldAt.id) pin(foldAt);
   }
+  // CHAPTER MODE: a chapter's structure (sections, block placeholders, their
+  // [edit]/[feedback] rows) is data too, loaded when the reader comes near it,
+  // opens it, or follows a link into it. Its blocks then load as above.
+  const chapters = new Map();
+  const loadChap = (c) => {
+    if (!chapters.has(c)) {
+      const ph = document.querySelector('.fa-chap[data-chap="' + c + '"]');
+      const btn = ph && ph.querySelector(".fa-chap-open");
+      if (btn) { btn.disabled = true; btn.textContent = "Loading…"; }
+      chapters.set(c, !ph ? Promise.resolve() : fetch(${chapDir} + String(c).padStart(3, "0") + ".json")
+        .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then((d) => {
+          keep(() => { ph.innerHTML = d.html; ph.dataset.filled = "1"; });
+          for (const b of ph.querySelectorAll(".fa-blk")) io.observe(b);
+          if (window.faMathObserve) window.faMathObserve(ph);
+          ph.dispatchEvent(new CustomEvent("fa:chapter", { bubbles: true, detail: { chapter: c } }));
+        })
+        .catch(() => { if (!failed) { failed = true; location.replace("index.hydrated.html" + location.search + location.hash); } }));
+    }
+    return chapters.get(c);
+  };
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest && e.target.closest(".fa-chap-open");
+    if (b) loadChap(Number(b.closest(".fa-chap").dataset.chap));
+  });
   // A link to a block, or to a term inside one, loads its chunk and lands on it.
   // A link back into the folded text opens all of it first.
   const go = () => {
     let id;
     try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
-    if (!id) return;
+    if (!id) return Promise.resolve();
+    const c = ix.chap ? ix.chap.of[id] : undefined;
+    if (c !== undefined && !failed && !document.querySelector('.fa-chap[data-chap="' + c + '"][data-filled]')) return loadChap(c).then(go);
     let n = ix.of[id] ?? ix.ids[id];
     const el = document.getElementById(id);
     const open = folded.size && (!el || [...folded].some((ph) => ph === el || ph.contains(el) || (el.compareDocumentPosition(ph) & Node.DOCUMENT_POSITION_FOLLOWING))) ? [...folded] : [];
@@ -721,20 +799,38 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
       const t = document.getElementById(id);
       if (t) pin(t);
     };
-    Promise.all([n === undefined ? null : load(n), loadAll(open)]).then(land);
+    return Promise.all([n === undefined ? null : load(n), loadAll(open)]).then(land);
   };
   addEventListener("hashchange", go);
-  go();
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(ix.of[e.target.dataset.blk]); }
   }, { rootMargin: "2000px 0px" });
   for (const ph of blks) if (!folded.has(ph)) io.observe(ph);
+  const went = go();
+  if (ix.chap) {
+    // The first unloaded chapter near the window loads; when it has, the rest
+    // are measured again, so a long chapter pushes the next out of reach and
+    // only what the reader comes to is fetched.
+    const chs = [...document.querySelectorAll(".fa-chap")];
+    let busy = false;
+    const near = (el) => { const r = el.getBoundingClientRect(); return r.top < innerHeight + 800 && r.bottom > -800; };
+    const pump = () => {
+      if (busy) return;
+      const el = chs.find((x) => !chapters.has(Number(x.dataset.chap)) && near(x));
+      if (!el) return;
+      busy = true;
+      loadChap(Number(el.dataset.chap)).then(() => { busy = false; requestAnimationFrame(pump); });
+    };
+    let tick = false;
+    addEventListener("scroll", () => { if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; pump(); }); } }, { passive: true });
+    Promise.resolve(went).then(() => requestAnimationFrame(pump));
+  }
   // Then the rest, one chunk at a time while the browser is idle, so the whole
   // text is there for reading on and for the browser's own find.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
   let next = 0;
   const more = () => { while (next < ix.chunks && pending.has(next)) next++; if (next < ix.chunks) load(next).then(() => idle(more)); };
-  addEventListener("load", () => idle(more));
+  if (!ix.chap) addEventListener("load", () => idle(more));
 })();
 </script>`;
 }
@@ -1141,6 +1237,12 @@ export async function buildDocumentSite(
     math?: boolean;
     actions?: Partial<BlockActionsConfig> | false;
     lazy?: "auto" | "always" | "never";
+    /**
+     * A lazy page loads one chapter at a time (`--lazy-chapters`). Off by
+     * default: a public-comment release adds its notes to the page by block
+     * anchor, and in this mode the anchors are in the chapters' data.
+     */
+    lazyChapters?: boolean;
     /** Write the landing as a Jekyll page in this layout ({@link landingPage}). */
     landingLayout?: string;
     /**
@@ -1299,7 +1401,8 @@ export async function buildDocumentSite(
       // The whole document on one page, for file://, no-JS readers and tools.
       writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts, "", sourceMeta)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
-      const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
+      const index: LazyIndex = { chunks: 0, of: {}, ids: {} };
+      const idBlock: Record<string, string> = {};
       mkdirSync(join(data, "blocks"), { recursive: true });
       // Rendered first, so a citation in one chunk and the reference list in
       // another are numbered and linked together.
@@ -1314,16 +1417,44 @@ export async function buildDocumentSite(
           const h = linked[i + j]!;
           chunk[b.label] = h;
           index.of[b.label] = n;
-          for (const id of idsIn(h)) index.ids[id] ??= n;
+          for (const id of idsIn(h)) { index.ids[id] ??= n; idBlock[id] ??= b.label; }
         }
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = afterTitle(await render(split.shell), switcher + downloads + contents);
-      const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
-      const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
-      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader, sourceMeta), true)));
-      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader, sourceMeta), true));
+      // One chapter at a time (owner, 2026-11-27): the shell keeps the title and
+      // the chapter headings; each chapter's sections, block placeholders and
+      // [edit]/[feedback] rows are `<slug>/chapters/NNN.json`, loaded when the
+      // reader reaches the chapter, opens it, or follows a link into it.
+      const chaps = opts.lazyChapters ? splitChapters(split.shell) : { head: split.shell, chapters: [] };
+      let shellMd = split.shell;
+      if (chaps.chapters.length) {
+        const chap = { n: chaps.chapters.length, of: {} as Record<string, number> };
+        mkdirSync(join(data, "chapters"), { recursive: true });
+        shellMd = [chaps.head, ...chaps.chapters.map((c, n) =>
+          `${c.lead}\n\n<div class="fa-chap" data-chap="${n}"><button type="button" class="fa-chap-open">Show this chapter</button></div>\n`)].join("\n");
+        for (const [n, c] of chaps.chapters.entries()) {
+          let h = await render(c.body);
+          if (themed) h = headingIds(h);
+          if (cfg) h = injectBlockActions(h, blocks, cfg, { compact: true }).html;
+          writeFileSync(join(data, "chapters", `${String(n).padStart(3, "0")}.json`), JSON.stringify({ html: h }));
+          for (const id of idsIn(h)) chap.of[id] ??= n;
+          for (const m of h.matchAll(/data-blk="([^"]+)"/g)) chap.of[m[1]!] ??= n;
+        }
+        for (const [id, label] of Object.entries(idBlock)) if (chap.of[label] !== undefined) chap.of[id] ??= chap.of[label];
+        index.chap = chap;
+      }
+      const shellHtml = afterTitle(await render(shellMd), switcher + downloads + contents);
+      const note = LAZY_OPEN + `<p class="fa-one-page">${index.chap ? "Each chapter loads when you reach it." : "The text loads as you read."} <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
+      const dataDir = fromPageDir(documentPageDir(d.slug), documentDataDir(d.slug));
+      const loader = lazyLoader(index, `${dataDir}/blocks`, `${dataDir}/chapters`);
+      // The shell holds no block, so the actions runtime and styles that the
+      // chapters' rows need are added here rather than by injection.
+      const actionsRuntime = (h: string) =>
+        !index.chap || !cfg || h.includes('id="fa-edit-cfg"') ? h
+          : h.replace("</head>", `<style>${BLOCK_ACTIONS_CSS}</style></head>`).replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, actionsRuntime(withActions(page(title, note + headingIds(shellHtml), mathOpts, loader, sourceMeta), true))));
+      else writeFileSync(join(dir, "index.html"), actionsRuntime(withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader, sourceMeta), true)));
     }
     if (assets.length) {
       const assetsDir = join(dir, ASSETS_DIR);
@@ -1492,6 +1623,7 @@ if (import.meta.main) {
       "usage: bun run folio-assistant-core/scripts/build-document-site.ts [--repo <folio repo root>] [--out _site] [--math | --no-math]\n" +
         "         [--github <owner/repo>] [--edit-branch main] [--issue-template block-feedback.yml] [--site-url <url>] [--no-block-actions]\n" +
         "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
+        "         [--lazy-chapters]   (a lazy page loads one chapter at a time)\n" +
         "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
         "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
         "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)\n" +
@@ -1524,6 +1656,7 @@ if (import.meta.main) {
     math,
     actions,
     ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}),
+    ...(args.includes("--lazy-chapters") ? { lazyChapters: true } : {}),
     ...(landingLayout ? { landingLayout } : {}),
     ...(documentLayout ? { documentLayout } : {}),
     ...(bibliographyUrl ? { bibliographyUrl } : {}),

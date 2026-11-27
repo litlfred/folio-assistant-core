@@ -9,7 +9,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { LAZY_OPEN, afterTitle, buildDocumentSite, contentsList, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
+import { LAZY_OPEN, afterTitle, buildDocumentSite, contentsList, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, splitChapters, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 import { checkSiteIris } from "@litlfred/cat-harness-tools/scripts/check-site-iris.ts";
@@ -339,6 +339,24 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.shell).not.toContain("Step one.");
     expect(s.shell).toContain("### Unlabelled section");
     expect(s.shell).toContain("### Section");
+  });
+
+  test("splitChaptersKeepsLeads", () => {
+    // One chapter at a time (owner, 2026-11-27): the shell keeps each chapter's
+    // anchor and heading; its sections and placeholders are the chapter's data.
+    const md = [
+      "# Doc", "", "Intro.", "", '<a id="chap:a"></a>', "## A", "", '<a id="sec:a1"></a>', "### A1", "", '<div class="fa-blk" data-blk="p:1"></div>', "",
+      "```", "## not a chapter", "```", "", '<a id="chap:b"></a>', "", "## B", "", "### B1",
+    ].join("\n");
+    const c = splitChapters(md);
+    expect(c.head).toContain("Intro.");
+    expect(c.chapters.length).toBe(2);
+    expect(c.chapters[0]!.lead).toBe('<a id="chap:a"></a>\n## A');
+    expect(c.chapters[0]!.body).toContain('data-blk="p:1"');
+    expect(c.chapters[0]!.body).toContain("## not a chapter");
+    expect(c.chapters[1]!.lead).toContain('<a id="chap:b"></a>');
+    expect(c.chapters[1]!.body).toContain("### B1");
+    expect(splitChapters("# Doc\n\n## Only\n\ntext").chapters).toEqual([]);
   });
 
   test("splitBlocksMovesFrameOpener", () => {
