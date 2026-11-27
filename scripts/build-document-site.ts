@@ -156,6 +156,7 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   dfn.defterm { font-style: normal; font-weight: 600; }
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
+  .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; color: var(--muted); font-size: .9rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
   .fa-downloads { font-size: .9rem; color: var(--muted); }
   /* A figure's drawing centred, its title under it centred at no more than
@@ -216,6 +217,7 @@ const THEMED_STYLE = `
 .${DOC_CLASS} dfn.defterm { font-style: normal; font-weight: 600; }
 .${DOC_CLASS} .cite { opacity: .72; }
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
+.${DOC_CLASS} .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; opacity: .6; font-size: .9rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .fa-downloads { font-size: .9rem; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
@@ -477,6 +479,7 @@ export const LAZY_OPEN = `<script>if (location.hash.length > 1) document.documen
 <style>
 html[data-fa-open] .fa-blk:not([data-filled]), html[data-fa-open] .fa-blk[data-fold] { min-height: 0; }
 html[data-fa-open] .fa-blk[data-below]:not([data-filled]) { min-height: 3rem; }
+html[data-fa-open] .fa-blk:not([data-below])::before { content: none; }
 html[data-fa-open] p:has(+ .fa-blk:not([data-filled])) > .block-actions,
 html[data-fa-open] p:has(+ .fa-blk[data-fold]) > .block-actions,
 html[data-fa-open] p:has(+ .fa-blk[data-fold]) > .pc-note { display: none; }
@@ -494,9 +497,18 @@ export interface BlockSplit {
 
 /**
  * Split the assembled Markdown at block anchors. A block runs from its
- * `<a id="<label>"></a>` line to the next anchor or heading; lines inside a
- * fenced code block are never read as either. Anchors that are not block
- * labels (sections, chapters) stay in the shell, with their headings.
+ * `<a id="<label>"></a>` line to the next anchor or structural heading; lines
+ * inside a fenced code block are never read as either. Anchors that are not
+ * block labels (sections, chapters) stay in the shell, with their headings.
+ *
+ * A heading inside a block's own Markdown (a proof's "## Proof outline") is
+ * the block's text, not the document's structure. Ending the block there put
+ * the rest of the block in the shell: on qou, 1,800 such headings left about
+ * 4 MB of block text in a 7.6 MB shell, so the page was blank and its navbar
+ * dead until all of it had loaded (owner, 2026-11-27). A heading is
+ * structural when the next non-blank line is an anchor or another structural
+ * heading: a chapter or section heading is followed by its first block's
+ * anchor or a subsection, and a heading in a block is followed by its text.
  */
 export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
   const ANCHOR = /^<a id="([^"]+)"><\/a>\s*$/;
@@ -511,7 +523,25 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
     if (cur) blocks.push({ label: cur.label, markdown: cur.lines.join("\n").trim() + "\n" });
     cur = null;
   };
-  for (const line of markdown.split("\n")) {
+  const lines = markdown.split("\n");
+  // structural[i]: line i is a heading outside a fence whose next non-blank
+  // line is an anchor or a structural heading. Computed back to front.
+  const fenced: boolean[] = [];
+  for (let i = 0, f = false; i < lines.length; i++) {
+    if (FENCE.test(lines[i]!)) { fenced[i] = true; f = !f; } else fenced[i] = f;
+  }
+  const structural: boolean[] = new Array(lines.length).fill(false);
+  let next: "anchor" | "structural" | "other" | "end" = "end";
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const l = lines[i]!;
+    if (l.trim() === "") continue;
+    if (!fenced[i] && ANCHOR.test(l)) next = "anchor";
+    else if (!fenced[i] && HEADING.test(l)) {
+      structural[i] = next !== "other";
+      next = structural[i] ? "structural" : "other";
+    } else next = "other";
+  }
+  for (const [i, line] of lines.entries()) {
     if (!inFence) {
       const m = line.match(ANCHOR);
       if (m) {
@@ -540,7 +570,7 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
         }
         continue;
       }
-      if (HEADING.test(line)) {
+      if (HEADING.test(line) && (structural[i] || !cur)) {
         close();
         shell.push(line);
         continue;

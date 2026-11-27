@@ -324,6 +324,23 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.shell).toContain("## Next");
   });
 
+  test("splitBlocksKeepsInBlockHeadings", () => {
+    // A heading in a block's own text is the block's, not the document's: ending
+    // the block there left the rest of it in the shell (qou, 2026-11-27).
+    const md = [
+      "# Doc", "", '<a id="chap:one"></a>', "## Chapter", "", '<a id="sec:s"></a>', "### Section", "",
+      '<a id="prop:a"></a>', "Statement.", "", "## Proof outline", "", "Step one.", "", "### Details", "", "Step two.", "",
+      "### Unlabelled section", "", '<a id="prose:b"></a>', "Block B.",
+    ].join("\n");
+    const s = splitBlocks(md, new Set(["prop:a", "prose:b"]));
+    expect(s.blocks[0]!.markdown).toContain("## Proof outline");
+    expect(s.blocks[0]!.markdown).toContain("Step two.");
+    expect(s.blocks[0]!.markdown).not.toContain("Unlabelled section");
+    expect(s.shell).not.toContain("Step one.");
+    expect(s.shell).toContain("### Unlabelled section");
+    expect(s.shell).toContain("### Section");
+  });
+
   test("splitBlocksMovesFrameOpener", () => {
     // The frame opens before the anchor and closes after the text; an opener
     // left in the shell put every later block inside it (smart-ra, 2026-11-02).
