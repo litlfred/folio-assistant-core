@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { declOf, docsFromIndex, kgIndex, linkFromPage, pagesUrlOf, readDocsIndex, staticIndex } from "./block-lean.ts";
+import { declOf, docsFromIndex, kgIndex, leanDocs, leanDocsAll, linkFromPage, pagesUrlOf, readDocsIndex, staticIndex, visualiserRoute } from "./block-lean.ts";
 
 describe("block-lean: the ∀ icon's facts (owner, 2026-11-19)", () => {
   test("a lean.ref names its declaration, package prefix or not", () => {
@@ -50,5 +50,39 @@ describe("block-lean: the ∀ icon's facts (owner, 2026-11-19)", () => {
     expect(pagesUrlOf("Some-Owner/some.repo")).toBe("https://some-owner.github.io/some.repo");
     expect(pagesUrlOf(undefined)).toBeUndefined();
     expect(pagesUrlOf("not a repo")).toBeUndefined();
+  });
+});
+
+describe("block-lean: one sub-KG per package (owner, 2026-11-24)", () => {
+  test("a visualiser ref is read as a site path, as landingLinks reads it, and the _site/ form still works", () => {
+    expect(visualiserRoute("lean/qou/index.html")).toBe("lean/qou");
+    expect(visualiserRoute("lean/qou/")).toBe("lean/qou");
+    expect(visualiserRoute("_site/lean/index.html")).toBe("lean");
+    expect(visualiserRoute("/lean/index.html")).toBeUndefined();
+    expect(visualiserRoute("https://x/lean/")).toBeUndefined();
+    expect(visualiserRoute("lean/../x/index.html")).toBeUndefined();
+    expect(visualiserRoute("lean/qou.html")).toBeUndefined();
+  });
+
+  test("a block links into the lean directory belonging to its own paper; else the first declared", () => {
+    const root = mkdtempSync(join(tmpdir(), "bl-sub-"));
+    const dir = (id: string, path: string, ref: string) => ({ id, path, graphTypologies: ["lean"], coverage: { visualiser: [{ ref, title: id }] } });
+    writeFileSync(
+      join(root, "fx.json"),
+      JSON.stringify({
+        name: "fx",
+        directories: [
+          dir("lean-docs", "lean/", "lean/index.html"),
+          dir("lean", "folio/paper-a/lean/", "lean/a/index.html"),
+          dir("lean-b", "folio/paper-b/lean/", "_site/lean/b/index.html"),
+          { id: "other", path: "x/", graphTypologies: ["docs"] },
+        ],
+      }),
+    );
+    expect(leanDocsAll(root).map((e) => [e.route, e.path])).toEqual([["lean", "lean"], ["lean/a", "folio/paper-a/lean"], ["lean/b", "folio/paper-b/lean"]]);
+    expect(leanDocs(root, join(root, "folio", "paper-b"))?.route).toBe("lean/b");
+    expect(leanDocs(root, join(root, "folio", "paper-a"))?.route).toBe("lean/a");
+    expect(leanDocs(root, join(root, "folio", "paper-c"))?.route).toBe("lean");
+    expect(leanDocs(root)?.route).toBe("lean");
   });
 });

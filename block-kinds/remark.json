@@ -7,5 +7,6 @@
   "folioType": "folio-assistant-core:Remark",
   "docoType": "doco:Section",
   "heading": "Remark",
-  "headingPlural": "Remarks"
+  "headingPlural": "Remarks",
+  "libraryOrigin": "extracted"
 }

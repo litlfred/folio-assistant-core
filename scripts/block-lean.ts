@@ -27,7 +27,14 @@
  *   page, JSON shards loaded on demand; owner, 2026-11-19, "use thin html and
  *   dynamic loading"), whose `data/names.json` says which declarations it has
  *   and in which module, so a declaration links to the viewer opened at it
- *   (`<route>/#/m/<Module>/<name>`). doc-gen4's static HTML is read only as a
+ *   (`<route>/#/m/<Module>/<name>`). A folio with several Lake packages declares
+ *   one `lean` directory per package, each its own sub-KG at its own route
+ *   (owner, 2026-11-24: "separate qou, UGB and Fred2005 into own lean
+ *   sub-KGs"); a block links into the one belonging to its own paper, the
+ *   directory whose path is the paper's `lean/` ({@link leanDocs}). The ref is
+ *   read as a site path, as `landingLinks` reads it (`lean/qou/index.html`),
+ *   and the older `_site/<route>/index.html` form is still accepted. doc-gen4's
+ *   static HTML is read only as a
  *   fallback, through its `declarations/declaration-data.bmp`. Read from the
  *   mount, else the built site, else the published site. A declaration the
  *   index does not list gets no rendered link, the rule `build-paper-pdf.sh`
@@ -63,8 +70,12 @@ export interface LeanLinkContext {
   repoUrl?: string;
   /** The commit the source links are pinned to. */
   commit?: string;
-  /** A declaration's rendered page, as the block's page links it; undefined when the docs do not list it. */
-  docs?: (decl: string) => string | undefined;
+  /**
+   * A declaration's rendered page, as the block's page links it; undefined when
+   * the docs do not list it. `paperDir` is the block's document directory, for
+   * a context that serves several papers' sub-KGs (the glossary's).
+   */
+  docs?: (decl: string, paperDir?: string) => string | undefined;
 }
 
 /** The declaration a `lean.ref` names: `qou:QOU.Foo.bar` → `QOU.Foo.bar`. */
@@ -89,33 +100,78 @@ export function leanSourceContext(repoRoot: string): Pick<LeanLinkContext, "repo
 }
 
 /**
- * The site route the folio publishes its Lean render under, from its declared
- * `lean` directory: the `coverage.visualiser` ref `_site/<route>/index.html`
- * gives `<route>`. Undefined when the folio declares no such directory, or its
- * visualiser is not a page under the built site.
+ * The site route a `lean` directory's visualiser ref names: the site path
+ * `<route>/index.html` or `<route>/` (as `landingLinks` reads a ref), or the
+ * older `_site/<route>/index.html`. Undefined for an absolute path, a URL, a
+ * `..` segment, or a ref that names no directory page.
  */
-export function leanDocsRoute(repoRoot: string): string | undefined {
-  return leanDocs(repoRoot)?.route;
+export function visualiserRoute(ref: unknown): string | undefined {
+  if (typeof ref !== "string" || ref.startsWith("/") || /^[a-z][a-z0-9+.-]*:/i.test(ref)) return undefined;
+  const m = /^(?:_site\/)?(.+?)\/(?:index\.html)?$/.exec(ref);
+  if (!m || m[1]!.split("/").some((x) => x === ".." || x === "." || x === "")) return undefined;
+  return m[1]!;
 }
 
-/** The declared Lean render: its site route and the repository path it is mounted at (block-lean.ts header). */
-export function leanDocs(repoRoot: string): { route: string; mount?: string } | undefined {
+/** One declared Lean render: its site route, the repository path it is mounted at, and its directory path. */
+export interface LeanDocsEntry {
+  route: string;
+  mount?: string;
+  /** The declared directory's path, repo-relative, no trailing slash. */
+  path?: string;
+}
+
+/** Every `lean` directory the folio declares with a visualiser page, in declaration order. */
+export function leanDocsAll(repoRoot: string): LeanDocsEntry[] {
   let dirs: Array<{ path?: string; graphTypologies?: string[]; graphs?: string[]; coverage?: { visualiser?: unknown } }> = [];
   try {
     dirs = ((readDeclaration(repoRoot) as unknown as { directories?: typeof dirs } | undefined)?.directories ?? []);
   } catch {
-    return undefined;
+    return [];
   }
+  const out: LeanDocsEntry[] = [];
   for (const d of dirs) {
     if (!(d.graphTypologies ?? d.graphs ?? []).includes("lean")) continue;
     const v = d.coverage?.visualiser;
     const refs = typeof v === "string" ? [v] : Array.isArray(v) ? v.map((x) => (typeof x === "string" ? x : (x as { ref?: string })?.ref)) : [];
     for (const r of refs) {
-      const m = typeof r === "string" ? /^_site\/(.+?)\/(?:index\.html)?$/.exec(r) : null;
-      if (m && !m[1]!.split("/").includes("..")) return { route: m[1]!, ...(d.path ? { mount: join(repoRoot, ...d.path.split("/").filter(Boolean)) } : {}) };
+      const route = visualiserRoute(r);
+      if (route === undefined) continue;
+      const path = d.path?.split("/").filter(Boolean).join("/");
+      out.push({ route, ...(path ? { mount: join(repoRoot, ...path.split("/")), path } : {}) });
+      break;
     }
   }
-  return undefined;
+  return out;
+}
+
+/**
+ * The site route the folio publishes its Lean render under, from its declared
+ * `lean` directory: the `coverage.visualiser` ref (`<route>/index.html`, or
+ * `_site/<route>/index.html`) gives `<route>`. Undefined when the folio
+ * declares no such directory, or its visualiser is not a page under the built
+ * site.
+ */
+export function leanDocsRoute(repoRoot: string, paperDir?: string): string | undefined {
+  return leanDocs(repoRoot, paperDir)?.route;
+}
+
+/**
+ * The declared Lean render a block of the paper at `paperDir` links into: the
+ * `lean` directory whose path is that paper's `lean/` or holds it (the longest
+ * such path, so a package's own directory beats a common parent). With no
+ * `paperDir`, or no directory belonging to that paper, the first declared one,
+ * as before sub-KGs existed.
+ */
+export function leanDocs(repoRoot: string, paperDir?: string): LeanDocsEntry | undefined {
+  const all = leanDocsAll(repoRoot);
+  if (paperDir !== undefined) {
+    const own = relative(repoRoot, join(paperDir, "lean")).split("\\").join("/");
+    const hit = all
+      .filter((e) => e.path !== undefined && (own === e.path || own.startsWith(`${e.path}/`)))
+      .sort((a, b) => b.path!.length - a.path!.length)[0];
+    if (hit) return hit;
+  }
+  return all[0];
 }
 
 /**
@@ -289,6 +345,6 @@ export function blockLean(block: Block, tsPath: string, paperDir: string, repoRo
   } catch {
     source = undefined;
   }
-  const docs = ctx.docs?.(decl);
+  const docs = ctx.docs?.(decl, paperDir);
   return { decl, status, ...(source ? { source } : {}), ...(docs ? { docs } : {}) };
 }
