@@ -1,0 +1,21 @@
+{
+  "$schema": "kg-qa/v1",
+  "subject": {
+    "kind": "decision",
+    "id": "pages-live-gate",
+    "path": "collab/processes/conduct/decisions/pages-live-gate.dmn"
+  },
+  "source_hash": "sha256:37f0a1153cbb667f3fb283e45db36e78556ca862d65c6297353720183b8eafa8",
+  "criteria": {
+    "decision-outcomes-used": {
+      "result": "pass",
+      "findings": []
+    }
+  },
+  "totals": {
+    "pass": 1,
+    "fail": 0,
+    "n/a": 0,
+    "unknown": 0
+  }
+}
