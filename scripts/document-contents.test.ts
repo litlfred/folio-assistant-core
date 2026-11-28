@@ -21,6 +21,12 @@ describe("contentsList", () => {
     expect(contentsList(`<h2>Table of contents</h2>\n${ch("chap:one", "One")}${ch("chap:two", "Two")}`)).toBe("");
   });
 
+  test("aContentsSectionInsideAChapterIsNotTheDocumentsOwn", () => {
+    // qou: a block's own "## Contents" section suppressed the whole paper's list (2026-11-28).
+    const out = contentsList(`${ch("chap:one", "One")}<h4>Contents</h4>\n<p>Text.</p>\n${ch("chap:two", "Two")}`);
+    expect(out).toContain('<nav class="fa-contents"');
+  });
+
   test("oneChapterNone", () => {
     expect(contentsList(ch("chap:one", "One"))).toBe("");
   });
