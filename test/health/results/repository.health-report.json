@@ -8,7 +8,7 @@
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-19T21:23:57.004Z",
+  "updated_at": "2026-11-28T17:02:22.512Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -84,7 +84,7 @@
       "measurements": [
         {
           "metric": "special-branch-bytes:qa-reports",
-          "value": 32424342,
+          "value": 48830147,
           "unit": "bytes",
           "command": "git ls-remote --heads origin; git fetch --depth=1 + git ls-tree -r -l <tip> per budgeted branch (unique blobs summed)"
         },
@@ -138,7 +138,7 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/5571cc3b4c49f3e78ed39be846c57fe1afde7a6f — miss: main/97b3461c369edb0877d9be4ed8fdb63e0e8a3c2b has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/b3bc5bfd78dd93068bfdfb3f6bfec09ad9326c8e — miss: main/b3bc5bfd78dd93068bfdfb3f6bfec09ad9326c8e has nothing under health"
     },
     {
       "id": "remote-mounts",
@@ -345,19 +345,19 @@
       "measurements": [
         {
           "metric": "tracked-tree-bytes",
-          "value": 30550711,
+          "value": 30611029,
           "unit": "bytes",
           "command": "git ls-tree -r -l HEAD (blob sizes summed)"
         },
         {
           "metric": "git-dir-bytes",
-          "value": 31795585,
+          "value": 34779527,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 30196736,
+          "value": 33644544,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
@@ -369,7 +369,7 @@
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 1.04,
+          "value": 1.14,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
