@@ -138,6 +138,20 @@ export function tableStyle(scope = ""): string {
 }
 
 /** The standalone page's own stylesheet. Light and dark follow the reader's system setting. */
+/**
+ * The document's Contents as a CARD (owner, 2026-11-28: *"TOC should be a card
+ * like other sites"*): a bordered, rounded panel under the title, as the
+ * landing pages' cards are, rather than a bare list between the title and the
+ * first chapter. The same rules on the standalone page and, scoped, on the
+ * themed one.
+ */
+export const CONTENTS_CARD_STYLE = `
+  .fa-contents { border: 1px solid rgba(127,127,127,.35); border-radius: 10px; padding: .75rem 1.25rem; margin: 1rem 0 1.5rem; background: rgba(127,127,127,.06); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .fa-contents .fa-contents-title { margin: .25rem 0 .5rem; }
+  .fa-contents ol { margin: 0 0 .5rem; padding-inline-start: 1.5rem; }
+  .fa-contents ol ol { margin: .15rem 0; font-size: .92em; }
+  .fa-contents li { margin: .1rem 0; }`;
+
 const PAGE_STYLE = `<style>
   :root { color-scheme: light dark; --fg: #1b1b1b; --bg: #fdfdfb; --muted: #5b5b5b; --link: #0b5cad; }
   ${darkRules(`:root { --fg: #e8e8e6; --bg: #161616; --muted: #a8a8a4; --link: #7db4ff; }`)}
@@ -161,6 +175,7 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; color: var(--muted); font-size: .9rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
   .fa-downloads { font-size: .9rem; color: var(--muted); }
+${CONTENTS_CARD_STYLE}
   /* A figure's drawing centred, its title under it centred at no more than
      67% of the column (owner, 2026-11-17; figure-numbers.ts moves the title). */
   .fa-numbered { margin: .75em 0; }
@@ -224,6 +239,7 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .fa-blk:not([data-filled]):empty::before { content: "Loading…"; display: block; padding: .75rem 0; opacity: .6; font-size: .9rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .fa-downloads { font-size: .9rem; }
+${scopeCss(CONTENTS_CARD_STYLE, `.${DOC_CLASS}`)}
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
 ${tableStyle(`.${DOC_CLASS}`)}`;
 
@@ -340,7 +356,14 @@ function contentsEntries(html: string): VisualiserNavEntry[] {
  * its own, or fewer than two chapters.
  */
 export function contentsList(html: string): string {
-  if (/<h[1-6]\b[^>]*>\s*(table of )?contents\s*<\/h[1-6]>/i.test(html)) return "";
+  // A document's OWN contents comes before its first chapter. A "Contents"
+  // heading further down is a section inside some block (qou's
+  // multi-link-jones-q1-extension block has a "## Contents" section), and it
+  // took the whole paper's list away (owner, 2026-11-28: "TOC should be a card
+  // like other sites" — the QOU page had no contents at all).
+  const firstChapter = html.search(/<p><a id="[^"]+"><\/a><\/p>\s*<h2\b/);
+  const front = firstChapter < 0 ? html : html.slice(0, firstChapter);
+  if (/<h[1-6]\b[^>]*>\s*(table of )?contents\s*<\/h[1-6]>/i.test(front)) return "";
   const entries = contentsEntries(html);
   if (entries.length < 2) return "";
   const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
