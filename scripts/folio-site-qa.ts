@@ -86,6 +86,11 @@ export async function qaBlockHtml(
     }
   }
 
+  // A ```tex fence that reached the page as a code listing is raw TeX too, even
+  // though the text check below drops <pre>/<code> (folio-assistant-core#881).
+  for (const m of html.matchAll(/<code class="language-(?:tex|latex)">([\s\S]{0,80})/g))
+    findings.push({ block, class: "raw-tex", excerpt: `tex fence shown as code: ${decode(m[1]!).slice(0, 60)}` });
+
   // Text a reader sees: drop math nodes, code, preformatted text and disclosures.
   const text = decode(
     html
