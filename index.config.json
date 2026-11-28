@@ -52,7 +52,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "4026199a2a73b0dd7c83114cdd706684c558b902",
+          "ref": "eda30abb9fe6fce2d56b76c93d84043d92e05125",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -64,9 +64,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-23",
-              "ref": "4026199a2a73b0dd7c83114cdd706684c558b902",
-              "evidence": "litlfred 2026-11-22T15:33:16Z, decision card cmsg_017WNUkNK8kdDziPK58Pv6G9THqoGPsH9aB3w92kZZ2w7n in the project chat: \"A. Yes, +12 hours\" on \"Open a new 12-hour merge window?\" — non-content merge and re-pin window to 2026-11-23T03:33Z"
+              "on": "2026-11-28",
+              "ref": "eda30abb9fe6fce2d56b76c93d84043d92e05125",
+              "evidence": "litlfred chose 'Yes, re-pin to eda30ab' on decision card cmsg_01H9cBvdoT3vcjHkS7QAyTqgNsLqtrzF3nie7JYnA2cAM4 in project thread https://claude.ai/code/project/chan_01H9cBvdoT3vcjHkS7QAyTqg?thread=cmsg_01H9cBvdoT3vcjHkS7QAyTqgLcSdNTxa1PaLgsXup2yFcB at 2026-11-28T17:01:05Z"
             }
           }
         }
