@@ -44,7 +44,7 @@ function checkout(extra?: (root: string) => void): string {
   made.push(root);
   const folio = join(root, "folio-x");
   mkdirSync(folio, { recursive: true });
-  writeDeclaration(folio, { name: "folio-x", directories: [{ id: "folio-x-references", path: "references/", graphTypologies: ["references"] }] });
+  writeDeclaration(folio, { name: "folio-x", iriBase: "https://example.org/folio-x/", version: "0.1.0", directories: [{ id: "folio-x-references", path: "references/", graphTypologies: ["references"] }] });
   put(folio, "references/garoufalidis2004.json", {
     $schema: "folio-reference/v1",
     id: "garoufalidis2004",
@@ -133,6 +133,16 @@ describe("pages and exports", () => {
   const c = collect(checkout());
   const files = outputs(c);
   const paths = [...files.keys()].map((p) => p.split("/").slice(-3).join("/"));
+
+  test("jsonLdExportNamesEachReferenceUnderItsLayersRelease", () => {
+    // folio-assistant-core#878: not under the shared FOLIO_BASE no site serves.
+    expect(c.bases?.["folio-x"]).toBe("https://example.org/folio-x/v0/");
+    const [, text] = [...files].find(([p]) => p.endsWith("folio-x-references/references.jsonld"))!;
+    expect(text).not.toContain("litlfred.github.io/folio/");
+    const g = JSON.parse(text) as { "@context": Record<string, unknown>; "@graph": Record<string, unknown>[] };
+    expect(g["@context"]).not.toHaveProperty("@base");
+    expect(g["@graph"].map((n) => n["@id"])).toContain("https://example.org/folio-x/v0/references/garoufalidis2004");
+  });
 
   test("fiveExportsPerPage", () => {
     for (const where of ["bibliography", "folio-x-references", "iris-x-catalogue"]) {

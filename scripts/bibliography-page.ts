@@ -68,6 +68,7 @@ import { buildSearchIndex, searchHtml, type SearchRecord } from "./bibliography-
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
 import { safeHref } from "@litlfred/cat-harness-tools/schemas/ui/safe-url.ts";
 import { declaredPageRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { instanceKgBase } from "@litlfred/cat-harness-tools/schemas/kg/jsonld.ts";
 import { siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";
 import {
@@ -169,6 +170,14 @@ export interface Collected {
   /** Per-asset bibliography views (`<route>/<sub-graph>/<asset>/`). */
   assets: AssetView[];
   invalid: string[];
+  /**
+   * Each layer's release base, `<iriBase>v<major>/` (cat-harness-tools
+   * `instanceKgBase`), by layer name: what the `references.jsonld` exports
+   * resolve a reference's IRIs against. A layer with no `iriBase` or no
+   * `MAJOR.MINOR.PATCH` version is absent, and its references keep the
+   * shared `FOLIO_BASE`.
+   */
+  bases?: Record<string, string>;
 }
 
 const rel = (repo: string, p: string) => relative(repo, p).split("\\").join("/");
@@ -196,13 +205,21 @@ export function heldCopies(instanceRoot: string, catalogueDir: string): Map<stri
 
 /** Every reference in the checkout. */
 export function collect(repo: string = REPO): Collected {
-  const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [] };
+  const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [], bases: {} };
   const scanned: Omit<SubgraphView, "slug">[] = [];
   const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry; catalogued?: boolean }[] = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
     if (resolve(root) === resolve(repo)) out.own = decl.name;
+    const { iriBase, version } = decl as { iriBase?: string; version?: string };
+    if (iriBase) {
+      try {
+        out.bases![decl.name] = instanceKgBase(iriBase, version);
+      } catch {
+        // No release to mint under: its references keep the shared base.
+      }
+    }
     const dirs = resolveDirectories([{ name: decl.name, root, own: true }]).filter((d) => d.own);
     const heldByCatalogue = new Set<string>();
     for (const d of dirs) {
@@ -990,7 +1007,11 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
   const write = (dir: string, page: string, entries: Entry[]) => {
     out.set(join(dir, "index.md"), page);
     const refs = entries.map((e) => e.ref);
-    for (const [f, , fn] of EXPORTS) out.set(join(dir, f), fn(refs));
+    // The JSON-LD names each reference under the release of the layer that
+    // holds it, never the shared FOLIO_BASE no site serves.
+    const layerOf = new Map(entries.map((e) => [e.ref, e.instance] as const));
+    const baseOf = (r: ReferenceNode) => c.bases?.[layerOf.get(r) ?? ""];
+    for (const [f, , fn] of EXPORTS) out.set(join(dir, f), fn === toJsonLdGraph ? toJsonLdGraph(refs, baseOf) : fn(refs));
   };
   const inSub = (s: { id: string; instance: string }) => c.entries.filter((e) => e.subgraph === s.id && e.instance === s.instance);
   // A directory declaring two kinds (references and catalogue) is scanned twice: one link, one page.
