@@ -1557,7 +1557,9 @@ export async function buildDocumentSite(
       const vdir = join(outDir, v.locale, d.slug);
       mkdirSync(vdir, { recursive: true });
       const vwhole = await render(v.markdown);
-      const lead = languageSwitcher(v.locale, locales, d.slug, routeOf) + translationNote(source, v.translated, v.total);
+      // The same Download line as the source page, linking the source-language
+      // Word and PDF: a reader of a translation can still reach every rendering.
+      const lead = languageSwitcher(v.locale, locales, d.slug, routeOf) + translationNote(source, v.translated, v.total) + (opts.downloads ? downloadLinks(d.slug, `${v.locale}/${d.slug}`) : "");
       const vdirSite = `${v.locale}/${d.slug}`;
       const vbody = rebaseHtmlUrls(linkCitations([{ html: vwhole }], { library })[0]!, pageDirOf, vdirSite);
       const vhtml = afterTitle(vbody, lead + contentsList(vwhole));
