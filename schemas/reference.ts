@@ -491,13 +491,41 @@ export function toRis(refs: readonly ReferenceNode[]): string {
   return refs.map(rec).join("\r\n\r\n") + (refs.length ? "\r\n" : "");
 }
 
-/** Dublin Core / BIBO JSON-LD: every reference as one `@graph`. */
-export function toJsonLdGraph(refs: readonly ReferenceNode[]): string {
+/** The properties of a reference's JSON-LD that name an IRI, relative to its `@base` (the `@id` and the two coerced in {@link REFERENCE_CONTEXT}). */
+const REFERENCE_IRI_KEYS = ["@id", "dcterms:source", "dcterms:hasVersion"] as const;
+
+/**
+ * Dublin Core / BIBO JSON-LD: every reference as one `@graph`.
+ *
+ * With `baseOf`, each node is written with ABSOLUTE IRIs resolved against the
+ * release base of the layer that holds it (`<iriBase>v<major>/`, cat-harness-tools
+ * `instanceKgBase`), and the graph's context carries no `@base`. A published
+ * export lists references from several layers, and one shared `@base`
+ * ({@link FOLIO_BASE}, served by no site) minted every one of them under
+ * `https://litlfred.github.io/folio/`, the wrong host for all of them (qou's
+ * published bibliography, folio-assistant-core#878). A node `baseOf` gives no
+ * base for keeps {@link FOLIO_BASE}, written out, as before. Without `baseOf`
+ * the output is unchanged: the committed nodes' shape, relative to
+ * {@link REFERENCE_CONTEXT}'s `@base`.
+ */
+export function toJsonLdGraph(refs: readonly ReferenceNode[], baseOf?: (ref: ReferenceNode) => string | undefined): string {
   const graph = refs.map((r) => {
     const { "@context": _c, ...rest } = referenceToJsonLd(r);
+    if (baseOf === undefined) return rest;
+    const base = baseOf(r) ?? FOLIO_BASE;
+    for (const k of REFERENCE_IRI_KEYS) {
+      const v = rest[k];
+      if (typeof v !== "string") continue;
+      try {
+        rest[k] = new URL(v, base).href;
+      } catch {
+        // Not resolvable as a URL reference: left as written.
+      }
+    }
     return rest;
   });
-  return `${JSON.stringify({ "@context": REFERENCE_CONTEXT, "@graph": graph }, null, 2)}\n`;
+  const { "@base": _b, ...unbased } = REFERENCE_CONTEXT;
+  return `${JSON.stringify({ "@context": baseOf === undefined ? REFERENCE_CONTEXT : unbased, "@graph": graph }, null, 2)}\n`;
 }
 
 // ── Reference → Dublin Core XML (via 7eak's renderDcXml) ─────────────────────

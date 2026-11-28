@@ -248,6 +248,24 @@ describe("exports", () => {
     expect(g["@graph"].every((n) => !("@context" in n))).toBe(true);
   });
 
+  test("jsonLdGraphUnderEachLayersBase", () => {
+    // folio-assistant-core#878: a published export minted every reference
+    // under FOLIO_BASE (litlfred.github.io/folio/), a host no layer serves.
+    const base = "https://litlfred.github.io/qou/v0/";
+    const held = { ...garoufalidis2004, derivedFrom: "library/g/manifest.jsonld", heldAt: "library/g" };
+    const g = JSON.parse(toJsonLdGraph([held, who], (r) => (r.id === held.id ? base : undefined))) as {
+      "@context": Record<string, unknown>;
+      "@graph": Record<string, unknown>[];
+    };
+    expect(g["@context"]).not.toHaveProperty("@base");
+    expect(g["@context"]["dcterms:source"]).toEqual({ "@type": "@id" });
+    expect(g["@graph"][0]!["@id"]).toBe(`${base}references/garoufalidis2004`);
+    expect(g["@graph"][0]!["dcterms:source"]).toBe(`${base}library/g/manifest.jsonld`);
+    expect(g["@graph"][0]!["dcterms:hasVersion"]).toBe(`${base}library/g`);
+    // A layer with no release base keeps the shared one, written out.
+    expect(g["@graph"][1]!["@id"]).toBe(`${FOLIO_BASE}references/who2014handbook`);
+  });
+
   test("dcXmlReusesRenderer", () => {
     const singleXml = toDublinCoreXml([garoufalidis2004]);
     expect(singleXml).toContain("<dcterms:title>On the characteristic and deformation varieties of a knot</dcterms:title>");
