@@ -147,6 +147,19 @@ describe("a site per declared locale", () => {
     expect(landing).toContain(`<a href="fr/handbook/index.html" hreflang="fr" lang="fr">français</a>`);
   }, 60_000);
 
+  test("translatedPageLinksTheDownloads", async () => {
+    const d = twoLocaleFolio();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { downloads: true });
+    expect(r.errors).toEqual([]);
+    // The same Download line as the source page, reaching the source's export
+    // from the translation's own directory.
+    const fr = readFileSync(join(out, "fr", "handbook", "index.html"), "utf-8");
+    expect(fr).toContain('href="../../en/handbook/export/handbook-public-comment-latest.pdf" download');
+    expect(fr).toContain('href="../../en/handbook/export/handbook-public-comment-latest.docx" download');
+    expect(fr).toContain('href="../../en/handbook/export/">all formats</a>');
+  }, 60_000);
+
   test("noDeclarationNoLocalePages", async () => {
     const d = twoLocaleFolio();
     const cfgPath = join(d, "index.config.json");
