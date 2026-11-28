@@ -93,6 +93,7 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 /** The structured-assets page's folder, beside the document page. */
 const ASSETS_DIR = "assets";
 import { linkedSvgFigures, liveFigures, withLiveFigures } from "./live-figures.js";
+import { documentTexFences, texSvgIndex } from "./document-tex-fences.ts";
 import { glossaryEntries, linkGlossaryTables, linkTerms, termLinks as glossaryTermLinks, type GlossaryEntry, type TermLink } from "./glossary-term-links.ts";
 import { findReferenceList, libraryLinks, linkCitations, type LibraryLink } from "./citation-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
@@ -870,11 +871,37 @@ export interface MathOptions {
 
 const KATEX = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist";
 
+/**
+ * A paper's blocks set as a paper sets them (amsthm), not as the requirement
+ * cards docs-ui.css draws for every `.fa-block`: no tint or rule, the
+ * statement of a theorem-like block in italic, a proof's label "Proof" in
+ * italic, a heading written inside a block (`## Statement`) run small rather
+ * than as a section heading, a display equation centred and scrolled within
+ * the column instead of pushing past it, and a fence's diagram centred and
+ * scaled to the column. Only on a math page, i.e. a paper.
+ */
+const THEOREMS = ["theorem", "proposition", "lemma", "corollary", "conjecture", "claim", "axiom", "hypothesis"];
+const PAPER_KINDS = [...THEOREMS, "definition", "proof", "remark", "example", "notation", "construction"];
+const PAPER_STYLE = `<style>
+  ${PAPER_KINDS.map((k) => `.fa-block-${k}`).join(", ")} { background: none; border: 0; border-radius: 0; padding: 0; margin: 1em 0; min-width: 0; overflow-wrap: anywhere; }
+  ${THEOREMS.map((k) => `.fa-block-${k} p, .fa-block-${k} li`).join(", ")} { font-style: italic; }
+  ${THEOREMS.map((k) => `.fa-block-${k} :is(strong, .fa-block-kind, a, code, .katex)`).join(", ")} { font-style: normal; }
+  ${PAPER_KINDS.map((k) => `.fa-block-${k} .fa-block-kind`).join(", ")} { font-size: 1em; font-weight: 700; letter-spacing: 0; text-transform: none; opacity: 1; }
+  .fa-block-proof .fa-block-kind { font-weight: 400; font-style: italic; }
+  .fa-block :is(h1, h2, h3, h4, h5, h6) { font-size: 1em; font-weight: 600; font-style: normal; margin: .8em 0 .2em; line-height: inherit; }
+  .fa-block .katex-display { overflow-x: auto; overflow-y: hidden; max-width: 100%; text-align: center; }
+  .fa-block pre { overflow-x: auto; max-width: 100%; }
+  .fa-tex { margin: .75em 0; text-align: center; overflow-x: auto; max-width: 100%; }
+  .fa-tex-svg { zoom: 1.4; max-width: calc(100% / 1.4); height: auto; } /* dvisvgm draws at 10pt; the page sets ~16px type */
+  .fa-tex .tex-ph { text-align: start; }
+</style>`;
+
 function mathHead(math: MathOptions): string {
   const macros = JSON.stringify(math.macros).replace(/</g, "\\u003c");
   return `
 <link rel="stylesheet" href="${KATEX}/katex.min.css">
 <script defer src="${KATEX}/katex.min.js"></script>
+${PAPER_STYLE}
 <script>
 addEventListener("DOMContentLoaded", () => {
   // Rendered as each equation nears the viewport, not all at once: a paper
@@ -1043,9 +1070,13 @@ export async function renderDocumentHtml(
     glossaryEntries?: readonly GlossaryEntry[];
     /** Where a glossary-table term with no entry is reported. */
     report?: (message: string) => void;
+    /** Pre-rendered ```tex fence SVGs by hash (document-tex-fences.ts); `texUsed` collects those shown. */
+    texSvgs?: Map<string, string>;
+    texUsed?: Set<string>;
   },
 ): Promise<string> {
-  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown, { bibliographyUrl: opts.bibliographyUrl });
+  const fenced = documentTexFences(markdown, { math: opts.math, svgs: opts.texSvgs ?? new Map(), used: opts.texUsed });
+  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(fenced)) : fenced, { bibliographyUrl: opts.bibliographyUrl });
   const base = opts.math ? remark().use(remarkMath) : remark();
   const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(linkGlossaryTables(opts.glossaryEntries ?? [], opts.report)).use(linkTerms(opts.termLinks ?? [])).use(remarkHtml, { sanitize: false });
   return String(await proc.process(source));
@@ -1329,8 +1360,11 @@ export async function buildDocumentSite(
     // glossary (owner, 2026-11-02; external-glossaries.ts).
     const extGlossaries = externalGlossaries(repoRoot);
     const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
+    // A ```tex fence's pre-rendered SVG (render-tex-blocks.ts), copied beside the page below.
+    const texSvgs = texSvgIndex(dirname(d.path));
+    const texUsed = new Set<string>();
     const render = async (md: string) => {
-      const rendered = await renderDocumentHtml(siteCrossDocumentRefs(md, d.slug, crossDocs), { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report });
+      const rendered = await renderDocumentHtml(siteCrossDocumentRefs(md, d.slug, crossDocs), { math, bibliographyUrl: opts.bibliographyUrl, termLinks, glossaryEntries: tableEntries, report, texSvgs, texUsed });
       const h = withExternalGlossaries(
         linkedSvgFigures(withLiveFigures(siteCrossDocumentLinks(rendered, d.slug, crossDocs), live), dirname(d.path)),
         firstEntry,
@@ -1483,6 +1517,10 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), graphDocument(graph.nodes.map((n) => n.current)));
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
+    for (const svg of texUsed) {
+      mkdirSync(dirname(join(dir, svg)), { recursive: true });
+      cpSync(join(dirname(d.path), svg), join(dir, svg));
+    }
     // Each translated version: the whole document on one page, in its own
     // language and direction, at `<locale>/<slug>/` (document-locales.ts).
     // Its body is rendered as the source page's is, so every relative link in
